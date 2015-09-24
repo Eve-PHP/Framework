@@ -45,12 +45,14 @@
         "eden/validation": "4.x-dev",
 		"ruflin/elastica": "2.3.0",
 		"videlalvaro/php-amqplib": "2.5.2",
-		"xamin/handlebars.php": "dev-develop",
 		"jakoch/phantomjs-installer": "2.0.0"
     },
 	"autoload": {
         "psr-4": {
 			"Eve\\Framework\\": "/src"
-		}
+		},
+		"psr-0": {
+            "Handlebars": "handlebars/"
+        }
     }
 }
