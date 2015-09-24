@@ -1,5 +1,5 @@
 {
-	"name": "eve/framework",
+	"name": "eve-php/framework",
     "type": "framework",
     "description": "Framework Built on top of the Eden Library",
     "keywords": ["eve", "framework"],
