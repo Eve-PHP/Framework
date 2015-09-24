@@ -45,8 +45,7 @@
         "eden/timezone": "4.x-dev",
         "eden/validation": "4.x-dev",
 		"ruflin/elastica": "2.3.0",
-		"videlalvaro/php-amqplib": "2.5.2",
-		"jakoch/phantomjs-installer": "2.0.0"
+		"videlalvaro/php-amqplib": "2.5.2"
     },
 	"autoload": {
         "psr-4": {
