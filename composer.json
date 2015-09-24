@@ -29,6 +29,7 @@
     },
     "require": {
 		"php": ">=5.4.1",
+        "eden/core": "4.x-dev",
         "eden/cookie": "4.x-dev",
         "eden/folder": "4.x-dev",
         "eden/handler": "4.x-dev",
