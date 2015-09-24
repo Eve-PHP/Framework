@@ -460,7 +460,7 @@ namespace Eve\Framework
         {
             Argument::i()->test(1, 'string');
             
-			$suffix = ucwords(str_replace(array('-', '_', '/'), '\\', $key));
+			$suffix = ucwords(str_replace(array('-', '_', '/'), '\\', ucwords($key)));
 			$class = $this->rootNameSpace.'\\Job\\' . $suffix;
 			
 			//if there's not a class
@@ -520,7 +520,7 @@ namespace Eve\Framework
         {
             Argument::i()->test(1, 'string');
             
-			$class = $this->rootNameSpace.'\\Model\\' . $key . '\\Index';
+			$class = $this->rootNameSpace.'\\Model\\' . ucwords($key) . '\\Index';
 			
 			if(!class_exists($class)) {
 				throw new Exception(sprintf(self::NO_MODEL, $key));
