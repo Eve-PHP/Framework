@@ -1,0 +1,50 @@
+{
+	"name": "eve/framework",
+    "type": "framework",
+    "description": "Framework Built on top of the Eden Library",
+    "keywords": ["eve", "framework"],
+    "homepage": "http://eve.openovate.com",
+    "license": "MIT",
+	"authors": [
+        {
+            "name": "Christian Blanquera",
+            "email": "cblanquera@openovate.com"
+        }
+    ],
+	"scripts": {
+        "post-install-cmd": [
+            "PhantomInstaller\\Installer::installPhantomJS"
+        ],
+        "post-update-cmd": [
+            "PhantomInstaller\\Installer::installPhantomJS"
+        ]
+    },
+	"require-dev": {
+        "phpunit/phpunit": "~4.4",
+        "squizlabs/php_codesniffer": "~1.5"
+    },
+    "require": {
+		"php": ">=5.4.1",
+        "eden/cookie": "4.x-dev",
+        "eden/folder": "4.x-dev",
+        "eden/handler": "4.x-dev",
+        "eden/image": "4.x-dev",
+        "eden/language": "4.x-dev",
+        "eden/mail": "4.x-dev",
+        "eden/mysql": "4.x-dev",
+        "eden/postgre": "4.x-dev",
+        "eden/sqlite": "4.x-dev",
+        "eden/oauth": "4.x-dev",
+        "eden/server": "4.x-dev",
+        "eden/session": "4.x-dev",
+        "eden/timezone": "4.x-dev",
+        "eden/validation": "4.x-dev",
+		"ruflin/elastica": "2.3.0",
+		"videlalvaro/php-amqplib": "2.5.2",
+		"xamin/handlebars.php": "dev-develop",
+		"jakoch/phantomjs-installer": "2.0.0"
+    },
+	"autoload": {
+        "psr-4": {"Eve\\Framework": "/src"}
+    }
+}
