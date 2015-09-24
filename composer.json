@@ -2,7 +2,10 @@
 	"name": "eve-php/framework",
     "type": "framework",
     "description": "Framework Built on top of the Eden Library",
-    "keywords": ["eve", "framework"],
+    "keywords": [
+		"eve", 
+		"framework"
+	],
     "homepage": "http://eve.openovate.com",
     "license": "MIT",
 	"authors": [
@@ -45,6 +48,8 @@
 		"jakoch/phantomjs-installer": "2.0.0"
     },
 	"autoload": {
-        "psr-4": {"Eve\\Framework": "/src"}
+        "psr-4": {
+			"Eve\\Framework\\": "/src"
+		}
     }
 }
