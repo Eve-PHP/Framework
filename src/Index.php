@@ -567,7 +567,7 @@ namespace Eve\Framework
                 $config['username'], 
                 $config['password'],
                 $task,
-                $data);
+                $data)->setApplication(eve()->rootNameSpace);
         }
         
         /**
