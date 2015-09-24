@@ -460,7 +460,10 @@ namespace Eve\Framework
         {
             Argument::i()->test(1, 'string');
             
-			$suffix = ucwords(str_replace(array('-', '_', '/'), '\\', ucwords($key)));
+			$suffix = str_replace(array('-', '_', '/'), ' ', $key);
+			$suffix = ucwords($suffix);
+			$suffix = str_replace(' ', '\\', $suffix);
+			
 			$class = $this->rootNameSpace.'\\Job\\' . $suffix;
 			
 			//if there's not a class
