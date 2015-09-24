@@ -272,7 +272,7 @@ namespace Eve\Framework
          */
         public function defaultResponse() 
         {
-			$this->all('*', function($request, $response) {
+			$this->all('**', function($request, $response) {
 				//if there is already a body
 				if($response->isKey('body')
 				|| !$response->isKey('action')) {
@@ -326,7 +326,7 @@ namespace Eve\Framework
 		public function defaultRouting()
 		{
 			//just call the parent
-			$this->all('*', function($request, $response) {
+			$this->all('**', function($request, $response) {
 				//if there is already a body
 				if($response->isKey('body')) {
 					//do nothing
@@ -469,6 +469,9 @@ namespace Eve\Framework
 				throw new Exception(sprintf(self::NO_JOB, $key));
 			}
 			
+			//remove starting \\
+			$class = substr($class, 1);
+			
 			//instantiate the job
 			$job = $this->$class();
 			
@@ -522,6 +525,9 @@ namespace Eve\Framework
 			if(!class_exists($class)) {
 				throw new Exception(sprintf(self::NO_MODEL, $key));
 			}
+			
+			//remove starting \\
+			$class = substr($class, 1);
 			
 			return $this->$class();
         }
