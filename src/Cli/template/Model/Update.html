@@ -1,0 +1,323 @@
+<?php //-->
+/*
+ * A Custom Library
+ *
+ * Copyright and license information can be found at LICENSE
+ * distributed with this package.
+ */
+
+namespace {{namespace}}\\Model\\{{capital name}};
+
+use Eve\\Framework\\Model\\Base;
+use Eve\\Framework\\Model\\Argument;
+use Eve\\Framework\\Model\\Exception;
+
+/**
+ * {{singular}} Model Create
+ *
+ * GUIDE:
+ * -- eve() - The current server controller
+ *    use this to access the rest of the framework
+ *
+ *    -- eve()->database() - Returns the current database
+ *
+ *    -- eve()->model('noun') - Returns the given model factory
+ *
+ *    -- eve()->job('noun-action') - Returns a job following noun/action
+ *
+ *    -- eve()->settings('foo') - Returns a settings data originating
+ *    from the settings path. ie. settings/foo.php
+ *
+ *    -- eve()->registry() - Returns Eden\\Registry\\Index used globally
+ */
+class Create extends Base
+{
+    /**
+     * Returns errors if any
+     *
+     * @param array submitted data
+     * @param array existing errors
+     * @return array error
+     */
+    public function errors(array $data = array(), array $errors = array()) 
+    {
+        //prepare
+        $data = $this->prepare($data);
+        
+        //REQUIRED
+        
+        // {{name}}_id - required
+        if(!isset($data['{{name}}_id'])
+        || !$this('validation', $data['{{name}}_id'])->isType('int', true)) {
+            $errors['{{name}}_id'] = self::INVALID_REQUIRED;
+        }
+        {{#loop fields}}{{#if value.required}}
+        
+        // {{key}} - required
+        if(isset($data['{{key}}'])
+        && empty($data['{{key}}'])) {
+            $errors['{{key}}'] = self::INVALID_ID;
+        }
+        {{/if}}{{/loop}}
+        
+        //OPTIONAL
+        {{#loop fields}}
+        {{#loop value.valid}}
+        {{#when value.[0] '===' 'empty'}}
+        
+        // {{../key}} - empty
+        if(isset($data['{{../key}}'])
+        && empty($data['{{../key}}'])) {
+            $errors['{{../key}}'] = self::INVALID_EMPTY;
+        }
+        {{/when}}{{#when value.[0] '===' 'one'}}
+        
+        // {{../key}} - one of
+        $choices = array({{implode value.[1] ', '}});
+        if(isset($data['{{../key}}']) 
+            && !in_array($data['{{../key}}'], $choices)
+        ) {
+            $errors['{{../key}}'] = sprintf(self::INVALID_ONEOF, implode(',', $choices));
+        }
+        {{/when}}{{#when value.[0] '===' 'email'}}
+        
+        // {{../key}} - email
+        if(isset($data['{{../key}}']) 
+            && !$this('validation', $data['{{../key}}'])->isType('email')
+        ) {
+            $errors['{{../key}}'] = self::INVALID_EMAIL;
+        }
+        {{/when}}{{#when value.[0] '===' 'hex'}}
+        
+        // {{../key}} - hex
+        if(isset($data['{{../key}}']) 
+            && !$this('validation', $data['{{../key}}'])->isType('hex')
+        ) {
+            $errors['{{../key}}'] = self::INVALID_HEX;
+        }
+        {{/when}}{{#when value.[0] '===' 'cc'}}
+        
+        // {{../key}} - cc
+        if(isset($data['{{../key}}']) 
+            && !$this('validation', $data['{{../key}}'])->isType('cc')
+        ) {
+            $errors['{{../key}}'] = self::INVALID_CC;
+        }
+        {{/when}}{{#when value.[0] '===' 'html'}}
+        
+        // {{../key}} - html
+        if(isset($data['{{../key}}']) 
+            && !$this('validation', $data['{{../key}}'])->isType('html')
+        ) {
+            $errors['{{../key}}'] = self::INVALID_HTML;
+        }
+        {{/when}}{{#when value.[0] '===' 'url'}}
+        
+        // {{../key}} - url
+        if(isset($data['{{../key}}']) 
+            && !$this('validation', $data['{{../key}}'])->isType('url')
+        ) {
+            $errors['{{../key}}'] = self::INVALID_URL;
+        }
+        {{/when}}{{#when value.[0] '===' 'slug'}}
+        
+        // {{../key}} - slug
+        if(isset($data['{{../key}}']) 
+            && !$this('validation', $data['{{../key}}'])->isType('slug')
+        ) {
+            $errors['{{../key}}'] = self::INVALID_SLUG;
+        }
+        {{/when}}{{#when value.[0] '===' 'json'}}
+        
+        // {{../key}} - json
+        if(isset($data['{{../key}}']) 
+            && !$this('validation', $data['{{../key}}'])->isType('json')
+        ) {
+            $errors['{{../key}}'] = self::INVALID_JSON;
+        }
+        {{/when}}{{#when value.[0] '===' 'date'}}
+        
+        // {{../key}} - date
+        if(isset($data['{{../key}}']) 
+            && !$this('validation', $data['{{../key}}'])->isType('date')
+        ) {
+            $errors['{{../key}}'] = self::INVALID_DATE;
+        }
+        {{/when}}{{#when value.[0] '===' 'time'}}
+        
+        // {{../key}} - time
+        if(isset($data['{{../key}}']) 
+            && !$this('validation', $data['{{../key}}'])->isType('time')
+        ) {
+            $errors['{{../key}}'] = self::INVALID_TIME;
+        }
+        {{/when}}{{#when value.[0] '===' 'alphanum'}}
+        
+        // {{../key}} - alphanum
+        if(isset($data['{{../key}}']) 
+            && !$this('validation', $data['{{../key}}'])->isType('alphanum')
+        ) {
+            $errors['{{../key}}'] = self::INVALID_ALPHANUM;
+        }    
+        {{/when}}{{#when value.[0] '===' 'alphanum-'}}
+        
+        // {{../key}} - alphanum-
+        if(isset($data['{{../key}}']) 
+            && !$this('validation', $data['{{../key}}'])->isType('alphanum-')
+        ) {
+            $errors['{{../key}}'] = self::INVALID_ALPHANUM_HYPHEN;
+        }
+        {{/when}}{{#when value.[0] '===' 'alphanum_'}}
+        
+        // {{../key}} - alphanum_
+        if(isset($data['{{../key}}']) 
+            && !$this('validation', $data['{{../key}}'])->isType('alphanum_')
+        ) {
+            $errors['{{../key}}'] = self::INVALID_ALPHANUM_SCORE;
+        }
+        {{/when}}{{#when value.[0] '===' 'alphanum-_'}}
+        
+        // {{../key}} - alphanum-_
+        if(isset($data['{{../key}}']) 
+            && !$this('validation', $data['{{../key}}'])->isType('alphanum-_')
+        ) {
+            $errors['{{../key}}'] = self::INVALID_ALPHANUM_LINE;
+        }
+        {{/when}}{{#when value.[0] '===' 'regex'}}
+        
+        // {{../key}} - regex
+        if(isset($data['{{../key}}']) 
+            && !preg_match('{{value.[0]}}', $data['{{../key}}'])
+        ) {
+            $errors['{{../key}}'] = self::INVALID_REGEX;
+        }
+        {{/when}}{{#when value.[0] '===' 'bool'}}
+        
+        // {{../key}} - bool
+        if(isset($data['{{../key}}']) 
+            && !$this('validation', $data['{{../key}}'])->isType('bool', true)
+        ) {
+            $errors['{{../key}}'] = self::INVALID_BOOL;
+        }
+        {{/when}}{{#when value.[0] '===' 'small'}}
+        
+        // {{../key}} - small
+        if(isset($data['{{../key}}']) 
+            && !$this('validation', $data['{{../key}}'])->isType('small', true)
+        ) {
+            $errors['{{../key}}'] = self::INVALID_SMALL;
+        }
+        {{/when}}{{#when value.[0] '===' 'int'}}
+        
+        // {{../key}} - int
+        if(isset($data['{{../key}}']) 
+            && !$this('validation', $data['{{../key}}'])->isType('int', true)
+        ) {
+            $errors['{{../key}}'] = self::INVALID_INT;
+        }
+        {{/when}}{{#when value.[0] '===' 'float'}}
+        
+        // {{../key}} - float
+        if(isset($data['{{../key}}']) 
+            && !$this('validation', $data['{{../key}}'])->isType('float', true)
+        ) {
+            $errors['{{../key}}'] = self::INVALID_FLOAT;
+        }
+        {{/when}}{{#when value.[0] '==' 'price'}}
+        
+        // {{../key}} - float
+        if(isset($data['{{../key}}']) 
+            && !$this('validation', $data['{{../key}}'])->isType('float', true)
+        ) {
+            $errors['{{../key}}'] = self::INVALID_PRICE;
+        }
+        {{/when}}
+        {{#when value.[0] '===' 'number'}}
+        
+        // {{../key}} - number
+        if(isset($data['{{../key}}']) 
+            && !$this('validation', $data['{{../key}}'])->isType('number', true)
+        ) {
+            $errors['{{../key}}'] = self::INVALID_NUMBER;
+        }
+        {{/when}}
+        {{/loop}}
+        {{/loop}}
+        
+        // {{name}}_flag - small
+        if(isset($data['{{name}}_flag']) 
+        && !$this('validate', $data['{{name}}_flag'])->isType('small', true)) {
+            $errors['{{name}}_flag'] = self::INVALID_SMALL;
+        }
+        
+        return $errors;
+    }
+    
+    /**
+     * Processes the form
+     *
+     * @param array data
+     * @return void
+     */
+    public function process(array $data = array()) 
+    {
+        //prevent uncatchable error
+        if(count($this->errors($data))) {
+            throw new Exception(self::FAIL_400);
+        }
+        
+        //prepare
+        $data = $this->prepare($data);
+        
+        //generate stuff
+        $updated = date('Y-m-d H:i:s');
+        
+        //SET WHAT WE KNOW
+        $model = eve()
+            ->database()
+            ->model()
+            
+            // {{name}}_id
+            ->set{{capital name}}Id($data['{{name}}_id'])
+            
+            // {{name}}_created
+            ->set{{capital name}}Created($created)
+            
+            // {{name}}_updated
+            ->set{{capital name}}Updated($updated);
+        
+        //REQUIRED
+        
+        {{#loop fields}}{{#if value.required}}
+        // {{key}}
+        if(isset($data['{{key}}'])) {
+            $model->set{{capitalCamel key}}($data['{{key}}']);
+        }
+        {{/if}}{{/loop}}
+        
+        //OPTIONAL
+        {{#loop fields}}{{#if value.required}}{{else}}
+        // {{key}}
+        if(isset($data['{{key}}'])) {
+            $model->set{{capitalCamel key}}($data['{{key}}']);
+        }
+        {{/if}}{{/loop}}
+        
+        // {{name}}_type
+        if(isset($data['{{name}}_type'])) {
+            $model->set{{capital name}}Type($data['{{name}}_type']);
+        }
+        
+        // {{name}}_flag
+        if(isset($data['{{name}}_flag'])) {
+            $model->set{{capital name}}Flag($data['{{name}}_flag']);
+        }
+        
+        //what's left ?
+        $model->save('{{name}}');
+        
+        eve()->trigger('{{name}}-update', $model);
+        
+        return $model;
+    }
+}

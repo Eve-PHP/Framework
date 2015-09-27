@@ -1,7 +1,7 @@
 <?php //-->
 /*
- * This file is part of the Openovate Labs Inc. framework library
- * (c) 2013-2014 Openovate Labs
+ * This file is part of the Eve Framework Library
+ * (c) 2014-2016 Openovate Labs
  *
  * Copyright and license information can be found at LICENSE
  * distributed with this package.
@@ -40,6 +40,7 @@ namespace Eve\Framework
         const INSTANCE = 1;
 		const NO_JOB = 'No Job: %s Found';
 		const NO_MODEL = 'No Model: %s Found';
+		const NO_BLOCK = 'No Block: %s Found';
         
 		public $rootPath = null;
 		public $rootNameSpace = null;
@@ -460,11 +461,11 @@ namespace Eve\Framework
         {
             Argument::i()->test(1, 'string');
             
-			$suffix = str_replace(array('-', '_', '/'), ' ', $key);
-			$suffix = ucwords($suffix);
-			$suffix = str_replace(' ', '\\', $suffix);
+			$name = str_replace(array('-', '_', '/'), ' ', $key);
+			$name = ucwords($name);
+			$name = str_replace(' ', '\\', $name);
 			
-			$class = $this->rootNameSpace.'\\Job\\' . $suffix;
+			$class = $this->rootNameSpace.'\\Job\\' . $name;
 			
 			//if there's not a class
 			if(!class_exists($class)) {

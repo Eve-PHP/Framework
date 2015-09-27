@@ -1,0 +1,117 @@
+<h3>{{plural}}</h3>
+
+<!-- START: SEARCH FORM -->
+<form class="pull-right search form-inline" method="get">
+    <div class="form-group">
+        <input name="keyword" placeholder="Search {{plural}}" type="text"
+        value="\{\{query keyword\}\}" class="form-control" />
+        <input type="hidden" name="mode" value="\{\{mode\}\}" />
+    </div>
+    <button class="btn"><i class="fa fa-search"></i></button>    
+</form>
+<!-- END: SEARCH FORM -->
+
+<span>
+    <a class="btn btn-success" href="/{{name}}/create">
+        <i class="fa fa-plus"></i>
+        Create New {{singular}}
+    </a>
+</span>
+
+<!-- START: BULK FORM -->
+<form action="/{{name}}/bulk" method="post" class="form-inline bulk-form">
+    <div class="panel panel-default clear" >
+    <div class="panel-heading brand">
+        <div class="panel-title">
+            \{\{#if rows\}\}
+            <!-- START: BULK ACTION -->
+            <select name="action" class="form-control">
+                <option value="" selected="selected">Bulk Actions</option>
+                <option value="remove">Remove</option>
+                <option value="restore">Restore</option>
+            </select>
+            <button class="btn btn-primary">Apply</button>
+            <!-- END: BULK ACTION -->
+            \{\{/if\}\}
+            
+            <!-- START: FILTER BUTTONS -->
+            <ul class="nav nav-pills" role="tablist">
+                <li role="presentation" class="\{\{#when mode '!=' 'trash'\}\}active\{\{/when\}\}">
+                    <a 
+                        href="/{{name}}/search\{\{#if keyword\}\}?keyword=\{\{keyword\}\}\{\{/if\}\}" 
+                        aria-controls="details" 
+                        role="tab">
+                        Active
+                    </a>
+                </li>
+                <li role="presentation" class="\{\{#when mode '==' 'trash'\}\}active\{\{/when\}\}">
+                    <a 
+                        href="/{{name}}/search?mode=trash\{\{#if keyword\}\}&keyword=\{\{keyword\}\}\{\{/if\}\}" 
+                        aria-controls="details" 
+                        role="tab">
+                        Trash
+                    </a>
+                </li>
+            </ul>
+            <!-- END: FILTER BUTTONS -->
+        </div>
+    </div>
+    <div class="panel-body" >
+        \{\{#if rows\}\}
+        <!-- START: POST TABLE -->
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th><input class="checkall" type="checkbox" /></th>
+                    <th>Action</th>
+                    <th>ID</th>{{#loop fields}}{{#in value.field.[0] 'textarea,wysiwyg,markdown,file'}}{{else}}
+                    <th>{{value.label}}</th>{{/in}}{{/loop}}
+                    <th>Created</th>
+                    <th>Updated</th>
+                </tr>
+            </thead>
+            <tbody>
+                \{\{#each rows\}\}
+                <tr data-id="\{\{ {{name}}_id\}\}">
+                    <td><input name="id[]" value="\{\{ {{name}}_id\}\}" type="checkbox" class="form-control" /></td>
+                    <td>
+                        {{#if active}}
+                        \{\{#when {{name}}_active '==' 1\}\}
+                        <a title="Edit" href="/{{name}}/update/\{\{ {{name}}_id\}\}">
+                        <i class="fa fa-edit"></i></a> &nbsp; 
+                        <a title="Remove" href="/{{name}}/remove/\{\{ {{name}}_id\}\}"
+                        class="text-danger remove"><i class="fa fa-times" value="\{\{ {{name}}_id\}\}"></i></a>
+                        \{\{/when\}\}
+                        \{\{#when {{name}}_active '==' 0\}\}
+                        <a title="Restore" href="/{{name}}/restore/\{\{ {{name}}_id\}\}" class="text-success restore">
+                        <i class="fa fa-external-link"></i></a>
+                        \{\{/when\}\}
+                        {{else}}
+                        <a title="Edit" href="/{{name}}/update/\{\{ {{name}}_id\}\}">
+                        <i class="fa fa-edit"></i></a> &nbsp; 
+                        <a title="Remove" href="/{{name}}/remove/\{\{ {{name}}_id\}\}"
+                        class="text-danger remove"><i class="fa fa-times" value="\{\{ {{name}}_id\}\}"></i></a>
+                        {{/if}}
+                    </td>
+                    <td>\{\{ {{name}}_id\}\}</td>{{#loop fields}}{{#in value.field.[0] 'textarea,wysiwyg,markdown,file'}}{{else}}
+                    <td>\{\{ {{key}}\}\}</td>{{/in}}{{/loop}}
+                    <td>\{\{ {{name}}_created\}\}</td>
+                    <td>\{\{ {{name}}_updated\}\}</td>
+                </tr>    
+                \{\{/each\}\}
+            </tbody>    
+        </table>
+        <!-- END: POST TABLE -->
+        \{\{else\}\}
+        <!-- START: NO RESULTS -->
+        <div class="well no-results">No {{plural}} Found</div>
+        <!-- END: NO RESULTS -->
+        \{\{/if\}\}
+    </div>
+    
+    <ul class="pagination">
+        \{\{#block 'component/pagination' total range\}\}
+        <li\{\{#if active\}\} class="active"\{\{/if\}\}><a href="?\{\{querystring\}\}">\{\{page\}\}</a></li>
+        \{\{/block\}\}
+    </ul>
+</form>

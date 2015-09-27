@@ -1,0 +1,215 @@
+<?php //-->
+/*
+ * This file is part of the Eden package.
+ * (c) 2014-2016 Openovate Labs
+ *
+ * Copyright and license information can be found at LICENSE.txt
+ * distributed with this package.
+ */
+
+namespace {{namespace}}\\Model\\{{capital name}};
+
+use Eve\\Framework\\Model\\Base;
+use Eve\\Framework\\Model\\Argument;
+use Eve\\Framework\\Model\\Exception;
+
+/**
+ * {{singular}} Model Factory
+ *
+ * GUIDE:
+ * -- eve() - The current server controller
+ *    use this to access the rest of the framework
+ *
+ *    -- eve()->database() - Returns the current database
+ *
+ *    -- eve()->model('noun') - Returns the given model factory
+ *
+ *    -- eve()->job('noun-action') - Returns a job following noun/action
+ *
+ *    -- eve()->settings('foo') - Returns a settings data originating
+ *    from the settings path. ie. settings/foo.php
+ *
+ *    -- eve()->registry() - Returns Eden\\Registry\\Index used globally
+ */
+class Index extends Base
+{
+    /**
+     * Factory for create
+     *
+     * @return {{namespace}}\\Model\\{{capital name}}\\Create
+     */
+    public function create()
+    {
+        return Create::i();
+    }
+    
+    /**
+     * Factory for detail
+     *
+     * @return {{namespace}}\\Model\\{{capital name}}\\Detail
+     */
+    public function detail()
+    {
+        return Detail::i();
+    }
+    {{#if relations}}
+    {{#loop relations}}
+    /**
+     * Link {{../name}} to {{key}}
+     *
+     * @param int {{../name}} id
+     * @param int {{key}} id
+     * @return Eden\\Mysql\\Model
+     */
+    public function link{{capital key}}(${{../name}}Id, ${{key}}Id) 
+    {
+        //argument test
+        Argument::i()->test(1, 'int')->test(2, 'int');
+        
+        $model = eve()
+            ->database()
+            ->model()
+            ->set{{capital ../name}}{{capital key}}{{capital ../name}}(${{../name}}Id)
+            ->set{{capital ../name}}{{capital key}}{{capital key}}(${{key}}Id)
+            ->insert('{{../name}}_{{key}}');
+        
+        eve()->trigger('{{../name}}-link-{{key}}', $model);
+        
+        return $model;
+    }
+    
+    {{/loop}}
+    {{/if}}
+    {{#if permissions}}
+    /**
+     * Check for {{name}} permissions
+     * 
+     * @param int {{name}} id
+     * @param int {{permissions}} id
+     * @return bool
+     */
+    public function permissions(${{name}}Id, ${{permissions}}Id) 
+    {
+        //argument test
+        Argument::i()->test(1, 'int')->test(2, 'int');
+        
+        $row = eve()
+            ->database()
+            ->search('{{name}}_{{permissions}}')
+            ->filterBy{{capital name}}{{capital permissions}}{{capital name}}(${{name}}Id)
+            ->filterBy{{capital name}}{{capital permissions}}{{capital permissions}}(${{permissions}}Id)
+            ->getRow();
+        
+        if(!$row) {
+            return false;
+        }
+        
+        return true;
+    }
+    {{/if}}
+    /**
+     * Factory for search
+     *
+     * @return {{namespace}}\\Model\\{{capital name}}\\Search
+     */
+    public function search()
+    {
+        return Search::i();
+    }
+    
+    /**
+     * Factory for remove
+     *
+     * @return {{namespace}}\\Model\\{{capital name}}\\Remove
+     */
+    public function remove()
+    {
+        return Remove::i();
+    }
+    {{#if relations}}
+    {{#loop relations}}
+    {{#if value}}
+    /**
+     * Unlink all {{key}}
+     *
+     * @param int {{../name}} id
+     * @param array
+     * @return Eden\\Mysql\\Model
+     */
+    public function unlinkAll{{capital key}}(${{../name}}Id, array $types = array()) 
+    {
+        //argument test
+        Argument::i()->test(1, 'int');
+        
+        $search = eve()
+            ->database()
+            ->search('{{../name}}_{{key}}')
+            ->innerJoinOn(
+                '{{key}}', 
+                '{{../name}}_{{key}}_{{key}} = {{key}}_id')
+            ->filterBy{{capital ../name}}{{capital key}}{{capital ../name}}(${{../name}}Id);
+        
+        if(!empty($types)) {
+            $or = array();
+            $where = array();
+            
+            foreach($types as $type) {
+                $where[] = '{{key}}_type = %s';
+                $or[] = $type;
+            }
+            
+            array_unshift($or, '(' . implode(' OR ', $where) . ')');
+            
+            $search->callArray('addFilter', $or);
+        }    
+        
+        $rows = $search->getRows();
+        
+        for($i = 0; $i < count($rows); $i++) {
+            $this->unlink{{capital key}}(
+                ${{../name}}Id,
+                $rows[$i]['{{key}}_id']);
+        }
+        
+        return $rows;
+    }
+    
+    {{/if}}
+    {{/loop}}
+    {{#loop relations}}
+    /**
+     * Unlink {{../name}} to {{key}}
+     *
+     * @param int {{../name}} id
+     * @param int {{key}} id
+     * @return Eden\\Mysql\\Model
+     */
+    public function unlink{{capital key}}(${{../name}}Id, ${{key}}Id) 
+    {
+        //argument test
+        Argument::i()->test(1, 'int')->test(2, 'int');
+        
+        $model = eve()
+            ->database()
+            ->model()
+            ->set{{capital ../name}}{{capital key}}{{capital ../name}}(${{../name}}Id)
+            ->set{{capital ../name}}{{capital key}}{{capital key}}(${{key}}Id)
+            ->remove('{{../name}}_{{key}}');
+        
+        eve()->trigger('{{../name}}-unlink-{{key}}', $model);
+        
+        return $model;
+    }
+    
+    {{/loop}}
+    {{/if}}
+    /**
+     * Factory for update
+     *
+     * @return {{namespace}}\\Model\\{{capital name}}\\Update
+     */
+    public function update()
+    {
+        return Update::i();
+    }
+}

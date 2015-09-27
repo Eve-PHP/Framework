@@ -16,7 +16,7 @@ return array(
 		$data = eve()->registry()->callArray('get', $args);
 		
 		if(is_object($data) && $data instanceof Eden\Registry\Index) {
-			$data = $data->get(false);
+			$data = $data->getArray();
 		}
 		
 		if(is_object($data) || is_array($data)) {
@@ -65,10 +65,14 @@ return array(
 		return $_GET[$key];
 	},
 	
+	'querystring' => function($options) {
+		return http_build_query($_GET);
+	},
+	
 	//create a better if helper
 	'when' => function($value1, $operator, $value2, $options) {
 		$valid = false;
-	
+		
 		switch (true) {
 			case $operator == 'eq' 	&& $value1 == $value2:
 			case $operator == '==' 	&& $value1 == $value2:
@@ -90,12 +94,6 @@ return array(
 			case $operator == '&&' 	&& ($value1 && $value2):
 			case $operator == 'or' 	&& ($value1 || $value2):
 			case $operator == '||' 	&& ($value1 || $value2):
-	
-			case $operator == 'startsWith'
-			&& strpos($value1, value2) === 0:
-	
-			case operator == 'endsWith'
-			&& strpos($value1, $value2) === (strlen($value1) - strlen($value2)):
 				$valid = true;
 				break;
 		}
@@ -108,6 +106,7 @@ return array(
 	},
 	
 	//create a better loop helper
+	//fails when using nested loops
 	'loop' => function($object, $options) {
 		$i = 0;
 		$buffer = array();
@@ -125,8 +124,12 @@ return array(
 	},
 	
 	//array key
-	'in' => function(array $array, $key, $options) {
-		if(!isset($array[$key])) {
+	'in' => function($value, $array, $options) {
+		if(is_string($array)) {
+			$array = explode(',', $array);
+		}
+		
+		if(in_array($value, $array)) {
 			return $options['fn']();
 		}
 
@@ -149,5 +152,32 @@ return array(
 	//date helper
 	'date' => function($time, $format, $options) {
 		return date($format, strtotime($time));
+	},
+	
+	'capital' => function($string, $options) {
+		return ucwords($string);
+	},
+	
+	'capitalCamel' => function($string, $options) {
+		$string = str_replace('_', ' ', $string);
+		$string = ucwords($string);
+		$string = str_replace(' ', '', $string);
+		
+		return $string;
+	},
+	
+	'implode' => function(array $list, $separator, $options) {
+		foreach($list as $i => $variable) {
+			if(is_string($variable)) {
+				$list[$i] = "'".$variable."'";
+				continue;
+			}
+			
+			if(is_array($variable)) {
+				$list[$i] = "'".implode(',', $variable)."'";
+			}
+		}
+		
+		return implode($separator, $list);
 	}
 );
