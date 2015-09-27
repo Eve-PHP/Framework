@@ -108,11 +108,11 @@ class Search extends Base
         if($keyword) {
             $search->addFilter('(' . implode(' OR ', array(
                 {{#each fields}}{{#if search}}
-                '{{key}} LIKE %s', 
+                '{{@key}} LIKE %s', 
                 {{/if}}{{/each}}
             )) . ')' 
                 {{#each fields}}{{#if search}}
-                , '%'.keyword.'%' 
+                , '%'.$keyword.'%' 
                 {{/if}}{{/each}}
             );
         }
@@ -122,7 +122,7 @@ class Search extends Base
             $search->addSort($sort, $direction);
         }
         
-        $this->trigger('{{name}}-list', $search);
+        $this->trigger('{{name}}-search', $search);
         
         return $search;
     }

@@ -74,7 +74,7 @@ class Search extends Json
         //get rows
         $rows = eve()
             ->model('{{name}}')
-            ->list()
+            ->search()
             ->process()
             ->getRows();
         

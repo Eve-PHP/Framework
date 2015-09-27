@@ -72,8 +72,9 @@ abstract class Html extends Base
      */
     protected function build($template) 
     {
+		$this->body['flash'] = array();
         if(isset($_SESSION['flash']['message'])) {
-            $this->body['flash']['message'] = $_SESSION['flash']['message'];
+			$this->body['flash']['message'] = $_SESSION['flash']['message'];
             $this->body['flash']['type'] = $_SESSION['flash']['type'];
             unset($_SESSION['flash']);
         }
@@ -81,6 +82,7 @@ abstract class Html extends Base
 		$body = $this->parse($template, $this->body);
 		
         $page = array(
+			'flash' => $this->body['flash'],
             'meta' => $this->meta,
             'links' => $this->links,
             'styles' => $this->styles,

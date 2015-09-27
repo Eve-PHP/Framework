@@ -9,6 +9,8 @@ use Handlebars\Loader\StringLoader as HandlebarsLoader;
 
 class Generate extends \Eve\Framework\Base
 {
+	const SKIP = 'We don\'t have a template for %s/%s. Skipping..';
+	
 	protected $cwd = null;
 	protected $name = null;
 	protected $source = null;
@@ -96,80 +98,168 @@ class Generate extends \Eve\Framework\Base
 		$this->fixSchema();
 		
 		//lets get right into it
-		$files = $this('folder', $this->source)->getFiles(null, true);
-		
-		if(!is_dir($this->cwd . '/Action')) {
-			mkdir($this->cwd . '/Action');
-		}
-		
-		if(!is_dir($this->cwd . '/Action/Rest')) {
-			mkdir($this->cwd . '/Action/Rest');
-		}
-		
-		if(!is_dir($this->cwd . '/Model')) {
-			mkdir($this->cwd . '/Model');
-		}
-		
-		if(!is_dir($this->cwd . '/Job')) {
-			mkdir($this->cwd . '/Job');
-		}
-		
-		if(!is_dir($this->cwd . '/template')) {
-			mkdir($this->cwd . '/template');
-		}
-		
-		foreach($files as $file) {
-			//determine the destination
-			switch(true) {
-				case strpos($file->get(), '/Action/Rest/') !== false:
-					$path = '/Action/Rest/'.ucwords($this->schema['name']);
-					$ext = 'php';
-					break;
-				case strpos($file->get(), '/Action/') !== false:
-					$path = '/Action/'.ucwords($this->schema['name']);
-					$ext = 'php';
-					break;
-				case strpos($file->get(), '/Model/') !== false:
-					$path = '/Model/'.ucwords($this->schema['name']);
-					$ext = 'php';
-					break;
-				case strpos($file->get(), '/Job/') !== false:
-					$path = '/Job/'.ucwords($this->schema['name']);
-					$ext = 'php';
-					break;
-				case strpos($file->get(), '/template/') !== false:
-					$path = '/template/'.strtolower($this->schema['name']);
-					$ext = 'html';
-					break;
+		if(isset($this->schema['model'])
+			&& is_array($this->schema['model'])
+		) {
+			if(!is_dir($this->cwd . '/Model')) {
+				mkdir($this->cwd . '/Model');
 			}
 			
-			if(!isset($path)) {
-				continue;
+			if(!is_dir($this->cwd . '/Model/' . ucwords($this->schema['name']))) {
+				mkdir($this->cwd . '/Model/' . ucwords($this->schema['name']));
 			}
 			
-			$destination = $this->cwd . $path . '/' . $file->getBase() . '.' . $ext;
-			
-			if(!is_dir($this->cwd . $path)) {
-				mkdir($this->cwd . $path);
+			foreach($this->schema['model'] as $action) {
+				$source = '/Model/' . ucwords($action) . '.html';
+				
+				if(!file_exists($this->source.$source)) {
+					Index::error(sprintf(
+						self::SKIP, 
+						'Model', 
+						ucwords($action)), 
+					false);
+					
+					continue;
+				}
+				
+				$destination = '/Model/' 
+					. ucwords($this->schema['name']) . '/' 
+					. ucwords($action) . '.php';
+				
+				$this->copy($source, $destination);
+			}
+		}
+		
+		if(isset($this->schema['page'])
+			&& is_array($this->schema['page'])
+		) {
+			if(!is_dir($this->cwd . '/Action')) {
+				mkdir($this->cwd . '/Action');
 			}
 			
-			//Handlebars compile
-			$contents = $file->getContent();
+			if(!is_dir($this->cwd . '/Action/' . ucwords($this->schema['name']))) {
+				mkdir($this->cwd . '/Action/' . ucwords($this->schema['name']));
+			}
+		
+			if(!is_dir($this->cwd . '/template')) {
+				mkdir($this->cwd . '/template');
+			}
 			
-			$code = $this->engine->render($contents, $this->schema);
-			$code = str_replace('\\\\', '\\', $code);
-			$code = str_replace('\}', '}', $code);
-			$code = str_replace('\{', '{', $code);
-			$code = str_replace('{ ', '{', $code);
+			if(!is_dir($this->cwd . '/template/' . strtolower($this->schema['name']))) {
+				mkdir($this->cwd . '/template/' . strtolower($this->schema['name']));
+			}
 			
-			Index::info('Installing to '.$destination);
+			foreach($this->schema['page'] as $action) {
+				$source = '/Action/' . ucwords($action) . '.html';
+				
+				if(!file_exists($this->source.$source)) {
+					Index::error(sprintf(
+						self::SKIP, 
+						'Action', 
+						ucwords($action)), 
+					false);
+					
+					continue;
+				}
+				
+				$destination = '/Action/' 
+					. ucwords($this->schema['name']) . '/' 
+					. ucwords($action) . '.php';
+				
+				$this->copy($source, $destination);
+				
+				if(
+					!in_array(strtolower($action), 
+					array('create', 'update', 'search'))
+				) {
+					continue;
+				}
+				
+				$source = '/template/' . strtolower($action) . '.html';
+				
+				$destination = '/template/' 
+					. strtolower($this->schema['name']) . '/' 
+					. strtolower($action) . '.html';
+				
+				$this->copy($source, $destination);
+			}
+		}
+		
+		if(isset($this->schema['rest'])
+			&& is_array($this->schema['rest'])
+		) {
+			if(!is_dir($this->cwd . '/Action/Rest')) {
+				mkdir($this->cwd . '/Action/Rest');
+			}
 			
-			$this('file', $destination)->setContent($code);
+			if(!is_dir($this->cwd . '/Action/Rest/' . ucwords($this->schema['name']))) {
+				mkdir($this->cwd . '/Action/Rest/' . ucwords($this->schema['name']));
+			}
+			
+			foreach($this->schema['rest'] as $action) {
+				$source = '/Action/Rest/' . ucwords($action) . '.html';
+				
+				if(!file_exists($this->source.$source)) {
+					Index::error(sprintf(
+						self::SKIP, 
+						'Action/Rest', 
+						ucwords($action)), 
+					false);
+					
+					continue;
+				}
+				
+				$destination = '/Action/Rest/' 
+					. ucwords($this->schema['name']) . '/' 
+					. ucwords($action) . '.php';
+				
+				$this->copy($source, $destination);
+			}
+		}
+		
+		if(isset($this->schema['job'])
+			&& is_array($this->schema['job'])
+		) {
+			if(!is_dir($this->cwd . '/Job')) {
+				mkdir($this->cwd . '/Job');
+			}
+			
+			if(!is_dir($this->cwd . '/Job/' . ucwords($this->schema['name']))) {
+				mkdir($this->cwd . '/Job/' . ucwords($this->schema['name']));
+			}
+			
+			foreach($this->schema['job'] as $action => $instructions) {
+				$source = '/Job.html';
+				
+				$destination = '/Job/' . ucwords($this->schema['name']) . '/' . ucwords($action) . '.php';
+				
+				$this->schema['job_action'] = strtolower($action);
+				$this->schema['job_instructions'] = $instructions;
+				
+				$this->copy($source, $destination);
+			}
 		}
 		
 		Index::success($this->schema['name'].' has been successfully generated.');
 		
 		die(0);
+	}
+	
+	public function copy($template, $destination) 
+	{
+		$contents = $this('file', $this->source . $template)->getContent();
+			
+		$code = $this->engine->render($contents, $this->schema);
+		$code = str_replace('\\\\', '\\', $code);
+		$code = str_replace('\}', '}', $code);
+		$code = str_replace('\{', '{', $code);
+		$code = str_replace('{ ', '{', $code);
+		
+		Index::info('Installing to '.$this->cwd . $destination);
+		
+		$this('file', $this->cwd . $destination)->setContent($code);
+		
+		return $this;
 	}
 	
 	/**

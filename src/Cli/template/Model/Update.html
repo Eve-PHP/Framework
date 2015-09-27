@@ -13,7 +13,7 @@ use Eve\\Framework\\Model\\Argument;
 use Eve\\Framework\\Model\\Exception;
 
 /**
- * {{singular}} Model Create
+ * {{singular}} Model Update
  *
  * GUIDE:
  * -- eve() - The current server controller
@@ -30,7 +30,7 @@ use Eve\\Framework\\Model\\Exception;
  *
  *    -- eve()->registry() - Returns Eden\\Registry\\Index used globally
  */
-class Create extends Base
+class Update extends Base
 {
     /**
      * Returns errors if any
@@ -279,9 +279,6 @@ class Create extends Base
             
             // {{name}}_id
             ->set{{capital name}}Id($data['{{name}}_id'])
-            
-            // {{name}}_created
-            ->set{{capital name}}Created($created)
             
             // {{name}}_updated
             ->set{{capital name}}Updated($updated);

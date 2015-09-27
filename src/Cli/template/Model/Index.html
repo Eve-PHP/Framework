@@ -33,6 +33,7 @@ use Eve\\Framework\\Model\\Exception;
  */
 class Index extends Base
 {
+	{{#in 'create' model}}
     /**
      * Factory for create
      *
@@ -42,7 +43,9 @@ class Index extends Base
     {
         return Create::i();
     }
+    {{/in}}
     
+    {{#in 'detail' model}}
     /**
      * Factory for detail
      *
@@ -52,6 +55,7 @@ class Index extends Base
     {
         return Detail::i();
     }
+    {{/in}}
     {{#if relations}}
     {{#loop relations}}
     /**
@@ -80,6 +84,7 @@ class Index extends Base
     
     {{/loop}}
     {{/if}}
+    
     {{#if permissions}}
     /**
      * Check for {{name}} permissions
@@ -107,6 +112,8 @@ class Index extends Base
         return true;
     }
     {{/if}}
+    
+    {{#in 'search' model}}
     /**
      * Factory for search
      *
@@ -116,7 +123,9 @@ class Index extends Base
     {
         return Search::i();
     }
+    {{/in}}
     
+    {{#in 'remove' model}}
     /**
      * Factory for remove
      *
@@ -126,6 +135,19 @@ class Index extends Base
     {
         return Remove::i();
     }
+    {{/in}}
+    
+    {{#in 'restore' model}}
+    /**
+     * Factory for restore
+     *
+     * @return {{namespace}}\\Model\\{{capital name}}\\Restore
+     */
+    public function restore()
+    {
+        return Restore::i();
+    }
+    {{/in}}
     {{#if relations}}
     {{#loop relations}}
     {{#if value}}
@@ -176,6 +198,7 @@ class Index extends Base
     
     {{/if}}
     {{/loop}}
+    
     {{#loop relations}}
     /**
      * Unlink {{../name}} to {{key}}
@@ -203,6 +226,8 @@ class Index extends Base
     
     {{/loop}}
     {{/if}}
+    {{#in 'update' model}}
+    
     /**
      * Factory for update
      *
@@ -212,4 +237,5 @@ class Index extends Base
     {
         return Update::i();
     }
+    {{/in}}
 }

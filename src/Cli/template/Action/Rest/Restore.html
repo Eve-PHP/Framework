@@ -6,12 +6,12 @@
  * distributed with this package.
  */
 
-namespace {{namespace}}\\Action\\{{capital name}};
+namespace {{namespace}}\\Action\\Rest\\{{capital name}};
 
-use Eve\\Framework\\Action\\Html;
+use Eve\\Framework\\Action\\Json;
 
 /**
- * {{singular}} HTML Action Update
+ * {{singular}} REST Action Restore
  *
  * GUIDE:
  * -- eve() - The current server controller
@@ -29,6 +29,10 @@ use Eve\\Framework\\Action\\Html;
  *    -- eve()->registry() - Returns Eden\\Registry\\Index used globally
  *
  * -- $this->request - The Request Object using Eden\\Registry\\Index
+ *
+ *    -- $this->request->get('source') - Information gathered 
+ *       from the tokens like profile, app etc.. This information
+ *       was provided by the Validator plugin
  *
  *    -- $this->request->get('post') - $_POST data
  *       You are free to use the $_POST variable if you like
@@ -58,15 +62,12 @@ use Eve\\Framework\\Action\\Html;
  *       QUIRK: $this->response->set('headers', 'Foo') will erase
  *       all existing headers
  */
-class Update extends Html 
+class Restore extends Json 
 {
-    const FAIL_400 = 'There are some errors on the form.';
-    const FAIL_401 = 'You do not have permissions to update.';
-    const FAIL_404 = '{{singular}} does not exist';
-    const SUCCESS_200 = '{{singular}} successfully updated!';
+    const FAIL_400 = 'Invalid Data';
+    const FAIL_401 = 'Invalid Permissions';
+    const FAIL_404 = 'Not Found';
 
-    protected $title = 'Update {{singular}}';
-    
     /**
      * Main action call
      *
@@ -82,34 +83,44 @@ class Update extends Html
         $data['{{name}}_id'] = $this->request->get('variables', 0);
         
         //was it not included in the url ?
-        if(!$data['{{name}}_id'] 
-        && isset($_SESSION['me']['{{name}}_id'])) {
-            //get it from the session
-            $data['{{name}}_id'] = $_SESSION['me']['{{name}}_id'];
+        if(!$data['{{name}}_id']
+        && $this->request->isKey('source', '{{name}}_id')) {
+            //get it from the source
+            $data['{{name}}_id'] = $this->request->get('source', '{{name}}_id');
         }
         
         //it's going to fail if we don't have the {{name}}_id
         if(!$data['{{name}}_id']) {
             //we might as we an fail it now
-            return $this->fail(
-                self::FAIL_404,
-                '/{{name}}/search');
+            return $this->fail(self::FAIL_404);
         }
         
         {{#if permissions}}
         //if no {{permissions}}_id
-        if(!isset($_SESSION['me']['{{permissions}}_id'])) {
+        if(!$this->request->isKey('source', '{{permissions}}_id')) {
             //permission check failed
-            return $this->fail(
-                self::FAIL_401,
-                '/{{name}}/search');
+            return $this->fail(self::FAIL_401);
         }
         
-        $data['{{permissions}}_id'] = $_SESSION['me']['{{permissions}}_id'];
+        $source = $this->request->get('source', '{{permissions}}_id');
+        $data['{{permissions}}_id'] = $source;
         {{/if}}
         
         //-----------------------//
         // 2. Validate
+        //check fields
+        $errors = eve()
+            ->model('{{name}}')
+            ->update()
+            ->errors($data);
+        
+        //if there are errors
+        if(!empty($errors)) {
+            return $this->fail(
+                self::FAIL_400, 
+                $errors);
+        }
+        
         {{#if permissions}}
         //check permissions
         $yes = eve()
@@ -120,77 +131,28 @@ class Update extends Html
 
         //if not permitted, fail
         if(!$yes) {
-            return $this->fail(
-                self::FAIL_401,
-                '/{{name}}/search');
+            return $this->fail(self::FAIL_401);
         }
-        {{/if}}
+        {{else}}
         //does it exist?
-        $row = eve()
+        $total = eve()
             ->model('{{name}}')
             ->detail()
             ->process($data)
-            ->getRow();
+            ->getTotal();
         
-        if(!$row) {
-            return $this->fail(
-                self::FAIL_404,
-                '/{{name}}/search');
-        }
+        if(!$total) {
+               return $this->fail(self::FAIL_404);
+           }
+        {{/if}}
         
         //-----------------------//
         // 3. Process
-        //if it's a post
-        if(!empty($_POST)) {
-            return $this->check($data);
-        }
-        
-        $this->body = $row;
-        
-        //NOTE: add anything extra to body here
-        
-        //success
-        return $this->success();
-    }
-
-    /**
-     * When the form is submitted
-     *
-     * @param array
-     * @return void
-     */
-    protected function check($data) 
-    {
-        //-----------------------//
-        // 1. Get Data
-        $data = array_merge($data, $this->request->get('post'));
-        
-        //-----------------------//
-        //2. Validate
-        $errors = eve()
-            ->model('{{name}}')
-            ->update()
-            ->errors($data);
-        
-        //if there are errors
-        if(!empty($errors)) {
-            return $this->fail(
-                self::FAIL_400, 
-                $errors, 
-                $item);
-        }
-        
-        //-----------------------//
-        //3. Process
-        $results = eve()
-            ->job('{{name}}-update')
+        eve()
+            ->job('{{name}}-restore')
             ->setData($data)
             ->run();
-        
-        //NOTE: do something with results here
-        
-        return $this->success(
-            self::SUCCESS_200, 
-            '/{{name}}/search');
+           
+        return $this->success();
     }
 }

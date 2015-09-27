@@ -1,0 +1,183 @@
+<?php //-->
+/*
+ * A Custom Library
+ *
+ * Copyright and license information can be found at LICENSE
+ * distributed with this package.
+ */
+
+namespace {{namespace}}\\Job\\{{capital name}};
+
+use Eve\\Framework\\Job\\Base;
+use Eve\\Framework\\Job\\Exception;
+
+/**
+ * {{singular}} Job {{capital job_action}}
+ *
+ * GUIDE:
+ * -- eve() - The current server controller
+ *    use this to access the rest of the framework
+ *
+ *    -- eve()->database() - Returns the current database
+ *
+ *    -- eve()->model('noun') - Returns the given model factory
+ *
+ *    -- eve()->job('noun-action') - Returns a job following noun/action
+ *
+ *    -- eve()->settings('foo') - Returns a settings data originating
+ *    from the settings path. ie. settings/foo.php
+ *
+ *    -- eve()->registry() - Returns Eden\\Registry\\Index used globally
+ *
+ * -- $this->data - Provides all raw data
+ *    originally passed into the job
+ */
+class {{capital job_action}} extends Base 
+{
+    const FAIL_400 = 'Invalid Data';
+    
+    /**
+     * Executes the job
+     *
+     * @return void
+     */
+    public function run() 
+    {
+        //if no data
+        if(empty($this->data)) {
+            //there should be a global catch somewhere
+            throw new Exception(self::FAIL_400);
+        }
+        
+        //this will be returned at the end
+        $results = array();
+        {{#if job_instructions}}
+        {{#loop job_instructions}}
+        {{#when value.[0] '===' 'create'}}
+        
+        //NEXT ...
+        
+        //if there is no {{value.[1]}}_id provided
+        if(!isset($this->data['{{value.[1]}}_id'])) {
+            //create the {{value.[1]}}
+            $results['{{value.[1]}}'] = eve()
+                ->model('{{value.[1]}}')
+                ->create()
+                ->process($this->data)
+                ->get();
+           
+           $this->data['{{value.[1]}}_id'] = $results['{{value.[1]}}']['{{value.[1]}}_id'];
+        }
+        {{/when}}
+        {{#when value.[0] '===' 'remove'}}
+        
+        //NEXT ...
+        
+        //if there is a {{value.[1]}}_id
+        if(isset($this->data['{{value.[1]}}_id'])) {
+            //remove the {{value.[1]}}
+            $results['{{value.[1]}}'] = eve()
+                ->model('{{value.[1]}}')
+                ->remove()
+                ->process($this->data);
+        }
+        {{/when}}
+        {{#when value.[0] '===' 'restore'}}
+        
+        //NEXT ...
+        
+        //if there is a {{value.[1]}}_id
+        if(isset($this->data['{{value.[1]}}_id'])) {
+            //restore the {{value.[1]}}
+            $results['{{value.[1]}}'] = eve()
+                ->model('{{value.[1]}}')
+                ->restore()
+                ->process($this->data);
+        }
+        {{/when}}
+        {{#when value.[0] '===' 'update'}}
+        
+        //NEXT ...
+        
+        //if there is a {{value.[1]}}_id
+        if(isset($this->data['{{value.[1]}}_id'])) {
+            //update the {{value.[1]}}
+            $results['{{value.[1]}}'] = eve()
+                ->model('{{value.[1]}}')
+                ->update()
+                ->process($this->data);
+        }
+        {{/when}}
+        {{#when value.[0] '===' 'link'}}
+        
+        //NEXT ...
+        
+        //if there is a {{value.[1]}}_id
+        if(isset($this->data['{{value.[1]}}_id'])) {
+            //link the {{value.[1]}}
+            eve()
+                ->model('{{../name}}')
+                ->link{{capital value.[1]}}(
+                    $results['{{../name}}']['{{../name}}_id'],
+                    $this->data['{{value.[1]}}_id']);
+        }
+        {{/when}}
+        {{#when value.[0] '===' 'linkAll'}}
+        
+        //NEXT ...
+        
+        //if there is a list of {{value.[1]}}
+        if(isset($this->data['{{value.[1]}}'])
+        	&& is_array($this->data['{{value.[1]}}'])
+        ) {
+            foreach($this->data['{{value.[1]}}'] as $row) {
+                   //if no {{value.[1]}}_id
+                if(!isset($row['{{value.[1]}}_id'])) {
+                    //create the {{value.[1]}}
+                    $row = eve()
+                        ->model('{{value.[1]}}')
+                        ->create()
+                        ->process($row)
+                        ->get();
+                }
+                
+                //now link the {{value.[1]}}
+                eve()
+                    ->model('{{../name}}')
+                    ->link{{capital value.[1]}}(
+                        $results['{{../name}}']['{{../name}}_id'],
+                        $row['{{value.[1]}}_id']);
+                
+            }
+        }
+        {{/when}}
+        {{#when value.[0] '===' 'unlink'}}
+        
+        //NEXT ...
+        
+        //if there is a {{value.[1]}}_id
+        if(isset($this->data['{{value.[1]}}_id'])) {
+            //unlink the {{value.[1]}}
+            eve()
+                ->model('{{../name}}')
+                ->unlink{{capital value.[1]}}(
+                    $results['{{../name}}']['{{../name}}_id'],
+                    $this->data['{{value.[1]}}_id']);
+        }
+        {{/when}}
+        {{#when value.[0] '===' 'unlinkAll'}}
+        
+        //NEXT ...
+        
+        //unlink all {{value.[1]}}
+        eve()
+            ->model('{{../name}}')
+            ->unlinkAll{{capital value.[1]}}(
+                $results['{{../name}}']['{{../name}}_id']);
+        {{/when}}
+        {{/loop}}
+        {{/if}}
+        
+        return $results;
+    }
+}

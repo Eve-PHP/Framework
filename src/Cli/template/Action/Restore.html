@@ -11,7 +11,7 @@ namespace {{namespace}}\\Action\\{{capital name}};
 use Eve\\Framework\\Action\\Html;
 
 /**
- * {{singular}} HTML Action Update
+ * {{singular}} HTML Action Restore
  *
  * GUIDE:
  * -- eve() - The current server controller
@@ -58,21 +58,19 @@ use Eve\\Framework\\Action\\Html;
  *       QUIRK: $this->response->set('headers', 'Foo') will erase
  *       all existing headers
  */
-class Update extends Html 
+class Restore extends Html 
 {
-    const FAIL_400 = 'There are some errors on the form.';
-    const FAIL_401 = 'You do not have permissions to update.';
+    const FAIL_400 = 'No ID Provided';
+    const FAIL_401 = 'You do not have permissions to restore';
     const FAIL_404 = '{{singular}} does not exist';
-    const SUCCESS_200 = '{{singular}} successfully updated!';
+    const SUCCESS_200 = '{{singular}} successfully restored!';
 
-    protected $title = 'Update {{singular}}';
-    
     /**
      * Main action call
      *
      * @return string|null|void
      */
-    public function render() 
+    public function render()  
     {
         //-----------------------//
         // 1. Get Data
@@ -92,7 +90,7 @@ class Update extends Html
         if(!$data['{{name}}_id']) {
             //we might as we an fail it now
             return $this->fail(
-                self::FAIL_404,
+                self::FAIL_404, 
                 '/{{name}}/search');
         }
         
@@ -110,6 +108,19 @@ class Update extends Html
         
         //-----------------------//
         // 2. Validate
+        //check fields
+        $errors = eve()
+            ->model('{{name}}')
+            ->update()
+            ->errors($data);
+        
+        //if there are errors
+        if(!empty($errors)) {
+            return $this->fail(
+                self::FAIL_400, 
+                '/{{name}}/search');
+        }
+        
         {{#if permissions}}
         //check permissions
         $yes = eve()
@@ -124,66 +135,25 @@ class Update extends Html
                 self::FAIL_401,
                 '/{{name}}/search');
         }
-        {{/if}}
+        {{else}}
         //does it exist?
-        $row = eve()
+        $total = eve()
             ->model('{{name}}')
             ->detail()
             ->process($data)
-            ->getRow();
+            ->getTotal();
         
-        if(!$row) {
-            return $this->fail(
+        if(!$total) {
+               return $this->fail(
                 self::FAIL_404,
                 '/{{name}}/search');
-        }
+           }
+        {{/if}}
         
         //-----------------------//
         // 3. Process
-        //if it's a post
-        if(!empty($_POST)) {
-            return $this->check($data);
-        }
-        
-        $this->body = $row;
-        
-        //NOTE: add anything extra to body here
-        
-        //success
-        return $this->success();
-    }
-
-    /**
-     * When the form is submitted
-     *
-     * @param array
-     * @return void
-     */
-    protected function check($data) 
-    {
-        //-----------------------//
-        // 1. Get Data
-        $data = array_merge($data, $this->request->get('post'));
-        
-        //-----------------------//
-        //2. Validate
-        $errors = eve()
-            ->model('{{name}}')
-            ->update()
-            ->errors($data);
-        
-        //if there are errors
-        if(!empty($errors)) {
-            return $this->fail(
-                self::FAIL_400, 
-                $errors, 
-                $item);
-        }
-        
-        //-----------------------//
-        //3. Process
         $results = eve()
-            ->job('{{name}}-update')
+            ->job('{{name}}-restore')
             ->setData($data)
             ->run();
         

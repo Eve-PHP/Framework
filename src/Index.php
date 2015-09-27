@@ -274,6 +274,8 @@ namespace Eve\Framework
         public function defaultResponse() 
         {
 			$this->all('**', function($request, $response) {
+				$request->set('variables', $request['path']['variables']);
+				
 				//if there is already a body
 				if($response->isKey('body')
 				|| !$response->isKey('action')) {

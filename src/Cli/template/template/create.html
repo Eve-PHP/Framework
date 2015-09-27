@@ -37,7 +37,13 @@
                         name="{{key}}" 
                         class="form-control" 
                         placeholder="{{value.holder}}" 
-                        value="\{\{ {{key}}\}\}" />
+                        {{#if value.field.min}}
+                        min={{value.field.min}}
+                        {{/if}}{{#if value.field.max}}
+                        max={{value.field.max}}
+                        {{/if}}{{#if value.field.step}}
+                        step={{value.field.step}}
+                        {{/if}}value="\{\{ {{key}}\}\}" />
                         
                     \{\{#if errors.{{key}}\}\}
                     <span class="help-text">\{\{errors.{{key}}\}\}</span>
@@ -48,7 +54,7 @@
                         name="{{key}}" 
                         class="form-control" 
                         placeholder="{{value.holder}}" 
-                        value="\{\{ {{key}}\}\}" />
+                        value="\{\{date {{key}} 'Y-m-d'\}\}" />
                         
                     \{\{#if errors.{{key}}\}\}
                     <span class="help-text">\{\{errors.{{key}}\}\}</span>
@@ -59,6 +65,16 @@
                         name="{{key}}" 
                         class="form-control" 
                         placeholder="{{value.holder}}" 
+                        value="\{\{ {{key}}\}\}" />
+                        
+                    \{\{#if errors.{{key}}\}\}
+                    <span class="help-text">\{\{errors.{{key}}\}\}</span>
+                    \{\{/if\}\}
+                    {{/when}}{{#when value.field.[0] '==' 'color'}}
+                    <input 
+                        type="color" 
+                        name="{{key}}" 
+                        class="form-control" 
                         value="\{\{ {{key}}\}\}" />
                         
                     \{\{#if errors.{{key}}\}\}

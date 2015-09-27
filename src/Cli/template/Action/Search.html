@@ -60,6 +60,9 @@ use Eve\\Framework\\Action\\Html;
  */
 class Search extends Html 
 {
+	const FAIL_404 = 'No IDs or action found.';
+	const SUCCESS_200 = '{{plural}} successfully %s';
+    
     protected $title = 'Search {{Plural}}';
     protected $range = 50;
     
@@ -70,14 +73,18 @@ class Search extends Html
      */
     public function render() 
     {
+    	if(!empty($_POST)) {
+        	return $this->check();
+        }
+        
         $data = $this->request->get('get');
         
-        $data['range'] = 50;
+        $data['range'] = $this->range;
         
         $mode = 'active';
         if(isset($data['mode'])) {
-               $mode = $data['mode'];
-           }
+           $mode = $data['mode'];
+        }
         
         switch($mode) {
             case 'active':
@@ -91,41 +98,99 @@ class Search extends Html
         //get rows
         $rows = eve()
             ->model('{{name}}')
-            ->list()
+            ->search()
             ->process($data)
             ->getRows();
         
         //get total
         $total = eve()
             ->model('{{name}}')
-            ->list()
+            ->search()
             ->process($data)
             ->getTotal();
         
         foreach($rows as $i => $row) {
             {{#loop fields}}
             {{#when value.type '==' 'date'}}
-            $rows[$i]['{{key}}'] = date('F d, Y', strtotime($row['{{key}}']));
+            if(!strtotime($row['{{key}}'])) {
+           		$rows[$i]['{{key}}'] = null;
+            } else {
+            	$rows[$i]['{{key}}'] = date('M d', strtotime($row['{{key}}']));
+            }
             {{/when}}
             {{#when value.type '==' 'datetime'}}
-            $rows[$i]['{{key}}'] = date('F d, Y g:i A', strtotime($row['{{key}}']));
+            if(!strtotime($row['{{key}}'])) {
+           		$rows[$i]['{{key}}'] = null;
+            } else {
+            	$rows[$i]['{{key}}'] = date('M d', strtotime($row['{{key}}']));
+            }
             {{/when}}
             {{#when value.type '==' 'time'}}
-            $rows[$i]['{{key}}'] = date('g:i A', strtotime($row['{{key}}']));
+            if(!strtotime($row['{{key}}'])) {
+           		$rows[$i]['{{key}}'] = null;
+            } else {
+            	$rows[$i]['{{key}}'] = date('g:i A', strtotime($row['{{key}}']));
+            }
             {{/when}}
             {{#when value.type '==' 'boolean'}}
             $rows[$i]['{{key}}'] = ((int) $row['{{key}}']) ? 'Yes': 'No';
             {{/when}}
             {{/loop}}
+            
+            $rows[$i]['{{name}}_updated'] = date('M d', strtotime($row['{{name}}_updated']));
         }
         
         $this->body['rows'] = $rows;
         $this->body['total'] = $total;
         $this->body['range'] = $this->range;
         $this->body['mode'] = $mode;
+        $this->body['keyword'] = null;
+        
+        if(isset($_GET['keyword'])) {
+        	$this->body['keyword'] = $_GET['keyword'];
+        }
+        
         //NOTE: add anything extra to body here
         
         //success
         return $this->success();
+    }
+    
+    /**
+     * When the form is submitted
+     *
+     * @return void
+     */
+    protected function check() 
+    {
+    	//-----------------------//
+        // 1. Get Data
+        $data = $this->request->get('post');
+        
+        //-----------------------//
+        //2. Validate
+        if(!isset($data['action']) 
+        	|| !isset($data['id']) 
+            || !is_array($data['id'])
+        ) {
+            return $this->fail(
+                self::FAIL_404,
+                '/{{name}}/search');
+        }
+        
+        //-----------------------//
+        //3. Process
+        foreach($data['id'] as $id) {
+       		$item = array('{{name}}_id' => $id);
+            
+            eve()
+                ->job('{{name}}-'.$data['action'])
+                ->setData($item)
+                ->run();
+        }
+        
+        return $this->success(
+            sprintf(self::SUCCESS_200, $data['action'].'d'), 
+            '/{{name}}/search');
     }
 }

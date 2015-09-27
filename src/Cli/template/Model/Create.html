@@ -48,7 +48,7 @@ class Create extends Base
         {{#loop fields}}{{#if value.required}}
         
         // {{key}} - required
-        if(!isset($data['{{key}}'])) {
+        if(!isset($data['{{key}}']) || empty($data['{{key}}'])) {
             $errors['{{key}}'] = self::INVALID_REQUIRED;
         }
         {{/if}}{{/loop}}

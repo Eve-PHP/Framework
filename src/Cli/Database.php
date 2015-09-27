@@ -92,14 +92,76 @@ class Database extends \Eve\Framework\Base
 		//normalize the schema
 		$this->fixSchema();
 		
-		Index::info('Checking database');
+		Index::info('Creating database table.');	
 		
-		try {
-			$this->database->query('SELECT * FROM `'.$this->schema['name'].'` LIMIT 1');
-			Index::error('Database table `'.$this->schema['name'].'` exists. Aborting..');
-		} catch(\Exception $e) {
-			Index::info('Creating database table.');	
+		$this->createTable();
+		
+		Index::success('`'.$this->schema['name'].'` has been successfully created.');
+		
+		$this->createRelations();
+		
+		foreach($this->schema['relations'] as $table => $many) {
+			Index::success('`'.$this->schema['name'].'_'.$table.'` has been successfully created.');
 		}
+		
+		if(!isset($this->schema['fixture'])
+		|| !is_array($this->schema['fixture'])) {
+			return;
+		}
+		
+		Index::info('Fixtures found. Installing');
+		
+		$this->insertFixtures();
+		
+		Index::success('Fixtures has been successfully inserted.');
+		
+		die(0);
+	}
+	
+	protected function insertFixtures()
+	{
+		foreach($this->schema['fixture'] as $row) {
+			$model = $this->database
+				->model($row)
+				->save($this->schema['name']);
+			
+			foreach($this->schema['relations'] as $table => $many) {
+				if(isset($row[$this->schema['name'].'_'.$table.'_'.$this->schema['name']])
+					&& isset($row[$this->schema['name'].'_'.$table.'_'.$table])
+				) {
+					$model->insert($this->schema['name'].'_'.$table);
+				}
+			}
+		}
+		
+		return $this;
+	}
+	
+	protected function createRelations()
+	{
+		foreach($this->schema['relations'] as $table => $many) {
+			$this->database->query('DROP TABLE IF EXISTS `'.$this->schema['name'].'_'.$table.'`');
+			
+			$this->database->query('CREATE TABLE `'.$this->schema['name'].'_'.$table.'` (
+			  `'.$this->schema['name'].'_'.$table.'_'.$this->schema['name'].'` int(10) unsigned NOT NULL,
+			  `'.$this->schema['name'].'_'.$table.'_'.$table.'` int(10) unsigned NOT NULL
+			) ENGINE=InnoDB DEFAULT CHARSET=utf8');	
+			
+			$this->database->query('ALTER TABLE `'
+				. $this->schema['name'] . '_' . $table . '`'
+		 		. 'ADD PRIMARY KEY (`'
+				. $this->schema['name'] . '_' . $table . '_' . $this->schema['name'] . '`,`'
+				. $this->schema['name'] . '_' . $table . '_' . $table . '`), '
+				. 'ADD KEY `' . $table . '_id_idx` (`'
+				. $this->schema['name'] . '_' . $table . '_' . $table . '`)');
+		}
+		
+		return $this;
+	}
+	
+	protected function createTable()
+	{
+		$this->database->query('DROP TABLE IF EXISTS `'.$this->schema['name'].'`');
 		
 		$schema = array();
 		$columns = array();
@@ -176,22 +238,7 @@ class Database extends \Eve\Framework\Base
 		$this->database->query('ALTER TABLE `' . $this->schema['name'] . '` '
 			. 'MODIFY `' . $this->schema['name'] . '_id` int(10) unsigned NOT NULL AUTO_INCREMENT');
 		
-		Index::success('`'.$this->schema['name'].'` has been successfully created.');
-			
-		if(!isset($this->schema['fixture'])
-		|| !is_array($this->schema['fixture'])) {
-			return;
-		}
-		
-		Index::info('Fixtures found. Installing');
-		
-		foreach($this->schema['fixture'] as $row) {
-			$this->database->model($row)->save($this->schema['name']);
-		}
-		
-		Index::success('Fixtures has been successfully inserted.');
-		
-		die(0);
+		return $this;
 	}
 	
 	/**
