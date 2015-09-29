@@ -9,42 +9,39 @@
 
 class ApiModel{{capital name}}CreateTest extends PHPUnit_Framework_TestCase
 {
-    public function testValidateAddressFields() 
+    public function testErrors()
 	{
-        $errors = eve()->model('address')->create()->errors();
-		
-		$this->assertEquals('Cannot be empty!', $errors['address_street']);
-		$this->assertEquals('Cannot be empty!', $errors['address_city']);
-		$this->assertEquals('Cannot be empty!', $errors['address_country']);
-		$this->assertEquals('Cannot be empty!', $errors['address_postal']);
+        $errors = eve()->model('{{name}}')->create()->errors();
+
+        {{#loop fields}}{{#if value.required}}
+        $this->assertEquals('Cannot be empty', $errors['{{key}}']);
+        {{/if}}{{/loop}}
     }
 	
-    public function testCreatePrivateAddress() 
-	{	
-		$model = eve()->model('address')->create()->process(array(
-			'address_street'	=> 'TEST PRIVATE 123 Sesame Street',
-			'address_city'		=> 'New York',
-			'address_country'	=> 'PH',
-			'something_rand'	=> 'okay random',
-			'address_postal'	=> '12345' 
-		));
-
-		$this->assertTrue(is_numeric($model['address_id']));
-		eve()->registry()->set('test', 'private_address', $model['address_id']);
-	}
-
-    public function testCreatePublicAddress() 
-	{	
-		$model = eve()->model('address')->create()->process(array(
-			'address_street'	=> 'TEST PUBLIC 123 Sesame Street',
-			'address_city'	=> 'New York',
-			'address_country'	=> 'PH',
-			'something_rand'	=> 'okay random',
-			'address_postal'	=> '12345',
-			'address_public'	=> 1 
-		));
-
-		$this->assertTrue(is_numeric($model['address_id']));
-		eve()->registry()->set('test', 'public_address', $model['address_id']);
-	}
+	 public function testProcess() 
+    {
+        {{#loop fields}}
+        {{#when value.field.[0] '===' 'file'}}
+        $path = eve()->path('public') . '/logo.png';
+        $_FILES['{{key}}']['tmp_name'] = sys_get_temp_dir().'/test-123';
+        $contents = file_get_contents(eve()->path('public') . '/logo.png');
+        eve('file', $path)->setContent($contents);
+        {{/when}}
+        {{/loop}}
+        
+        $model = eve()->model('{{name}}')->create()->process(array(
+            {{#loop fields}}{{#if value.required}}
+            {{#when value.field.[0] '==' 'password'}}
+            '{{key}}' => md5({{value.sample}}),
+            {{/when}}{{#when value.field.[0] '!=' 'password'}}
+            '{{key}}' => {{value.sample}},{{/when}}
+            {{#when value.field.[0] '==' 'file'}}
+            '{{key}}' => $_FILES['{{key}}']['tmp_name'],
+            {{/when}}
+            {{/if}}{{/loop}}
+			));
+        
+		eve()->registry()->set('test', '{{name}}', $model->get());
+        $this->assertTrue(is_numeric($model['{{name}}_id']));
+    }
 }

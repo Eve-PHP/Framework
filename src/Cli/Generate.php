@@ -109,12 +109,22 @@ class Generate extends \Eve\Framework\Base
 				mkdir($this->cwd . '/Model/' . ucwords($this->schema['name']));
 			}
 			
+			// For test Model
 			if(!is_dir($this->cwd . '/test/Model')) {
 				mkdir($this->cwd . '/test/Model');
 			}
 			
 			if(!is_dir($this->cwd . '/test/Model/' . ucwords($this->schema['name']))) {
 				mkdir($this->cwd . '/test/Model/' . ucwords($this->schema['name']));
+			}
+
+			// For test Job
+			if(!is_dir($this->cwd . '/test/Job')) {
+				mkdir($this->cwd . '/test/Job');
+			}
+			
+			if(!is_dir($this->cwd . '/test/Job/' . ucwords($this->schema['name']))) {
+				mkdir($this->cwd . '/test/Job/' . ucwords($this->schema['name']));
 			}
 			
 			foreach($this->schema['model'] as $action) {
@@ -136,7 +146,7 @@ class Generate extends \Eve\Framework\Base
 				
 				$this->copy($source, $destination);
 				
-				//for tests
+				//for test Model
 				$source = '/test/Model/' . ucwords($action) . '.html';
 				
 				if(!file_exists($this->source.$source)) {
@@ -150,6 +160,25 @@ class Generate extends \Eve\Framework\Base
 				}
 				
 				$destination = '/test/Model/' 
+					. ucwords($this->schema['name']) . '/' 
+					. ucwords($action) . '.php';
+				
+				$this->copy($source, $destination);
+
+				//for test Job
+				$source = '/test/Job/' . ucwords($action) . '.html';
+				
+				if(!file_exists($this->source.$source)) {
+					Index::error(sprintf(
+						self::SKIP, 
+						'test/Job', 
+						ucwords($action)), 
+					false);
+					
+					continue;
+				}
+				
+				$destination = '/test/Job/' 
 					. ucwords($this->schema['name']) . '/' 
 					. ucwords($action) . '.php';
 				

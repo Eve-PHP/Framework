@@ -7,26 +7,28 @@
  * distributed with this package.
  */
 
-class ApiModelAddressRemoveTest extends PHPUnit_Framework_TestCase
+class ApiModel{{capital name}}RemoveTest extends PHPUnit_Framework_TestCase
 {
-    public function testRemovePublicAddress() 
-	{	
-		$publicAddress = eve()->registry()->get('test', 'public_address');
-
-        $row = eve()->model('address')->remove()->process(array( 
-			'address_id' => $publicAddress));
-        // TODO
-        $this->assertEquals(0, $row['address_active']);
+    public function testErrors() 
+    {
+        $errors = eve()
+            ->model('{{name}}')
+            ->remove()
+            ->errors();
+            
+        $this->assertEquals('Cannot be empty', $errors['{{name}}_id']);
     }
+    
+    public function testProcess() 
+    {
+        ${{name}} = eve()->registry()->get('test', '{{name}}');
 
-    public function testRemovePrivateAddress() 
-	{	
-		$privateAddress = eve()->registry()->get('test', 'private_address');
+        $row = eve()
+            ->model('{{name}}')
+            ->remove()
+            ->process(array( 
+                '{{name}}_id' => ${{name}}['{{name}}_id'] ));
 
-        $row = eve()->model('address')->remove()->process(array( 
-			'address_id' => $privateAddress));
-
-        //TODO
-        $this->assertEquals(0, $row['address_active']);
+        $this->assertEquals(0, $row['{{name}}_active']);
     }
 }

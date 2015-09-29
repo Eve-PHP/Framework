@@ -7,30 +7,24 @@
  * distributed with this package.
  */
 
-class ApiModelAddressDetailTest extends PHPUnit_Framework_TestCase
+class ApiModel{{capital name}}DetailTest extends PHPUnit_Framework_TestCase
 {
-    public function testGetPublicAddress() 
+    public function testErrors() 
 	{	
-		$publicAddress = eve()->registry()->get('test', 'public_address');
-     	
-     	$row = eve()
-     		->model('address')
-			->detail()
-			->process(array('address_id' => $publicAddress))
-			->getRow();
+		$errors = eve()->model('{{name}}')->detail()->errors();
+		$this->assertEquals('Cannot be empty', $errors['{{name}}_id']);
+	}
+
+    public function testProcess() {
+
+		${{name}} = eve()->registry()->get('test', '{{name}}');
+
+        $row = eve()
+        	->model('{{name}}')
+        	->detail()
+        	->process(array('{{name}}_id' => ${{name}}['{{name}}_id']))
+        	->getRow();
 		
-		$this->assertEquals('TEST PUBLIC 123 Sesame Street', $row['address_street']);
-    }
-	
-    public function testGetPrivateAddress() 
-	{	
-		$privateAddress = eve()->registry()->get('test', 'private_address');
-     	$row = eve()
-     		->model('address')
-			->detail()
-			->process(array('address_id' => $privateAddress))
-			->getRow();
-		
-		$this->assertEquals('TEST PRIVATE 123 Sesame Street', $row['address_street']);
+		$this->assertEquals(${{name}}['{{name}}_id'], $row['{{name}}_id']);
     }
 }

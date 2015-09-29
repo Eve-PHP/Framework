@@ -114,6 +114,7 @@ return array(
 		
 		foreach($object as $key => $value) {
 			$buffer[] = $options['fn'](array(
+				'first'	=> $i === 0,
 				'key'	=> $key,
 				'value'	=> $value,
 				'last'	=> ++$i === $total

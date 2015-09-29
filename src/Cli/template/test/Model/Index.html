@@ -1,21 +1,82 @@
 <?php //-->
 /*
- * This file is part of the Type package of the Eden PHP Library.
- * (c) 2013-2014 Openovate Labs
+ * A Custom Library
  *
  * Copyright and license information can be found at LICENSE
  * distributed with this package.
  */
-
-class ApiModelAddressIndexTest extends PHPUnit_Framework_TestCase
+class ApiModel{{capital name}}IndexTest extends PHPUnit_Framework_TestCase
 {
-    public function testErrors() 
+	{{#loop model}}
+	public function test{{capital value}}()
 	{
-        
+		$class = eve()->model('{{../name}}')->create();
+		$this->assertInstanceOf('Api\\Model\\{{capital ../name}}\\Create', $class);
+	}
+	{{/loop}}
+
+    {{#loop relations}}
+
+    public function testLink{{capital key}}() 
+	{
+		${{../name}} = eve()->registry()->get('test', '{{../name}}');
+		
+		//link
+		$model = eve()
+			->model('{{../name}}')
+			->link{{capital key}}(
+				${{../name}}['{{../name}}_id'],
+				400);
+		
+		//test
+		$this->assertEquals(
+			${{../name}}['{{../name}}_id'],
+			$model['{{../name}}_{{key}}_{{../name}}']);
+
+		$this->assertEquals(
+			400,
+			$model['{{../name}}_{{key}}_{{key}}']);
+    }
+	{{/loop}}
+
+	public function testPermissions() 
+    {	
+    	${{name}} = eve()->registry()->get('test', '{{name}}');
+
+		$yes = eve()
+			->model('{{name}}')
+			->permissions(
+				${{name}}['{{name}}_id'], 
+				400);
+		
+		$this->assertTrue($yes);
+
+		$yes = eve()
+			->model('{{name}}')
+			->permissions(${{name}}['{{name}}_id'], 222);
+
+		$this->assertFalse($yes);
     }
 	
-    public function testProcess() 
-	{
-        
+	{{#loop relations}}
+    public function testUnlink{{capital key}}() 
+    {
+    	${{../name}} = eve()->registry()->get('test', '{{../name}}');
+    	
+		$model = eve()
+			->model('{{../name}}')
+			->unlink{{capital key}}(
+				${{../name}}['{{../name}}_id'],
+				400);
+		
+		$this->assertEquals(
+			${{../name}}['{{../name}}_id'],
+			$model['{{../name}}_{{key}}_{{../name}}']);
+
+		$this->assertEquals(
+			400,
+			$model['{{../name}}_{{key}}_{{key}}']);
     }
+
+    {{/loop}}
 }

@@ -7,19 +7,28 @@
  * distributed with this package.
  */
 
-class ApiModelAddressUpdateTest extends PHPUnit_Framework_TestCase
+class ApiModel{{capital name}}UpdateTest extends PHPUnit_Framework_TestCase
 {
-    public function testUpdateAddress() 
-	{
-		$publicAddress = eve()->registry()->get('test', 'public_address');
-     	
-     	$model = eve()
-     		->model('address')
-     		->update()
-     		->process(array(
-				'address_id'		=> $publicAddress,
-				'address_country'	=> 'US' ));
+    public function testErrors() 
+    {
+        $errors = eve()->model('{{name}}')->update()->errors();
+        $this->assertEquals('Cannot be empty', $errors['{{name}}_id']);
+    }
+    
+    public function testProcess() 
+    {
+        ${{name}} = eve()->registry()->get('test', '{{name}}');
+        
+        $model = eve()
+            ->model('{{name}}')
+            ->update()
+            ->process(array(
+                '{{name}}_id' => ${{name}}['{{name}}_id'],
+                {{#loop fields}}{{#if value.required}}
+                '{{key}}' => {{value.sample}},
+                {{/if}}{{/loop}}
+                ));
 
-		$this->assertEquals('US', $model['address_country']);
+        $this->assertEquals(${{name}}['{{name}}_id'], $model['{{name}}_id']);
     }
 }
