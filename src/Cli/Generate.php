@@ -109,6 +109,14 @@ class Generate extends \Eve\Framework\Base
 				mkdir($this->cwd . '/Model/' . ucwords($this->schema['name']));
 			}
 			
+			if(!is_dir($this->cwd . '/test/Model')) {
+				mkdir($this->cwd . '/test/Model');
+			}
+			
+			if(!is_dir($this->cwd . '/test/Model/' . ucwords($this->schema['name']))) {
+				mkdir($this->cwd . '/test/Model/' . ucwords($this->schema['name']));
+			}
+			
 			foreach($this->schema['model'] as $action) {
 				$source = '/Model/' . ucwords($action) . '.html';
 				
@@ -123,6 +131,25 @@ class Generate extends \Eve\Framework\Base
 				}
 				
 				$destination = '/Model/' 
+					. ucwords($this->schema['name']) . '/' 
+					. ucwords($action) . '.php';
+				
+				$this->copy($source, $destination);
+				
+				//for tests
+				$source = '/test/Model/' . ucwords($action) . '.html';
+				
+				if(!file_exists($this->source.$source)) {
+					Index::error(sprintf(
+						self::SKIP, 
+						'test/Model', 
+						ucwords($action)), 
+					false);
+					
+					continue;
+				}
+				
+				$destination = '/test/Model/' 
 					. ucwords($this->schema['name']) . '/' 
 					. ucwords($action) . '.php';
 				
