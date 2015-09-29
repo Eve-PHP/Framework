@@ -350,6 +350,10 @@ class Generate extends \Eve\Framework\Base
 			$normal['search'] = !!$field['search'];
 		}
 		
+		if(isset($field['sample'])) {
+			$normal['sample'] = $field['sample'];
+		}
+		
 		if(isset($field['field'])) {
 			if($field['field'] === false
 				|| is_array($field['field'])
@@ -468,6 +472,80 @@ class Generate extends \Eve\Framework\Base
 		//datetime as well
 		if($normal['type'] === 'datetime' && !in_array('date', $validKeys)) {
 			$normal['valid'][] = array('date');
+		}
+		
+		if(!isset($normal['sample']) && isset($normal['default'])) {
+			$normal['sample'] = $normal['default'];
+		}
+		
+		if(!isset($normal['sample'])) {
+			$sample = 'foobar';
+			foreach($normal['valid'] as $valid) {
+				switch($valid[0]) {
+					case 'required':
+					case 'empty':
+						break;
+					case 'one':
+						$sample = $valid[1][0];
+						break;
+					case 'email':
+						$sample = 'test@test.com';
+						break;
+					case 'hex':
+						$sample = '12321';
+						break;
+					case 'cc':
+						$sample = '4111111111111111';
+						break;
+					case 'html':
+						$sample = '<p>Awesome</p>';
+						break;
+					case 'url':
+						$sample = 'http://example.com';
+						break;
+					case 'slug':
+						$sample = 'asd-123';
+						break;
+					case 'json':
+						$sample = '{"error":false}';
+						break;
+					case 'date':
+						$sample = '2015-09-02';
+						break;
+					case 'time':
+						$sample = '12:01:00';
+						break;
+					case 'alphanum':
+						$sample = 'foo123';
+						break;
+					case 'alphanum-':
+						$sample = 'foo-123';
+						break;
+					case 'alphanum_':
+						$sample = 'foo_123';
+						break;
+					case 'alphanum-_':
+						$sample = 'foo-_123';
+						break;
+					case 'bool':
+						$sample = '1';
+						break;
+					case 'small':
+						$sample = '3';
+						break;
+					case 'int':
+						$sample = '3';
+						break;
+					case 'float':
+						$sample = '3.3';
+						break;
+					case 'price':
+						$sample = '3.30';
+						break;
+				}
+			}
+			
+			$normal['sample'] = "'".$sample."'";
 		}
 		
 		return $normal;
