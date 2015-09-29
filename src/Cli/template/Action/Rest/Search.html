@@ -64,6 +64,8 @@ use Eve\\Framework\\Action\\Json;
  */
 class Search extends Json 
 {
+	protected $range = 50;
+    
     /**
      * Main action call
      *
@@ -71,11 +73,15 @@ class Search extends Json
      */
     public function render() 
     {
+    	$data = $this->request->get('get');
+		
+		$data['range'] = $this->range;
+        
         //get rows
         $rows = eve()
             ->model('{{name}}')
             ->search()
-            ->process()
+            ->process($data)
             ->getRows();
         
         //success

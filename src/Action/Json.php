@@ -58,7 +58,7 @@ abstract class Json extends Base
         $json = array('error' => false);
         
         if($results) {
-            $json['results'] = $this->body;
+            $json['results'] = $results;
         }
 		
 		$body = json_encode($json, JSON_PRETTY_PRINT);

@@ -308,11 +308,11 @@ class Create extends Base
                    mkdir($destination);
             }
             
-            $destination .= '/' . md5(uniqid()) . '-' . $_FILES['{{key}}']['name'];
+            $file .= '/' . md5(uniqid()) . '-' . $_FILES['{{key}}']['name'];
             
-            move_uploaded_file($_FILES['{{key}}']['tmp_name'], $destination);
+            move_uploaded_file($_FILES['{{key}}']['tmp_name'], $destination.$file);
             
-            $data['{{key}}'] = $destination;
+            $data['{{key}}'] = 'http://'.$_SERVER['HTTP_HOST'].'/upload'.$file;
         }
         
         {{/when}}{{/loop}}
