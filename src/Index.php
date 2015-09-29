@@ -243,7 +243,7 @@ namespace Eve\Framework
         {
             $root = $this->rootPath;
             
-            $this->registry()
+			$this->registry()
                 //root paths
                 ->set('path', 'root', $root)
                 

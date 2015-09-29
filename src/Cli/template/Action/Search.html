@@ -60,8 +60,9 @@ use Eve\\Framework\\Action\\Html;
  */
 class Search extends Html 
 {
-	const FAIL_404 = 'No IDs or action found.';
-	const SUCCESS_200 = '{{plural}} successfully %s';
+    const FAIL_401 = 'You do not have permissions to search';
+    const FAIL_404 = 'No IDs or action found.';
+    const SUCCESS_200 = '{{plural}} successfully %s';
     
     protected $title = 'Search {{Plural}}';
     protected $range = 50;
@@ -73,11 +74,27 @@ class Search extends Html
      */
     public function render() 
     {
-    	if(!empty($_POST)) {
-        	return $this->check();
+        //-----------------------//
+        // 1. Get Data
+        $data = $this->request->get('get');
+        
+        //-----------------------//
+        // 2. Validate
+        {{#if permissions}}
+        //if no {{permissions}}_id
+        if(!isset($_SESSION['me']['{{permissions}}_id'])) {
+            //permission check failed
+            return $this->fail(
+                self::FAIL_401,
+                '/login');
         }
         
-        $data = $this->request->get('get');
+        {{/if}}
+        //-----------------------//
+        // 3. Process
+        if(!empty($_POST)) {
+            return $this->check();
+        }
         
         $data['range'] = $this->range;
         
@@ -95,41 +112,46 @@ class Search extends Html
                 break;
         }
         
-        //get rows
-        $rows = eve()
+        $search = eve()
             ->model('{{name}}')
             ->search()
-            ->process($data)
-            ->getRows();
+            ->process($data);
         
+        {{#if permissions}}
+        //join {{permissions}}_id
+        $search
+            ->innerJoinOn(
+                '{{name}}_{{permissions}}', 
+                '{{name}}_{{permissions}}_{{name}} = {{name}}_id')
+            ->filterBy{{capital name}}{{capital permissions}}{{capital permissions}}($_SESSION['me']['{{permissions}}_id']);
+        
+        {{/if}}
+        //get rows  
+        $rows = $search->getRows();
         //get total
-        $total = eve()
-            ->model('{{name}}')
-            ->search()
-            ->process($data)
-            ->getTotal();
+        $total = $search->getTotal();
         
         foreach($rows as $i => $row) {
             {{#loop fields}}
             {{#when value.type '==' 'date'}}
             if(!strtotime($row['{{key}}'])) {
-           		$rows[$i]['{{key}}'] = null;
+                   $rows[$i]['{{key}}'] = null;
             } else {
-            	$rows[$i]['{{key}}'] = date('M d', strtotime($row['{{key}}']));
+                $rows[$i]['{{key}}'] = date('M d', strtotime($row['{{key}}']));
             }
             {{/when}}
             {{#when value.type '==' 'datetime'}}
             if(!strtotime($row['{{key}}'])) {
-           		$rows[$i]['{{key}}'] = null;
+                   $rows[$i]['{{key}}'] = null;
             } else {
-            	$rows[$i]['{{key}}'] = date('M d', strtotime($row['{{key}}']));
+                $rows[$i]['{{key}}'] = date('M d', strtotime($row['{{key}}']));
             }
             {{/when}}
             {{#when value.type '==' 'time'}}
             if(!strtotime($row['{{key}}'])) {
-           		$rows[$i]['{{key}}'] = null;
+                   $rows[$i]['{{key}}'] = null;
             } else {
-            	$rows[$i]['{{key}}'] = date('g:i A', strtotime($row['{{key}}']));
+                $rows[$i]['{{key}}'] = date('g:i A', strtotime($row['{{key}}']));
             }
             {{/when}}
             {{#when value.type '==' 'boolean'}}
@@ -147,7 +169,7 @@ class Search extends Html
         $this->body['keyword'] = null;
         
         if(isset($_GET['keyword'])) {
-        	$this->body['keyword'] = $_GET['keyword'];
+            $this->body['keyword'] = $_GET['keyword'];
         }
         
         //NOTE: add anything extra to body here
@@ -163,14 +185,14 @@ class Search extends Html
      */
     protected function check() 
     {
-    	//-----------------------//
+        //-----------------------//
         // 1. Get Data
         $data = $this->request->get('post');
         
         //-----------------------//
         //2. Validate
         if(!isset($data['action']) 
-        	|| !isset($data['id']) 
+            || !isset($data['id']) 
             || !is_array($data['id'])
         ) {
             return $this->fail(
@@ -181,12 +203,18 @@ class Search extends Html
         //-----------------------//
         //3. Process
         foreach($data['id'] as $id) {
-       		$item = array('{{name}}_id' => $id);
+               $item = array('{{name}}_id' => $id);
             
-            eve()
-                ->job('{{name}}-'.$data['action'])
-                ->setData($item)
-                ->run();
+            try {
+                eve()
+                    ->job('{{name}}-'.$data['action'])
+                    ->setData($item)
+                    ->run();
+            } catch(\Exception $e) {
+           		return $this->fail(
+                    $e->getMessage(),
+                    '/{{name}}/search');
+            }
         }
         
         return $this->success(

@@ -34,7 +34,7 @@ use Eve\\Framework\\Job\\Exception;
  */
 class {{capital job_action}} extends Base 
 {
-    const FAIL_400 = 'Invalid Data';
+    const FAIL_406 = 'Invalid Data';
     
     /**
      * Executes the job
@@ -46,13 +46,14 @@ class {{capital job_action}} extends Base
         //if no data
         if(empty($this->data)) {
             //there should be a global catch somewhere
-            throw new Exception(self::FAIL_400);
+            throw new Exception(self::FAIL_406);
         }
         
         //this will be returned at the end
         $results = array();
         {{#if job_instructions}}
         {{#loop job_instructions}}
+        {{#in value.[0] 'create,remove,restore,update,link,linkAll,unlink,unlinkAll'}}
         {{#when value.[0] '===' 'create'}}
         
         //NEXT ...
@@ -128,7 +129,7 @@ class {{capital job_action}} extends Base
         
         //if there is a list of {{value.[1]}}
         if(isset($this->data['{{value.[1]}}'])
-        	&& is_array($this->data['{{value.[1]}}'])
+            && is_array($this->data['{{value.[1]}}'])
         ) {
             foreach($this->data['{{value.[1]}}'] as $row) {
                    //if no {{value.[1]}}_id
@@ -175,6 +176,19 @@ class {{capital job_action}} extends Base
             ->unlinkAll{{capital value.[1]}}(
                 $results['{{../name}}']['{{../name}}_id']);
         {{/when}}
+        {{else}}
+        
+        //NEXT ...
+        
+        //if there is a {{value.[1]}}_id
+        if(isset($this->data['{{value.[1]}}_id'])) {
+            //remove the {{value.[1]}}
+            $results['{{value.[1]}}'] = eve()
+                ->model('{{value.[1]}}')
+                ->{{value.[0]}}()
+                ->process($this->data);
+        }
+        {{/in}}
         {{/loop}}
         {{/if}}
         

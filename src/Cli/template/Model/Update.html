@@ -67,7 +67,8 @@ class Update extends Base
         
         // {{../key}} - empty
         if(isset($data['{{../key}}'])
-        && empty($data['{{../key}}'])) {
+            && empty($data['{{../key}}'])
+        ) {
             $errors['{{../key}}'] = self::INVALID_EMPTY;
         }
         {{/when}}{{#when value.[0] '===' 'one'}}
@@ -75,6 +76,7 @@ class Update extends Base
         // {{../key}} - one of
         $choices = array({{implode value.[1] ', '}});
         if(isset($data['{{../key}}']) 
+            && !empty($data['{{../key}}'])
             && !in_array($data['{{../key}}'], $choices)
         ) {
             $errors['{{../key}}'] = sprintf(self::INVALID_ONEOF, implode(',', $choices));
@@ -83,6 +85,7 @@ class Update extends Base
         
         // {{../key}} - email
         if(isset($data['{{../key}}']) 
+            && !empty($data['{{../key}}'])
             && !$this('validation', $data['{{../key}}'])->isType('email')
         ) {
             $errors['{{../key}}'] = self::INVALID_EMAIL;
@@ -91,14 +94,16 @@ class Update extends Base
         
         // {{../key}} - hex
         if(isset($data['{{../key}}']) 
-            && !$this('validation', $data['{{../key}}'])->isType('hex')
+            && !empty($data['{{../key}}'])
+            && !$this('validation', str_replace('#', '', $data['{{../key}}']))->isType('hex')
         ) {
             $errors['{{../key}}'] = self::INVALID_HEX;
         }
         {{/when}}{{#when value.[0] '===' 'cc'}}
         
         // {{../key}} - cc
-        if(isset($data['{{../key}}']) 
+        if(isset($data['{{../key}}'])
+            && !empty($data['{{../key}}']) 
             && !$this('validation', $data['{{../key}}'])->isType('cc')
         ) {
             $errors['{{../key}}'] = self::INVALID_CC;
@@ -106,7 +111,8 @@ class Update extends Base
         {{/when}}{{#when value.[0] '===' 'html'}}
         
         // {{../key}} - html
-        if(isset($data['{{../key}}']) 
+        if(isset($data['{{../key}}'])
+            && !empty($data['{{../key}}']) 
             && !$this('validation', $data['{{../key}}'])->isType('html')
         ) {
             $errors['{{../key}}'] = self::INVALID_HTML;
@@ -115,6 +121,7 @@ class Update extends Base
         
         // {{../key}} - url
         if(isset($data['{{../key}}']) 
+            && !empty($data['{{../key}}'])
             && !$this('validation', $data['{{../key}}'])->isType('url')
         ) {
             $errors['{{../key}}'] = self::INVALID_URL;
@@ -123,6 +130,7 @@ class Update extends Base
         
         // {{../key}} - slug
         if(isset($data['{{../key}}']) 
+            && !empty($data['{{../key}}'])
             && !$this('validation', $data['{{../key}}'])->isType('slug')
         ) {
             $errors['{{../key}}'] = self::INVALID_SLUG;
@@ -131,6 +139,7 @@ class Update extends Base
         
         // {{../key}} - json
         if(isset($data['{{../key}}']) 
+            && !empty($data['{{../key}}'])
             && !$this('validation', $data['{{../key}}'])->isType('json')
         ) {
             $errors['{{../key}}'] = self::INVALID_JSON;
@@ -139,6 +148,7 @@ class Update extends Base
         
         // {{../key}} - date
         if(isset($data['{{../key}}']) 
+            && !empty($data['{{../key}}'])
             && !$this('validation', $data['{{../key}}'])->isType('date')
         ) {
             $errors['{{../key}}'] = self::INVALID_DATE;
@@ -147,6 +157,7 @@ class Update extends Base
         
         // {{../key}} - time
         if(isset($data['{{../key}}']) 
+            && !empty($data['{{../key}}'])
             && !$this('validation', $data['{{../key}}'])->isType('time')
         ) {
             $errors['{{../key}}'] = self::INVALID_TIME;
@@ -155,6 +166,7 @@ class Update extends Base
         
         // {{../key}} - alphanum
         if(isset($data['{{../key}}']) 
+            && !empty($data['{{../key}}'])
             && !$this('validation', $data['{{../key}}'])->isType('alphanum')
         ) {
             $errors['{{../key}}'] = self::INVALID_ALPHANUM;
@@ -163,6 +175,7 @@ class Update extends Base
         
         // {{../key}} - alphanum-
         if(isset($data['{{../key}}']) 
+            && !empty($data['{{../key}}'])
             && !$this('validation', $data['{{../key}}'])->isType('alphanum-')
         ) {
             $errors['{{../key}}'] = self::INVALID_ALPHANUM_HYPHEN;
@@ -170,7 +183,8 @@ class Update extends Base
         {{/when}}{{#when value.[0] '===' 'alphanum_'}}
         
         // {{../key}} - alphanum_
-        if(isset($data['{{../key}}']) 
+        if(isset($data['{{../key}}'])
+            && !empty($data['{{../key}}']) 
             && !$this('validation', $data['{{../key}}'])->isType('alphanum_')
         ) {
             $errors['{{../key}}'] = self::INVALID_ALPHANUM_SCORE;
@@ -179,6 +193,7 @@ class Update extends Base
         
         // {{../key}} - alphanum-_
         if(isset($data['{{../key}}']) 
+            && !empty($data['{{../key}}'])
             && !$this('validation', $data['{{../key}}'])->isType('alphanum-_')
         ) {
             $errors['{{../key}}'] = self::INVALID_ALPHANUM_LINE;
@@ -187,7 +202,8 @@ class Update extends Base
         
         // {{../key}} - regex
         if(isset($data['{{../key}}']) 
-            && !preg_match('{{value.[0]}}', $data['{{../key}}'])
+            && !empty($data['{{../key}}'])
+            && !preg_match('{{value.[1]}}', $data['{{../key}}'])
         ) {
             $errors['{{../key}}'] = self::INVALID_REGEX;
         }
@@ -195,6 +211,7 @@ class Update extends Base
         
         // {{../key}} - bool
         if(isset($data['{{../key}}']) 
+            && !empty($data['{{../key}}'])
             && !$this('validation', $data['{{../key}}'])->isType('bool', true)
         ) {
             $errors['{{../key}}'] = self::INVALID_BOOL;
@@ -202,7 +219,8 @@ class Update extends Base
         {{/when}}{{#when value.[0] '===' 'small'}}
         
         // {{../key}} - small
-        if(isset($data['{{../key}}']) 
+        if(isset($data['{{../key}}'])
+            && !empty($data['{{../key}}']) 
             && !$this('validation', $data['{{../key}}'])->isType('small', true)
         ) {
             $errors['{{../key}}'] = self::INVALID_SMALL;
@@ -211,6 +229,7 @@ class Update extends Base
         
         // {{../key}} - int
         if(isset($data['{{../key}}']) 
+            && !empty($data['{{../key}}'])
             && !$this('validation', $data['{{../key}}'])->isType('int', true)
         ) {
             $errors['{{../key}}'] = self::INVALID_INT;
@@ -219,6 +238,7 @@ class Update extends Base
         
         // {{../key}} - float
         if(isset($data['{{../key}}']) 
+            && !empty($data['{{../key}}'])
             && !$this('validation', $data['{{../key}}'])->isType('float', true)
         ) {
             $errors['{{../key}}'] = self::INVALID_FLOAT;
@@ -227,6 +247,7 @@ class Update extends Base
         
         // {{../key}} - float
         if(isset($data['{{../key}}']) 
+            && !empty($data['{{../key}}'])
             && !$this('validation', $data['{{../key}}'])->isType('float', true)
         ) {
             $errors['{{../key}}'] = self::INVALID_PRICE;
@@ -236,6 +257,7 @@ class Update extends Base
         
         // {{../key}} - number
         if(isset($data['{{../key}}']) 
+            && !empty($data['{{../key}}'])
             && !$this('validation', $data['{{../key}}'])->isType('number', true)
         ) {
             $errors['{{../key}}'] = self::INVALID_NUMBER;
@@ -246,7 +268,9 @@ class Update extends Base
         
         // {{name}}_flag - small
         if(isset($data['{{name}}_flag']) 
-        && !$this('validate', $data['{{name}}_flag'])->isType('small', true)) {
+            && !empty($data['{{name}}_flag'])
+            && !$this('validate', $data['{{name}}_flag'])->isType('small', true)
+        ) {
             $errors['{{name}}_flag'] = self::INVALID_SMALL;
         }
         
@@ -263,7 +287,7 @@ class Update extends Base
     {
         //prevent uncatchable error
         if(count($this->errors($data))) {
-            throw new Exception(self::FAIL_400);
+            throw new Exception(self::FAIL_406);
         }
         
         //prepare
@@ -272,6 +296,25 @@ class Update extends Base
         //generate stuff
         $updated = date('Y-m-d H:i:s');
         
+        {{#loop fields}}{{#when value.field.[0] '==' 'file'}}
+        //upload {{key}}
+        if(isset($_FILES['{{key}}']['tmp_name'])
+            && !empty($_FILES['{{key}}']['tmp_name'])
+        ) {
+            $destination = eve()->path('upload');
+            
+            if(!is_dir($destination)) {
+                   mkdir($destination);
+            }
+            
+            $destination .= '/' . md5(uniqid()) . '-' . $_FILES['{{key}}']['name'];
+            
+            move_uploaded_file($_FILES['{{key}}']['tmp_name'], $destination);
+            
+            $data['{{key}}'] = $destination;
+        }
+        
+        {{/when}}{{/loop}}
         //SET WHAT WE KNOW
         $model = eve()
             ->database()
@@ -285,28 +328,51 @@ class Update extends Base
         
         //REQUIRED
         
-        {{#loop fields}}{{#if value.required}}
+        {{#loop fields}}{{#if value.required}}{{#if value.encoding}}
+        {{#when value.encoding '===' 'md5'}}
         // {{key}}
-        if(isset($data['{{key}}'])) {
+        if(isset($data['{{key}}'])
+            && !empty($data['{{key}}'])
+        ) {
+            $model->set{{capitalCamel key}}(md5($data['{{key}}']));
+        }
+        {{/when}}{{#when value.encoding '===' 'sha1'}}
+        // {{key}}
+        if(isset($data['{{key}}'])
+            && !empty($data['{{key}}'])
+        ) {
+            $model->set{{capitalCamel key}}(sha1($data['{{key}}']));
+        }
+        {{/when}}{{else}}
+        // {{key}}
+        if(isset($data['{{key}}'])
+            && !empty($data['{{key}}'])
+        ) {
             $model->set{{capitalCamel key}}($data['{{key}}']);
         }
-        {{/if}}{{/loop}}
+        {{/if}}{{/if}}{{/loop}}
         
         //OPTIONAL
         {{#loop fields}}{{#if value.required}}{{else}}
         // {{key}}
-        if(isset($data['{{key}}'])) {
+        if(isset($data['{{key}}'])
+            && !empty($data['{{key}}'])
+        ) {
             $model->set{{capitalCamel key}}($data['{{key}}']);
         }
         {{/if}}{{/loop}}
         
         // {{name}}_type
-        if(isset($data['{{name}}_type'])) {
+        if(isset($data['{{name}}_type'])
+            && !empty($data['{{name}}_type'])
+        ) {
             $model->set{{capital name}}Type($data['{{name}}_type']);
         }
         
         // {{name}}_flag
-        if(isset($data['{{name}}_flag'])) {
+        if(isset($data['{{name}}_flag'])
+            && !empty($data['{{name}}_flag'])
+        ) {
             $model->set{{capital name}}Flag($data['{{name}}_flag']);
         }
         

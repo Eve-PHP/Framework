@@ -60,6 +60,7 @@ use Eve\\Framework\\Action\\Html;
  */
 class Detail extends Html 
 {
+    const FAIL_401 = 'You do not have permissions to view';
     const FAIL_404 = 'Not Found';
 
     protected $title = '{{singular}} Detail';
@@ -93,21 +94,50 @@ class Detail extends Html
                 '/{{name}}/search');
         }
         
+        {{#if permissions}}
+        //if no {{permissions}}_id
+        if(!isset($_SESSION['me']['{{permissions}}_id'])) {
+            //permission check failed
+            return $this->fail(
+                self::FAIL_401,
+                '/{{name}}/search');
+        }
+        
+        $data['{{permissions}}_id'] = $_SESSION['me']['{{permissions}}_id'];
+        {{/if}}
+        
         //-----------------------//
         // 2. Validate
+        {{#if permissions}}
+        //check permissions
+        $yes = eve()
+            ->model('{{name}}')
+            ->permissions(
+                $data['{{name}}_id'], 
+                $data['{{permissions}}_id']);
+
+        //if not permitted, fail
+        if(!$yes) {
+            return $this->fail(
+                self::FAIL_401,
+                '/{{name}}/search');
+        }
+        
+        {{else}}
         //does it exist?
-        $row = eve()
+        $total = eve()
             ->model('{{name}}')
             ->detail()
             ->process($data)
-            ->getRow();
+            ->getTotal();
         
-        if(!$row) {
-           return $this->fail(
-                self::FAIL_404, 
+        if(!$total) {
+            return $this->fail(
+                self::FAIL_404,
                 '/{{name}}/search');
         }
-
+        {{/if}}
+        
         //-----------------------//
         // 3. Process
         $this->body = $row;

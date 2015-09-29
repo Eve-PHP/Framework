@@ -66,7 +66,7 @@
                     <tr>
                         <th><input class="checkall" type="checkbox" /></th>
                         <th>Action</th>
-                        <th>ID</th>{{#loop fields}}{{#in value.field.[0] 'textarea,wysiwyg,markdown,file'}}{{else}}
+                        <th>ID</th>{{#loop fields}}{{#in value.field.[0] 'password,textarea,wysiwyg,markdown,file'}}{{else}}
                         <th>{{value.label}}</th>{{/in}}{{/loop}}
                         <th>Updated</th>
                     </tr>
@@ -80,14 +80,14 @@
                             <a title="Edit" href="/{{name}}/update/\{\{ {{name}}_id\}\}">
                             <i class="fa fa-edit"></i></a> &nbsp; 
                             <a title="Remove" href="/{{name}}/remove/\{\{ {{name}}_id\}\}"
-                            class="text-danger remove"><i class="fa fa-times" value="\{\{ {{name}}_id\}\}"></i></a>
+                            class="text-danger remove"><i class="fa fa-times"></i></a>
                             \{\{/when\}\}
                             \{\{#when {{name}}_active '==' 0\}\}
                             <a title="Restore" href="/{{name}}/restore/\{\{ {{name}}_id\}\}" class="text-success restore">
                             <i class="fa fa-external-link"></i></a>
                             \{\{/when\}\}
                         </td>
-                        <td>\{\{ {{name}}_id\}\}</td>{{#loop fields}}{{#in value.field.[0] 'textarea,wysiwyg,markdown,file'}}{{else}}
+                        <td>\{\{ {{name}}_id\}\}</td>{{#loop fields}}{{#in value.field.[0] 'password,textarea,wysiwyg,markdown,file'}}{{else}}
                         <td>\{\{ {{key}}\}\}</td>{{/in}}{{/loop}}
                         <td>\{\{ {{name}}_updated\}\}</td>
                     </tr>    
@@ -112,23 +112,23 @@
 
 <script type="text/javascript">
 $('tbody input[type="checkbox"]').click(function() {
-	setTimeout(function() {	
-		var allChecked = true;
-		$('tbody input[type="checkbox"]').each(function() {
-			if(!this.checked) {
-				allChecked = false;
-			}
-		});
-		
-		$('th input.checkall')[0].checked = allChecked;
-	}, 1);
+    setTimeout(function() {    
+        var allChecked = true;
+        $('tbody input[type="checkbox"]').each(function() {
+            if(!this.checked) {
+                allChecked = false;
+            }
+        });
+        
+        $('th input.checkall')[0].checked = allChecked;
+    }, 1);
 });
 
 //listen to remove restore
 $('th input.checkall').click(function() {
-	var checked = this.checked;
-	$('tbody input[type="checkbox"]').each(function() {
-		this.checked = checked;
-	});
+    var checked = this.checked;
+    $('tbody input[type="checkbox"]').each(function() {
+        this.checked = checked;
+    });
 });
 </script>

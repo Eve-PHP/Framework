@@ -174,6 +174,7 @@ class Database extends \Eve\Framework\Base
 		foreach($this->schema['fields'] as $name => $field) {
 			$line = array('`'.$name.'`');
 			switch($field['type']) {
+				case 'integer':
 				case 'int':
 					$line[] = 'int(10)';
 					break;
@@ -183,6 +184,8 @@ class Database extends \Eve\Framework\Base
 				case 'string':
 					$line[] = 'varchar(255)';
 					break;
+				case 'small':
+				case 'bool':
 				case 'boolean':
 					$line[] = 'int(1) unsigned';
 					break;
@@ -198,7 +201,7 @@ class Database extends \Eve\Framework\Base
 				$line[] = 'NOT NULL';
 			}
 			
-			if(isset($field['default'])) {
+			if(isset($field['default']) && $field['type'] !== 'datetime') {
 				$line[] = 'DEFAULT '.$field['default'];
 			} else if(!$field['required']) {
 				$line[] = 'DEFAULT NULL';

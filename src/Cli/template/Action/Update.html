@@ -60,7 +60,7 @@ use Eve\\Framework\\Action\\Html;
  */
 class Update extends Html 
 {
-    const FAIL_400 = 'There are some errors on the form.';
+    const FAIL_406 = 'There are some errors on the form.';
     const FAIL_401 = 'You do not have permissions to update.';
     const FAIL_404 = '{{singular}} does not exist';
     const SUCCESS_200 = '{{singular}} successfully updated!';
@@ -145,7 +145,7 @@ class Update extends Html
             return $this->check($data);
         }
         
-        $this->body = $row;
+        $this->body['item'] = $row;
         
         //NOTE: add anything extra to body here
         
@@ -163,29 +163,51 @@ class Update extends Html
     {
         //-----------------------//
         // 1. Get Data
-        $data = array_merge($data, $this->request->get('post'));
+        $data = array('item' => array_merge($data, $this->request->get('post')));
         
+        {{#loop fields}}{{#when value.field.[0] '==' 'checkbox'}}{{#if value.options}}
+        //merge {{key}}
+        if(isset($data['item']['{{key}}'])
+            && is_array($data['item']['{{key}}'])
+        ) {
+            $data['item']['{{key}}'] = implode(',', $data['item']['{{key}}']);
+        }
+        
+        {{/if}}{{/when}}{{#when value.field.[0] '===' 'date'}}
+        if(isset($data['item']['{{key}}']) 
+            && !strtotime($data['item']['{{key}}'])
+        ) {
+            $data['item']['{{key}}'] = null;
+        }
+        {{/when}}{{/loop}}
         //-----------------------//
         //2. Validate
         $errors = eve()
             ->model('{{name}}')
             ->update()
-            ->errors($data);
+            ->errors($data['item']);
         
         //if there are errors
         if(!empty($errors)) {
             return $this->fail(
-                self::FAIL_400, 
+                self::FAIL_406, 
                 $errors, 
-                $item);
+                $data['item']);
         }
         
         //-----------------------//
         //3. Process
-        $results = eve()
-            ->job('{{name}}-update')
-            ->setData($data)
-            ->run();
+        try {
+            $results = eve()
+                ->job('{{name}}-update')
+                ->setData($data['item'])
+                ->run();
+        } catch(\Exception $e) {
+            return $this->fail(
+                $e->getMessage(), 
+                array(), 
+                $data['item']);
+        }
         
         //NOTE: do something with results here
         

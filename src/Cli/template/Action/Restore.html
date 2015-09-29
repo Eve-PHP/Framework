@@ -60,7 +60,7 @@ use Eve\\Framework\\Action\\Html;
  */
 class Restore extends Html 
 {
-    const FAIL_400 = 'No ID Provided';
+    const FAIL_406 = 'No ID Provided';
     const FAIL_401 = 'You do not have permissions to restore';
     const FAIL_404 = '{{singular}} does not exist';
     const SUCCESS_200 = '{{singular}} successfully restored!';
@@ -117,7 +117,7 @@ class Restore extends Html
         //if there are errors
         if(!empty($errors)) {
             return $this->fail(
-                self::FAIL_400, 
+                self::FAIL_406, 
                 '/{{name}}/search');
         }
         
@@ -152,10 +152,16 @@ class Restore extends Html
         
         //-----------------------//
         // 3. Process
-        $results = eve()
-            ->job('{{name}}-restore')
-            ->setData($data)
-            ->run();
+        try {
+            $results = eve()
+                ->job('{{name}}-restore')
+                ->setData($data)
+                ->run();
+        } catch(\Exception $e) {
+            return $this->fail(
+                $e->getMessage(),
+                '/{{name}}/search');
+        }
         
         //NOTE: do something with results here
         

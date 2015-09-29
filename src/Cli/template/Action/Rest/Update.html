@@ -64,7 +64,7 @@ use Eve\\Framework\\Action\\Json;
  */
 class Update extends Json 
 {
-    const FAIL_400 = 'Invalid Data';
+    const FAIL_406 = 'Invalid Data';
     const FAIL_401 = 'Invalid Permissions';
     const FAIL_404 = 'Not Found';
 
@@ -112,6 +112,15 @@ class Update extends Json
         $data['{{permissions}}_id'] = $source;
         {{/if}}
         
+        {{#loop fields}}{{#when value.field.[0] '==' 'checkbox'}}{{#if value.options}}
+        //merge {{key}}
+        if(isset($data['{{key}}'])
+            && is_array($data['{{key}}'])
+        ) {
+            $data['{{key}}'] = implode(',', $data['{{key}}']);
+        }
+        
+        {{/if}}{{/when}}{{/loop}}
         //-----------------------//
         // 2. Validate
         //check fields
@@ -123,7 +132,7 @@ class Update extends Json
         //if there are errors
         if(!empty($errors)) {
             return $this->fail(
-                self::FAIL_400, 
+                self::FAIL_406, 
                 $errors);
         }
         
@@ -154,11 +163,15 @@ class Update extends Json
         
         //-----------------------//
         // 3. Process
-       $results = eve()
-            ->job('{{name}}-update')
-            ->setData($data)
-            ->run();
-
+        try {
+            $results = eve()
+                ->job('{{name}}-update')
+                ->setData($data)
+                ->run();
+        } catch(\Exception $e) {
+            return $this->fail($e->getMessage());
+        }
+       
         return $this->success($results);
     }
 }

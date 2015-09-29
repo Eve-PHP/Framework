@@ -17,7 +17,7 @@ namespace Eve\Framework\Model;
 class Base extends \Eve\Framework\Base 
 {
 	
-	const FAIL_400 = 'Invalid Parameters';
+	const FAIL_406 = 'Invalid Parameters';
 	
 	//basic
 	const INVALID_ID = 'Invalid ID';

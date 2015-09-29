@@ -60,7 +60,8 @@ use Eve\\Framework\\Action\\Html;
  */
 class Create extends Html 
 {
-    const FAIL_400 = 'There are some errors on the form.';
+    const FAIL_401 = 'Invalid Permissions';
+    const FAIL_406 = 'There are some errors on the form.';
     const SUCCESS_200 = '{{singular}} successfully created!';
 
     protected $title = 'Create {{singular}}';
@@ -72,10 +73,26 @@ class Create extends Html
      */
     public function render() 
     {
+        {{#if permissions}}
+        //if no {{permissions}}_id
+        if(!isset($_SESSION['me']['{{permissions}}_id'])) {
+            //permission check failed
+            return $this->fail(
+                self::FAIL_401,
+                '/{{name}}/search');
+        }
+        
+        $data['{{permissions}}_id'] = $_SESSION['me']['{{permissions}}_id'];
+        {{/if}}
+        
         //if it's a post
         if(!empty($_POST)) {
-            return $this->check();
+            return $this->check($data);
         }
+        
+        {{#loop fields}}{{#if value.default}}
+        $this->body['item']['{{key}}'] = {{value.default}};
+        {{/if}}{{/loop}}
         
         //NOTE: add anything extra to body here
         
@@ -86,36 +103,59 @@ class Create extends Html
     /**
      * When the form is submitted
      *
+     * @param array
      * @return void
      */
-    protected function check() 
+    protected function check($data) 
     {
         //-----------------------//
         // 1. Get Data
-        $data = $this->request->get('post');
+        $data = array('item' => array_merge($data, $this->request->get('post')));
         
+        {{#loop fields}}{{#when value.field.[0] '==' 'checkbox'}}{{#if value.options}}
+        //merge {{key}}
+        if(isset($data['item']['{{key}}'])
+            && is_array($data['item']['{{key}}'])
+        ) {
+            $data['item']['{{key}}'] = implode(',', $data['item']['{{key}}']);
+        }
+        
+        {{/if}}{{/when}}{{#when value.field.[0] '===' 'date'}}
+        if(isset($data['item']['{{key}}']) 
+            && !strtotime($data['item']['{{key}}'])
+        ) {
+            $data['item']['{{key}}'] = null;
+        }
+        {{/when}}{{/loop}}
         //-----------------------//
         // 2. Validate
         //check fields
         $errors = eve()
             ->model('{{name}}')
             ->create()
-            ->errors($data);
+            ->errors($data['item']);
         
         //if there are errors
         if(!empty($errors)) {
             return $this->fail(
-                self::FAIL_400, 
+                self::FAIL_406, 
                 $errors, 
-                $data);
+                $data['item']);
         }
         
         //-----------------------//
         // 3. Process
-        $results = eve()
-            ->job('{{name}}-create')
-            ->setData($data)
-            ->run();
+        try {
+            $results = eve()
+                ->job('{{name}}-create')
+                ->setData($data['item'])
+                ->run();
+        } catch(\Exception $e) {
+            return $this->fail(
+                $e->getMessage(), 
+                array(), 
+                $data['item']);
+        }
         
         //NOTE: do something with results here
         

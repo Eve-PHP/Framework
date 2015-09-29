@@ -64,7 +64,7 @@ use Eve\\Framework\\Action\\Json;
  */
 class Remove extends Json 
 {
-    const FAIL_400 = 'Invalid Data';
+    const FAIL_406 = 'Invalid Data';
     const FAIL_401 = 'Invalid Permissions';
     const FAIL_404 = 'Not Found';
 
@@ -117,7 +117,7 @@ class Remove extends Json
         //if there are errors
         if(!empty($errors)) {
             return $this->fail(
-                self::FAIL_400, 
+                self::FAIL_406, 
                 $errors);
         }
         
@@ -148,11 +148,15 @@ class Remove extends Json
         
         //-----------------------//
         // 3. Process
-        eve()
-            ->job('{{name}}-remove')
-            ->setData($data)
-            ->run();
-           
+        try {
+            eve()
+                ->job('{{name}}-remove')
+                ->setData($data)
+                ->run();
+        } catch(\Exception $e) {
+            return $this->fail($e->getMessage());
+        }
+        
         return $this->success();
     }
 }

@@ -64,7 +64,8 @@ use Eve\\Framework\\Action\\Json;
  */
 class Create extends Json 
 {
-    const FAIL_400 = 'Invalid Data';
+    const FAIL_401 = 'Invalid Permissions';
+    const FAIL_406 = 'Invalid Data';
     
     /**
      * Main action call
@@ -77,6 +78,26 @@ class Create extends Json
         // 1. Get Data
         $data = $this->request->get('post');
         
+        {{#loop fields}}{{#when value.field.[0] '==' 'checkbox'}}{{#if value.options}}
+        //merge {{key}}
+        if(isset($data['{{key}}'])
+            && is_array($data['{{key}}'])
+        ) {
+            $data['{{key}}'] = implode(',', $data['{{key}}']);
+        }
+        
+        {{/if}}{{/when}}{{/loop}}
+        {{#if permissions}}
+        //if no {{permissions}}_id
+        if(!$this->request->isKey('source', '{{permissions}}_id')) {
+            //permission check failed
+            return $this->fail(self::FAIL_401);
+        }
+        
+        $source = $this->request->get('source', '{{permissions}}_id');
+        $data['{{permissions}}_id'] = $source;
+        {{/if}}
+        
         //-----------------------//
         // 2. Validate
         //check fields
@@ -88,17 +109,21 @@ class Create extends Json
         //if there are errors
         if(!empty($errors)) {
             return $this->fail(
-                self::FAIL_400, 
+                self::FAIL_406, 
                 $errors);
         }
         
         //-----------------------//
         // 3. Process
-        $results = eve()
-            ->job('{{name}}-create')
-            ->setData($data)
-            ->run();
-
+        try {
+            $results = eve()
+                ->job('{{name}}-create')
+                ->setData($data)
+                ->run();
+        } catch(\Exception $e) {
+            return $this->fail($e->getMessage());
+        }
+        
         return $this->success($results);
     }
 }

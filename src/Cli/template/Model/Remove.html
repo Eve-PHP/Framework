@@ -64,7 +64,7 @@ class Remove extends Base
     {
         //prevent uncatchable error
         if(count($this->errors($data))) {
-            throw new Exception(self::FAIL_400);
+            throw new Exception(self::FAIL_406);
         }
         
         //prepare

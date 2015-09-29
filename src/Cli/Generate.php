@@ -303,6 +303,10 @@ class Generate extends \Eve\Framework\Base
 			'required' => false
 		);
 		
+		if(isset($field['encoding'])) {
+			$normal['encoding'] = $field['encoding'];
+		}
+		
 		if(isset($field['type'])) {
 			$normal['type'] = $field['type'];
 		}
@@ -402,14 +406,41 @@ class Generate extends \Eve\Framework\Base
 				$normal['options'][] = $option;
 			}
 			
-			$valid = array();
-			foreach($normal['options'] as $option) {
-				$valid[] = $option['value'];
+			if($field['field'] !== 'checkbox') {
+				$valid = array();
+				foreach($normal['options'] as $option) {
+					$valid[] = $option['value'];
+				}
+				
+				if($normal['type'] !== 'file') {
+					$normal['valid'][] = array('one', $valid);
+				}
 			}
-			
-			if($normal['type'] !== 'file') {
-				$normal['valid'][] = array('one', $valid);
-			}
+		}
+		
+		$validKeys = array();
+		
+		foreach($normal['valid'] as $check) {
+			$validKeys[] = $check[0];
+		}
+		
+		//some types should imply validation
+		if(in_array($normal['type'], array(
+			'bool', 
+			'date',
+			'float', 
+			'int', 
+			'email', 
+			'url', 
+			'small'))
+			&& !in_array($normal['type'], $validKeys)
+		) {
+			$normal['valid'][] = array($normal['type']);
+		}
+		
+		//datetime as well
+		if($normal['type'] === 'datetime' && !in_array('date', $validKeys)) {
+			$normal['valid'][] = array('date');
 		}
 		
 		return $normal;
