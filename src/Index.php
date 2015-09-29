@@ -107,6 +107,11 @@ namespace Eve\Framework
          */
         public function defaultDatabases(array $databases = null) 
         {
+			if(!$databases && strpos($_SERVER['HTTP_HOST'], 'testsuites') !== false) {
+				$test = $this->settings('test');
+				$databases = $test['database'];
+			}
+			
 			if(!$databases) {
             	$databases = $this->settings('databases');
 			}
