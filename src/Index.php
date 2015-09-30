@@ -68,8 +68,6 @@ namespace Eve\Framework
 			if($namespace) {
 				$this->setNamespace($namespace);
 			}
-			
-			parent::__construct();
 		}
 		
 		/**
