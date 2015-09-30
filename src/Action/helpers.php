@@ -9,6 +9,24 @@ return array(
 		return eve()->translate((string) $key, $args);
 	},
 	
+	
+	'root' => function($absolute = false) {
+		$root = eve()->rootUrl;
+		
+		if($absolute) {
+			$protocol = 'http://';
+			if(isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') {
+				$protocol = 'https://';
+			} else if($_SERVER['SERVER_PORT'] === 443) {
+				$protocol = 'https://';
+			}
+			
+			$root = $protocol . $_SERVER['HTTP_HOST'] . $root;
+		}
+		
+		return $root;
+	},
+	
 	//registry
 	'registry' => function() {
 		$args = func_get_args();

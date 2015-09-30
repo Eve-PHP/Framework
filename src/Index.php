@@ -42,6 +42,7 @@ namespace Eve\Framework
 		const NO_MODEL = 'No Model: %s Found';
 		const NO_BLOCK = 'No Block: %s Found';
         
+		public $rootUrl = null;
 		public $rootPath = null;
 		public $rootNameSpace = null;
         public $defaultDatabase = null;
@@ -55,14 +56,22 @@ namespace Eve\Framework
 		 * @param string
 		 * @return void
 		 */
-		public function __construct($root = null, $namespace = null)
-		{
+		public function __construct(
+			$rootPath = null, 
+			$namespace = null,
+			$rootUrl = ''
+		) {
 			Argument::i()
 				->test(1, 'string', 'null')	
-				->test(2, 'string', 'null');
-				
-			if($root) {
-				$this->setRoot($root);
+				->test(2, 'string', 'null')
+				->test(3, 'string');
+			
+			if($rootPath) {
+				$this->setRootPath($rootPath);
+			}
+			
+			if($rootUrl) {
+				$this->setRootUrl($rootUrl);
 			}
 			
 			if($namespace) {
@@ -345,7 +354,9 @@ namespace Eve\Framework
 				$root = $this->registry()->get('path', 'action');
 				
 				$path = $request['path']['string'];
-				$array = $request['path']['array'];
+				$path = substr($path, strlen($this->rootUrl));
+				
+				$array = explode('/', $path);
 				
 				$variables = array();
 				$action = null;
@@ -577,6 +588,27 @@ namespace Eve\Framework
                 $task,
                 $data)->setApplication(eve()->rootNameSpace);
         }
+	
+		/**
+		 * Browser redirect. We are overloading this
+		 * to add the root url
+		 *
+		 * @param string
+		 * @return mixed
+		 */
+		public function redirect($path) 
+		{
+			//if it starts with a /
+			//and does not start with the root url
+			if(strpos($path, '/') === 0 
+				&& strpos($path, $this->rootUrl) !== 0
+			) {
+				//add the root url
+				$path = $this->rootUrl . $path;
+			}
+			
+			return parent::redirect($path);
+		}
         
         /**
          * Returns the current Registry
@@ -613,11 +645,31 @@ namespace Eve\Framework
          * @param string
          * @return this
          */
-        public function setRoot($root) 
+        public function setRootPath($rootPath) 
         {
             Argument::i()->test(1, 'string');
             
-			$this->rootPath = $root;
+			$this->rootPath = $rootPath;
+			
+			return $this;
+        }
+        
+		/**
+         * Set the root URL before using
+         *
+         * @param string
+         * @return this
+         */
+        public function setRootUrl($rootUrl) 
+        {
+            Argument::i()->test(1, 'string');
+            
+			//normalize the url
+			if(strpos($rootUrl, '/') !== 0) {
+				$rootUrl = '/'.$rootUrl;
+			}
+			
+			$this->rootUrl = $rootUrl;
 			
 			return $this;
         }
