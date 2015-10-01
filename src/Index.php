@@ -59,12 +59,12 @@ namespace Eve\Framework
 		public function __construct(
 			$rootPath = null, 
 			$namespace = null,
-			$rootUrl = ''
+			$rootUrl = null
 		) {
 			Argument::i()
 				->test(1, 'string', 'null')	
 				->test(2, 'string', 'null')
-				->test(3, 'string');
+				->test(3, 'string', 'null');
 			
 			if($rootPath) {
 				$this->setRootPath($rootPath);
@@ -355,7 +355,6 @@ namespace Eve\Framework
 				
 				$path = $request['path']['string'];
 				$path = substr($path, strlen($this->rootUrl));
-				
 				$array = explode('/', $path);
 				
 				$variables = array();
@@ -598,16 +597,49 @@ namespace Eve\Framework
 		 */
 		public function redirect($path) 
 		{
+			$args = func_get_args();
+			$root = !isset($args[1]) || !$args[1];
+			
 			//if it starts with a /
 			//and does not start with the root url
-			if(strpos($path, '/') === 0 
-				&& strpos($path, $this->rootUrl) !== 0
+			if($root
+				&& strlen($this->rootUrl) > 0
+				&& strpos($path, '/') === 0 
+				&& strpos($path, $this->rootUrl.'/') !== 0
 			) {
 				//add the root url
-				$path = $this->rootUrl . $path;
+				$path = str_replace('//', '/', $this->rootUrl.'/'.$path);
 			}
 			
 			return parent::redirect($path);
+		}
+		
+		/**
+		 * Adds routing middleware
+		 *
+		 * @param string
+		 * @param string
+		 * @param callable
+		 * @return this
+		 */
+		public function route($method, $path, $callback) 
+		{
+			Argument::i()
+				//argument 1 should be a string	
+				->test(1, 'string')
+				//argument 2 should be a string	
+				->test(2, 'string')
+				//argument 3 should be callable	
+				->test(3, 'callable');
+			
+			//add the root url
+			if(strlen($this->rootUrl) > 0) {
+				if(strpos($path, $this->rootUrl.'/') !== 0) {
+					$path = str_replace('//', '/', $this->rootUrl.'/'.$path);
+				}
+			}
+			
+			return parent::route($method, $path, $callback);
 		}
         
         /**
