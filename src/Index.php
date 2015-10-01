@@ -44,10 +44,12 @@ namespace Eve\Framework
         
 		public $rootUrl = null;
 		public $rootPath = null;
-		public $rootNameSpace = null;
-        public $defaultDatabase = null;
+		public $defaultDatabase = null;
         public $defaultRegistry = null;
         public $defaultLanguage = null;
+        
+		protected $rootNameSpace = null;
+		protected $routeNameSpace = null;
         
 		/**
 		 * Set the root and namespace
@@ -75,7 +77,7 @@ namespace Eve\Framework
 			}
 			
 			if($namespace) {
-				$this->setNamespace($namespace);
+				$this->setRootNamespace($namespace);
 			}
 		}
 		
@@ -257,25 +259,33 @@ namespace Eve\Framework
         {
             $root = $this->rootPath;
             
-			$this->registry()
-                //root paths
-                ->set('path', 'root', $root)
-                
-                //paths that are dynamic and should not be committed
-                ->set('path', 'settings', $root.'/settings')
-                ->set('path', 'upload', $root.'/upload')
-                ->set('path', 'vendor', $root.'/vendor')
+			if(!$this->registry()->isKey('path', 'root')) {
+				$this->registry()->set('path', 'root', $root);
+			}
+			
+			$root = $this->registry()->get('path', 'root');
+			
+			$paths = array(
+				'settings',
+                'upload',
+                'vendor',
                 
                 //PHP folders
-                ->set('path', 'action', $root.'/Action')
-                ->set('path', 'event', $root.'/Event')
-                ->set('path', 'job', $root.'/Job')
-                ->set('path', 'model', $root.'/Model')
+                'Action',
+                'Event',
+                'Job',
+                'Model',
                 
                 //Other Folders
-                ->set('path', 'template', $root.'/template')
-                ->set('path', 'public', $root.'/public');
-            
+                'template',
+                'public');
+			
+			foreach($paths as $path) {
+				if(!$this->registry()->isKey('path', strtolower($path))) {
+					$this->registry()->set('path', strtolower($path), $root . '/' . $path);
+				}
+			}
+			
             return $this;
         }
         
@@ -288,11 +298,8 @@ namespace Eve\Framework
         public function defaultResponse() 
         {
 			$this->all('**', function($request, $response) {
-				$request->set('variables', $request['path']['variables']);
-				
-				//if there is already a body
-				if($response->isKey('body')
-				|| !$response->isKey('action')) {
+				//if there is already a body or not an action
+				if($response->isKey('body') || !$response->isKey('action')) {
 					//do nothing
 					return;
 				}
@@ -340,17 +347,24 @@ namespace Eve\Framework
          *
          * @return this
          */
-		public function defaultRouting()
+		public function defaultRouting($routeNameSpace = null)
 		{
 			//just call the parent
-			$this->all('**', function($request, $response) {
-				//if there is already a body
-				if($response->isKey('body')) {
+			$this->all('**', function($request, $response) use ($routeNameSpace) {
+				//if there is already a body or action
+				if($response->isKey('body') || $request->isKey('action')) {
 					//do nothing
 					return;
 				}
 				
-				$prefix = $this->rootNameSpace.'\\Action';
+				//determine the route namespace
+				$routeNameSpace = $this->routeNameSpace;
+				
+				if(!$routeNameSpace) {
+					$routeNameSpace = $this->rootNameSpace;
+				}
+				
+				$prefix = $routeNameSpace . '\\Action';
 				$root = $this->registry()->get('path', 'action');
 				
 				$path = $request['path']['string'];
@@ -409,8 +423,10 @@ namespace Eve\Framework
 					}
 				}
 				
-				//set the reuqest
-				$request->set('path', 'variables', $variables);
+				//set the variables if it has not been set
+				if(!$request->isKey('variables')) {
+					$request->set('variables', $variables);
+				}
 				
 				//if we have an action
 				if($action) {
@@ -465,6 +481,28 @@ namespace Eve\Framework
             }
             
             return $this->registry()->get('database', $key);
+        }
+        
+		/**
+         * Returns the root namespace
+         *
+         * @param string
+         * @return this
+         */
+        public function getRootNamespace() 
+        {
+			return $this->rootNameSpace;
+        }
+        
+		/**
+         * Returns the root namespace
+         *
+         * @param string
+         * @return this
+         */
+        public function getRouteNamespace() 
+        {
+			return $this->routeNameSpace;
         }
 		
         /**
@@ -657,16 +695,31 @@ namespace Eve\Framework
         }
         
 		/**
-         * Set the namespace before using
+         * Set the root namespace before using
          *
          * @param string
          * @return this
          */
-        public function setNamespace($namespace) 
+        public function setRootNamespace($namespace) 
         {
             Argument::i()->test(1, 'string');
             
 			$this->rootNameSpace = '\\'.$namespace;
+			
+			return $this;
+        }
+        
+		/**
+         * Set the route namespace before using
+         *
+         * @param string
+         * @return this
+         */
+        public function setRouteNamespace($namespace) 
+        {
+            Argument::i()->test(1, 'string');
+            
+			$this->routeNameSpace = '\\'.$namespace;
 			
 			return $this;
         }

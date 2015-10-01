@@ -42,27 +42,6 @@ abstract class Html extends Base
 	protected $body = array();
     protected $foot = array();
     
-	public function __construct() 
-	{
-		//get the template path
-		$path = eve()->path('template');
-		
-		//make a new loader
-		$loader = new HandlebarsLoader($path, array('extension' => self::TEMPLATE_EXTENSION));
-		
-		//create engine
-		$this->engine = new Handlebars(array(
-			'loader' => $loader,
-			'partials_loader' => $loader));
-		
-		//add helpers
-		$helpers = include(__DIR__.'/helpers.php');
-		
-		foreach($helpers as $name => $callback) {
-			$this->engine->registerHelper($name, $callback);
-		}
-	}
-    
     /**
      * Transform block to string
      *
@@ -131,7 +110,39 @@ abstract class Html extends Base
 		
         return $this->build($this->getTemplate());
     }
-    
+	
+	/**
+	 * Returns the default template engine
+	 *
+	 * @return Handlebars
+	 */
+	public function getEngine()
+	{
+		if($this->engine) {
+			return $this->engine;
+		}
+		
+		//get the template path
+		$path = eve()->path('template');
+		
+		//make a new loader
+		$loader = new HandlebarsLoader($path, array('extension' => self::TEMPLATE_EXTENSION));
+		
+		//create engine
+		$this->engine = new Handlebars(array(
+			'loader' => $loader,
+			'partials_loader' => $loader));
+		
+		//add helpers
+		$helpers = include(__DIR__.'/helpers.php');
+		
+		foreach($helpers as $name => $callback) {
+			$this->engine->registerHelper($name, $callback);
+		}
+		
+		return $this->engine;
+	}
+	
     /**
      * Returns file path used for templating
      *
@@ -141,16 +152,19 @@ abstract class Html extends Base
     {
 		//if no template
         if(!$this->template) {
-			//load the class
-            $this->template = eve('string')
-				// \Sample\Namespace\Action\Can\Be\Anywhere
-				->set('\\'.get_class($this))
-				// \Action\Can\Be\Anywhere
-				->substr(strlen(eve()->rootNameSpace))
-				// /Action/Can/Be/Anywhere
-                ->str_replace('\\', DIRECTORY_SEPARATOR)
+			//Action folder and template folder 
+			//are in the same directoryby default
+			
+			// Sample\Namespace\Action\Can\Be\Anywhere
+			$index = 'Action\\';
+			$root = strpos(get_class($this), $index);
+			$root += strlen($index);
+			
+			$this->template = eve('string')
+				// \Can\Be\Anywhere
+				->set('\\'.substr(get_class($this), $root))
 				// /Can/Be/Anywhere
-				->substr(7)
+                ->str_replace('\\', DIRECTORY_SEPARATOR)
                 // /can/be/anywhere
 				->strtolower()
 				// jic
@@ -183,7 +197,7 @@ abstract class Html extends Base
             eve()->trigger('template-'.$trigger, $file, $data);
         }
         
-		return $this->engine->render($file, $data);
+		return $this->getEngine()->render($file, $data);
     }
     
     /**
