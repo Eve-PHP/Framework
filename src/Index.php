@@ -177,6 +177,10 @@ namespace Eve\Framework
 			//save it for later
 			$this->registry()->set('config', $config);
 			
+			if(!isset($config['debug_mode'])) {
+				$config['debug_mode'] = E_ALL;
+			}
+			
 			//if debug mode is on
 			if(!$config['debug_mode']) {
 				//stop argument testing
@@ -403,6 +407,11 @@ namespace Eve\Framework
 				
 				if(!$action || !class_exists($action)) {
 					$defaultAction = $this->registry()->get('config', 'default_action');
+					
+					if(!$defaultAction) {
+						$defaultAction = 'index';
+					}
+					
 					$defaultAction = ucwords($defaultAction);
 					
 					//try to see if it's callable
@@ -554,6 +563,10 @@ namespace Eve\Framework
             if(is_null($this->defaultLanguage)) {
                 $config = $this->settings('config');
                 
+				if(!isset($config['i18n'])) {
+					$config['i18n'] = 'en_US';
+				}
+				
                 $settings = $this->path('settings');
                 $path = $settings.'/i18n/'.$config['i18n'].'.php';
                 
