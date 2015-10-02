@@ -263,6 +263,86 @@ class Update extends Base
             $errors['{{../key}}'] = self::INVALID_NUMBER;
         }
         {{/when}}
+        {{#when value.[0] '===' 'gt'}}
+        
+        // {{../key}} - greater than
+        if(isset($data['{{../key}}']) 
+        	&& is_numeric($data['{{../key}}'])
+            && !($data['{{../key}}'] > {{value.[1]}})
+        ) {
+            $errors['{{../key}}'] = sprintf(self::INVALID_GT, {{value.[1]}});
+        }
+        {{/when}}
+        {{#when value.[0] '===' 'gte'}}
+        
+        // {{../key}} - greater than or equal
+        if(isset($data['{{../key}}']) 
+        	&& is_numeric($data['{{../key}}'])
+            && !($data['{{../key}}'] >= {{value.[1]}})
+        ) {
+            $errors['{{../key}}'] = sprintf(self::INVALID_GTE, {{value.[1]}});
+        }
+        {{/when}}
+        {{#when value.[0] '===' 'lt'}}
+        
+        // {{../key}} - less than
+        if(isset($data['{{../key}}']) 
+        	&& is_numeric($data['{{../key}}'])
+            && !($data['{{../key}}'] < {{value.[1]}})
+        ) {
+            $errors['{{../key}}'] = sprintf(self::INVALID_LT, {{value.[1]}});
+        }
+        {{/when}}
+        {{#when value.[0] '===' 'lte'}}
+        
+        // {{../key}} - less than or equal
+        if(isset($data['{{../key}}']) 
+        	&& is_numeric($data['{{../key}}'])
+            && !($data['{{../key}}'] <= {{value.[1]}})
+        ) {
+            $errors['{{../key}}'] = sprintf(self::INVALID_LTE, {{value.[1]}});
+        }
+        {{/when}}
+        {{#when value.[0] '===' 'sgt'}}
+        
+        // {{../key}} - length greater than
+        if(isset($data['{{../key}}']) 
+        	&& is_string($data['{{../key}}'])
+            && !(strlen($data['{{../key}}']) > {{value.[1]}})
+        ) {
+            $errors['{{../key}}'] = sprintf(self::INVALID_SGT, {{value.[1]}});
+        }
+        {{/when}}
+        {{#when value.[0] '===' 'sgte'}}
+        
+        // {{../key}} - length greater than or equal
+        if(isset($data['{{../key}}']) 
+        	&& is_string($data['{{../key}}'])
+            && !(strlen($data['{{../key}}']) >= {{value.[1]}})
+        ) {
+            $errors['{{../key}}'] = sprintf(self::INVALID_SGTE, {{value.[1]}});
+        }
+        {{/when}}
+        {{#when value.[0] '===' 'slt'}}
+        
+        // {{../key}} - length less than
+        if(isset($data['{{../key}}']) 
+        	&& is_string($data['{{../key}}'])
+            && !(strlen($data['{{../key}}']) < {{value.[1]}})
+        ) {
+            $errors['{{../key}}'] = sprintf(self::INVALID_SLT, {{value.[1]}});
+        }
+        {{/when}}
+        {{#when value.[0] '===' 'slte'}}
+        
+        // {{../key}} - length less than or equal
+        if(isset($data['{{../key}}']) 
+        	&& is_string($data['{{../key}}'])
+            && !(strlen($data['{{../key}}']) <= {{value.[1]}})
+        ) {
+            $errors['{{../key}}'] = sprintf(self::INVALID_SLTE, {{value.[1]}});
+        }
+        {{/when}}
         {{/loop}}
         {{/loop}}
         

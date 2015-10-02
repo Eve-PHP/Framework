@@ -51,6 +51,17 @@ class Base extends \Eve\Framework\Base
 	const INVALID_NUMBER = 'Should be a valid number';
 	const INVALID_PRICE = 'Should be a valid price';
 	
+	//comparisons
+	const INVALID_GT = 'Should be greater than %s';
+	const INVALID_GTE = 'Should be greater than or equal to %s';
+	const INVALID_LT = 'Should be less than %s';
+	const INVALID_LTE = 'Should be less than or equal to %s';
+	
+	const INVALID_SGT = 'Should be greater than %s letters';
+	const INVALID_SGTE = 'Should be greater than or equal to %s letters';
+	const INVALID_SLT = 'Should be less than %s letters';
+	const INVALID_SLTE = 'Should be less than or equal to %s letters';
+	
 	
 	/**
 	 * make everything into a string

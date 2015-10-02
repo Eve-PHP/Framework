@@ -102,7 +102,7 @@ abstract class Html extends Base
 		//if it's a string
 		if(is_string($errors)) {
 			//redirect will forcefully exit
-			eve()->redirect($errors);
+			return (string) eve()->redirect($errors);
 		}
 		
 		$this->body['errors'] = $errors;
@@ -228,7 +228,7 @@ abstract class Html extends Base
 		
 		if(is_string($results)) {
 			//redirect will forcefully exit
-			eve()->redirect($results);
+			return (string) eve()->redirect($results);
 		}
 		
 		if(!is_null($results)) {

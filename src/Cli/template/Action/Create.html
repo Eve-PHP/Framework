@@ -73,6 +73,7 @@ class Create extends Html
      */
     public function render() 
     {
+    	$data = array();
         {{#if permissions}}
         //if no {{permissions}}_id
         if(!isset($_SESSION['me']['{{permissions}}_id'])) {

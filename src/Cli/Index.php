@@ -84,4 +84,29 @@ class Index extends \Eve\Framework\Base
 		print sprintf("\033[33m%s\033[0m", '[eve] '.$message);
 		print PHP_EOL;
 	}
+	
+	/**
+	 * Queries the user for an 
+	 * input and returns the results
+	 *
+	 * @param string
+	 * @param string|null
+	 * @return string
+	 */
+	public static function input($question, $default = null) 
+	{
+		echo $question.': ';
+		$handle = fopen ('php://stdin', 'r');
+		
+		$answer = fgets($handle);
+		fclose($handle);
+		
+		$answer = trim($answer);
+		
+		if(!$answer) {
+			$answer = $default;
+		}
+		
+		return $answer;
+	}
 }
