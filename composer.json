@@ -44,7 +44,9 @@
     },
 	"autoload": {
         "psr-4": {
-			"Eve\\Framework\\": "/src"
+			"Eve\\Framework\\": "/src",
+			"Eve\\": "/../../../",
+			"OL\\": "/../../../"
 		},
 		"psr-0": {
             "Handlebars": "handlebars/"
