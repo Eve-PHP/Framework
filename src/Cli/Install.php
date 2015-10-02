@@ -53,7 +53,7 @@ class Install extends \Eve\Framework\Base
 		Index::info('Downloading files..');	
 		
 		$this('curl')
-			->setUrl('https://github.com/Openovate/Framework/archive/v4.zip')
+			->setUrl('https://github.com/Eve-PHP/Shade/archive/master.zip')
 			->setFile($this->file)
 			->setFollowLocation(true)
 			->send();
@@ -75,11 +75,11 @@ class Install extends \Eve\Framework\Base
 			
 			Index::info('Copying files..');
 			
-			$root = $this->cwd.'/tmp/Framework-4';
+			$root = $this->cwd.'/tmp/Shade-master';
 			$files = $this('folder', $root)->getFiles(null, true);
 			
 			foreach($files as $file) {
-				$destination = str_replace('/tmp/Framework-4', '', $file->get());
+				$destination = str_replace('/tmp/Shade-master', '', $file->get());
 				$folder = $this('file', $destination)->getFolder();
 				
 				if(!is_dir($folder)) {
@@ -110,7 +110,8 @@ class Install extends \Eve\Framework\Base
 		}
 		
 		$tmp->remove();
-		Index::success('framework installation complete!');
+		Index::warning('Please set the configs in the settings folder');
+		Index::success('Framework installation complete!');
 		
 		die(0);
 	}
