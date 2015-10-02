@@ -92,10 +92,14 @@ class Generate extends \Eve\Framework\Base
 		$file = $this->cwd.'/schema/'.$this->name.'.php';
 
 		if(!file_exists($file)) {
-			Index::error('Cannot find schema/' . $this->name . '.php');
+			$file = $this->cwd.'/'.$this->name.'.php';
+			
+			if(!file_exists($file)) {
+				Index::error('Cannot find /' . $this->name . '.php');
+			}
 		}
 		
-		$this->schema = include($this->cwd . '/schema/' . $this->name . '.php');
+		$this->schema = include($file);
 		
 		if(!is_array($this->schema)) {
 			Index::error('Schema is invalid.');
