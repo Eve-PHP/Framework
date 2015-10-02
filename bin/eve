@@ -22,4 +22,4 @@ $eveFrameworkCLI = function($cwd) {
     return Eve\Framework\Cli\Index::i($cwd);
 };
 
-$eveFrameworkCLI($_SERVER['PWD'])->run($argv);
+$eveFrameworkCLI(getcwd())->run($argv);
