@@ -31,7 +31,8 @@ class Help extends \Eve\Framework\Base
 	{
 		Index::info('Help Menu');
 		Index::info('- `eve generate <schema> <namespace>`     Generates files based on schema');
-		Index::info('- `eve database <schema> <namespace>`     Generates database table/s schema');
+		Index::info('- `eve database <schema>`                 Generates database table/s schema');
+		Index::info('- `eve install`                           Generates default framework files');
 		
 		die(0);
 	}

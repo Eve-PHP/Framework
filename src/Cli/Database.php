@@ -1,6 +1,6 @@
 <?php //-->
 
-//activated by: generate product
+//activated by: database product
 
 namespace Eve\Framework\Cli;
 
