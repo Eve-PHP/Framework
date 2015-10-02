@@ -6,7 +6,7 @@
  * distributed with this package.
  */
 
-namespace {{namespace}}\\Action\\{{capital name}};
+namespace {{page_namespace}}\\{{capital name}};
 
 use Eve\\Framework\\Action\\Html;
 
@@ -86,7 +86,7 @@ class Search extends Html
             //permission check failed
             return $this->fail(
                 self::FAIL_401,
-                '/login');
+                '{{url}}/login');
         }
         
         {{/if}}
@@ -197,7 +197,7 @@ class Search extends Html
         ) {
             return $this->fail(
                 self::FAIL_404,
-                '/{{name}}/search');
+                '{{url}}/{{name}}/search');
         }
         
         //-----------------------//
@@ -213,12 +213,12 @@ class Search extends Html
             } catch(\Exception $e) {
            		return $this->fail(
                     $e->getMessage(),
-                    '/{{name}}/search');
+                    '{{url}}/{{name}}/search');
             }
         }
         
         return $this->success(
             sprintf(self::SUCCESS_200, $data['action'].'d'), 
-            '/{{name}}/search');
+            '{{url}}/{{name}}/search');
     }
 }

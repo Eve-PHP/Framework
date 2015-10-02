@@ -6,7 +6,7 @@
  * distributed with this package.
  */
 
-namespace {{namespace}}\\Action\\{{capital name}};
+namespace {{page_namespace}}\\{{capital name}};
 
 use Eve\\Framework\\Action\\Html;
 
@@ -93,7 +93,7 @@ class Update extends Html
             //we might as we an fail it now
             return $this->fail(
                 self::FAIL_404,
-                '/{{name}}/search');
+                '{{url}}/{{name}}/search');
         }
         
         {{#if permissions}}
@@ -102,7 +102,7 @@ class Update extends Html
             //permission check failed
             return $this->fail(
                 self::FAIL_401,
-                '/{{name}}/search');
+                '{{url}}/{{name}}/search');
         }
         
         $data['{{permissions}}_id'] = $_SESSION['me']['{{permissions}}_id'];
@@ -122,7 +122,7 @@ class Update extends Html
         if(!$yes) {
             return $this->fail(
                 self::FAIL_401,
-                '/{{name}}/search');
+                '{{url}}/{{name}}/search');
         }
         {{/if}}
         //does it exist?
@@ -135,7 +135,7 @@ class Update extends Html
         if(!$row) {
             return $this->fail(
                 self::FAIL_404,
-                '/{{name}}/search');
+                '{{url}}/{{name}}/search');
         }
         
         //-----------------------//
@@ -213,6 +213,6 @@ class Update extends Html
         
         return $this->success(
             self::SUCCESS_200, 
-            '/{{name}}/search');
+            '{{url}}/{{name}}/search');
     }
 }

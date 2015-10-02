@@ -6,7 +6,7 @@
  * distributed with this package.
  */
 
-namespace {{namespace}}\\Action\\{{capital name}};
+namespace {{page_namespace}}\\{{capital name}};
 
 use Eve\\Framework\\Action\\Html;
 
@@ -91,7 +91,7 @@ class Remove extends Html
             //we might as we an fail it now
             return $this->fail(
                 self::FAIL_404, 
-                '/{{name}}/search');
+                '{{url}}/{{name}}/search');
         }
         
         {{#if permissions}}
@@ -100,7 +100,7 @@ class Remove extends Html
             //permission check failed
             return $this->fail(
                 self::FAIL_401,
-                '/{{name}}/search');
+                '{{url}}/{{name}}/search');
         }
         
         $data['{{permissions}}_id'] = $_SESSION['me']['{{permissions}}_id'];
@@ -118,7 +118,7 @@ class Remove extends Html
         if(!empty($errors)) {
             return $this->fail(
                 self::FAIL_406, 
-                '/{{name}}/search');
+                '{{url}}/{{name}}/search');
         }
         
         {{#if permissions}}
@@ -133,7 +133,7 @@ class Remove extends Html
         if(!$yes) {
             return $this->fail(
                 self::FAIL_401,
-                '/{{name}}/search');
+                '{{url}}/{{name}}/search');
         }
         {{else}}
         //does it exist?
@@ -146,7 +146,7 @@ class Remove extends Html
         if(!$total) {
            return $this->fail(
                self::FAIL_404,
-               '/{{name}}/search');
+               '{{url}}/{{name}}/search');
         }
         {{/if}}
         
@@ -160,13 +160,13 @@ class Remove extends Html
         } catch(\Exception $e) {
             return $this->fail(
                 $e->getMessage(),
-                '/{{name}}/search');
+                '{{url}}/{{name}}/search');
         }
         
         //NOTE: do something with results here
         
         return $this->success(
             self::SUCCESS_200, 
-            '/{{name}}/search');
+            '{{url}}/{{name}}/search');
     }
 }

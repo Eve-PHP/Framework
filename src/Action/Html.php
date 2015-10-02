@@ -126,7 +126,7 @@ abstract class Html extends Base
 		$path = eve()->path('template');
 		
 		//make a new loader
-		$loader = new HandlebarsLoader($path, array('extension' => self::TEMPLATE_EXTENSION));
+		$loader = new HandlebarsLoader($path, array('extension' => static::TEMPLATE_EXTENSION));
 		
 		//create engine
 		$this->engine = new Handlebars(array(
@@ -197,6 +197,18 @@ abstract class Html extends Base
             eve()->trigger('template-'.$trigger, $file, $data);
         }
         
+		$path = eve()->path('template');
+		
+		if(file_exists($path.$file.'.php') 
+			&& static::TEMPLATE_EXTENSION !== 'php'
+		) {
+			return eve('template')->set($data)->parsePHP($path.$file.'.php');
+		} else if(file_exists($path.$file.'.phtml') 
+			&& static::TEMPLATE_EXTENSION !== 'phtml'
+		) {
+			return eve('template')->set($data)->parsePHP($path.$file.'.phtml');
+		}
+		
 		return $this->getEngine()->render($file, $data);
     }
     

@@ -61,11 +61,32 @@ class Generate extends \Eve\Framework\Base
 		if(isset($args[2])) {
 			$this->namespace = $args[2];
 		} else {
-			$this->namespace = explode('/', $this->cwd);
-			$this->namespace = array_pop($this->namespace);
-			$this->namespace = ucwords($this->namespace);
 			
-			Index::warning('No namespace provided. Assumming it to be '.$this->namespace);
+			
+			if(file_exists($this->cwd.'/composer.json')) {
+				$json = $this('file', $this->cwd.'/composer.json')->getContent();
+				$json = json_decode($json, true);
+				
+				if(isset($json['autoload']['psr-4']) 
+					&& is_array($json['autoload']['psr-4'])
+				) {
+					foreach($json['autoload']['psr-4'] as $namespace => $path) {
+						if(strlen($path) === 0) {
+							$this->namespace = substr($namespace, 0, -1);
+							break;
+						}
+					}
+				}
+			}
+			
+			if(!$this->namespace) {
+				$this->namespace = '';
+				//$this->namespace = explode('/', $this->cwd);
+				//$this->namespace = array_pop($this->namespace);
+				//$this->namespace = ucwords($this->namespace);
+			}
+			
+			Index::warning('No namespace provided.');
 		}
 		
 		$file = $this->cwd.'/schema/'.$this->name.'.php';
@@ -101,199 +122,30 @@ class Generate extends \Eve\Framework\Base
 		if(isset($this->schema['model'])
 			&& is_array($this->schema['model'])
 		) {
-			if(!is_dir($this->cwd . '/Model')) {
-				mkdir($this->cwd . '/Model');
-			}
-			
-			if(!is_dir($this->cwd . '/Model/' . ucwords($this->schema['name']))) {
-				mkdir($this->cwd . '/Model/' . ucwords($this->schema['name']));
-			}
-			
-			// For test Model
-			if(!is_dir($this->cwd . '/test/Model')) {
-				mkdir($this->cwd . '/test/Model');
-			}
-			
-			if(!is_dir($this->cwd . '/test/Model/' . ucwords($this->schema['name']))) {
-				mkdir($this->cwd . '/test/Model/' . ucwords($this->schema['name']));
-			}
-
-			// For test Job
-			if(!is_dir($this->cwd . '/test/Job')) {
-				mkdir($this->cwd . '/test/Job');
-			}
-			
-			if(!is_dir($this->cwd . '/test/Job/' . ucwords($this->schema['name']))) {
-				mkdir($this->cwd . '/test/Job/' . ucwords($this->schema['name']));
-			}
-			
-			foreach($this->schema['model'] as $action) {
-				$source = '/Model/' . ucwords($action) . '.html';
-				
-				if(!file_exists($this->source.$source)) {
-					Index::error(sprintf(
-						self::SKIP, 
-						'Model', 
-						ucwords($action)), 
-					false);
-					
-					continue;
-				}
-				
-				$destination = '/Model/' 
-					. ucwords($this->schema['name']) . '/' 
-					. ucwords($action) . '.php';
-				
-				$this->copy($source, $destination);
-				
-				//for test Model
-				$source = '/test/Model/' . ucwords($action) . '.html';
-				
-				if(!file_exists($this->source.$source)) {
-					Index::error(sprintf(
-						self::SKIP, 
-						'test/Model', 
-						ucwords($action)), 
-					false);
-					
-					continue;
-				}
-				
-				$destination = '/test/Model/' 
-					. ucwords($this->schema['name']) . '/' 
-					. ucwords($action) . '.php';
-				
-				$this->copy($source, $destination);
-
-				//for test Job
-				$source = '/test/Job/' . ucwords($action) . '.html';
-				
-				if(!file_exists($this->source.$source)) {
-					Index::error(sprintf(
-						self::SKIP, 
-						'test/Job', 
-						ucwords($action)), 
-					false);
-					
-					continue;
-				}
-				
-				$destination = '/test/Job/' 
-					. ucwords($this->schema['name']) . '/' 
-					. ucwords($action) . '.php';
-				
-				$this->copy($source, $destination);
-			}
-		}
-		
-		if(isset($this->schema['page'])
-			&& is_array($this->schema['page'])
-		) {
-			if(!is_dir($this->cwd . '/Action')) {
-				mkdir($this->cwd . '/Action');
-			}
-			
-			if(!is_dir($this->cwd . '/Action/' . ucwords($this->schema['name']))) {
-				mkdir($this->cwd . '/Action/' . ucwords($this->schema['name']));
-			}
-		
-			if(!is_dir($this->cwd . '/template')) {
-				mkdir($this->cwd . '/template');
-			}
-			
-			if(!is_dir($this->cwd . '/template/' . strtolower($this->schema['name']))) {
-				mkdir($this->cwd . '/template/' . strtolower($this->schema['name']));
-			}
-			
-			foreach($this->schema['page'] as $action) {
-				$source = '/Action/' . ucwords($action) . '.html';
-				
-				if(!file_exists($this->source.$source)) {
-					Index::error(sprintf(
-						self::SKIP, 
-						'Action', 
-						ucwords($action)), 
-					false);
-					
-					continue;
-				}
-				
-				$destination = '/Action/' 
-					. ucwords($this->schema['name']) . '/' 
-					. ucwords($action) . '.php';
-				
-				$this->copy($source, $destination);
-				
-				if(
-					!in_array(strtolower($action), 
-					array('create', 'update', 'search'))
-				) {
-					continue;
-				}
-				
-				$source = '/template/' . strtolower($action) . '.html';
-				
-				$destination = '/template/' 
-					. strtolower($this->schema['name']) . '/' 
-					. strtolower($action) . '.html';
-				
-				$this->copy($source, $destination);
-			}
-		}
-		
-		if(isset($this->schema['rest'])
-			&& is_array($this->schema['rest'])
-		) {
-			if(!is_dir($this->cwd . '/Action/Rest')) {
-				mkdir($this->cwd . '/Action/Rest');
-			}
-			
-			if(!is_dir($this->cwd . '/Action/Rest/' . ucwords($this->schema['name']))) {
-				mkdir($this->cwd . '/Action/Rest/' . ucwords($this->schema['name']));
-			}
-			
-			foreach($this->schema['rest'] as $action) {
-				$source = '/Action/Rest/' . ucwords($action) . '.html';
-				
-				if(!file_exists($this->source.$source)) {
-					Index::error(sprintf(
-						self::SKIP, 
-						'Action/Rest', 
-						ucwords($action)), 
-					false);
-					
-					continue;
-				}
-				
-				$destination = '/Action/Rest/' 
-					. ucwords($this->schema['name']) . '/' 
-					. ucwords($action) . '.php';
-				
-				$this->copy($source, $destination);
-			}
+			$this->generateModels();
+			$this->generateModelTests();
 		}
 		
 		if(isset($this->schema['job'])
 			&& is_array($this->schema['job'])
 		) {
-			if(!is_dir($this->cwd . '/Job')) {
-				mkdir($this->cwd . '/Job');
-			}
-			
-			if(!is_dir($this->cwd . '/Job/' . ucwords($this->schema['name']))) {
-				mkdir($this->cwd . '/Job/' . ucwords($this->schema['name']));
-			}
-			
-			foreach($this->schema['job'] as $action => $instructions) {
-				$source = '/Job.html';
-				
-				$destination = '/Job/' . ucwords($this->schema['name']) . '/' . ucwords($action) . '.php';
-				
-				$this->schema['job_action'] = strtolower($action);
-				$this->schema['job_instructions'] = $instructions;
-				
-				$this->copy($source, $destination);
-			}
+			$this->generateJobs();
+			$this->generateJobTests();
+		}
+		
+		if(isset($this->schema['page'])
+			&& is_array($this->schema['page'])
+		) {
+			$this->generatePages();
+			$this->generatePageTests();
+			$this->generateTemplates();
+		}
+		
+		if(isset($this->schema['rest'])
+			&& is_array($this->schema['rest'])
+		) {
+			$this->generateRests();
+			$this->generateRestTests();
 		}
 		
 		Index::success($this->schema['name'].' has been successfully generated.');
@@ -301,9 +153,279 @@ class Generate extends \Eve\Framework\Base
 		die(0);
 	}
 	
-	public function copy($template, $destination) 
+	public function generateModels()
 	{
-		$contents = $this('file', $this->source . $template)->getContent();
+		$sourceRoot = $this->source . '/Model';
+		
+		$destinationRoot = $this->cwd 
+			. $this->schema['paths']['model'] 
+			. '/' . ucwords($this->schema['name']);
+		
+		if(!is_dir($destinationRoot)) {
+			mkdir($destinationRoot, 0777, true);
+		}
+		
+		foreach($this->schema['model'] as $action) {
+			$source = $sourceRoot . '/' . ucwords($action) . '.html';
+			
+			$destination = $destinationRoot . '/' . ucwords($action) . '.php';
+			
+			if(!file_exists($source)) {
+				Index::error(sprintf(
+					self::SKIP, 
+					'Model', 
+					ucwords($action)), 
+				false);
+				
+				continue;
+			}
+			
+			$this->copy($source, $destination);
+		}
+	}
+	
+	public function generateModelTests()
+	{
+		$sourceRoot = $this->source . '/test/Model';
+		
+		$destinationRoot = $this->cwd 
+			. '/test'
+			. $this->schema['paths']['model'] 
+			. '/' . ucwords($this->schema['name']);
+		
+		if(!is_dir($destinationRoot)) {
+			mkdir($destinationRoot, 0777, true);
+		}
+		
+		foreach($this->schema['model'] as $action) {
+			$source = $sourceRoot . '/' . ucwords($action) . '.html';
+			$destination = $destinationRoot . '/' . ucwords($action) . '.php';
+			
+			if(!file_exists($source)) {
+				Index::error(sprintf(
+					self::SKIP, 
+					'test/Model', 
+					ucwords($action)), 
+				false);
+				
+				continue;
+			}
+			
+			$this->copy($source, $destination);
+		}
+	}
+	
+	public function generateJobs()
+	{
+		$destinationRoot = $this->cwd 
+			. $this->schema['paths']['job'] 
+			. '/' . ucwords($this->schema['name']);
+		
+		if(!is_dir($destinationRoot)) {
+			mkdir($destinationRoot, 0777, true);
+		}
+		
+		foreach($this->schema['job'] as $action => $instructions) {
+			$source = $this->source . '/Job.html';
+			
+			$destination = $destinationRoot . '/' . ucwords($action) . '.php';
+			
+			$this->schema['job_action'] = strtolower($action);
+			$this->schema['job_instructions'] = $instructions;
+			
+			$this->copy($source, $destination);
+		}
+	}
+	
+	public function generateJobTests()
+	{
+		$sourceRoot = $this->source . '/test/Job';
+		
+		$destinationRoot = $this->cwd 
+			. '/test'
+			. $this->schema['paths']['job'] 
+			. '/' . ucwords($this->schema['name']);
+		
+		if(!is_dir($destinationRoot)) {
+			mkdir($destinationRoot, 0777, true);
+		}
+		
+		foreach($this->schema['job'] as $action => $instructions) {
+			$source = $sourceRoot . '/' . ucwords($action) . '.html';
+			$destination = $destinationRoot . '/' . ucwords($action) . '.php';
+			
+			if(!file_exists($source)) {
+				Index::error(sprintf(
+					self::SKIP, 
+					'test/Job', 
+					ucwords($action)), 
+				false);
+				
+				continue;
+			}
+			
+			$this->copy($source, $destination);
+		}
+	}
+	
+	public function generatePages()
+	{
+		$sourceRoot = $this->source . '/Action';
+		
+		$destinationRoot = $this->cwd 
+			. $this->schema['paths']['page'] 
+			. '/' . ucwords($this->schema['name']);
+		
+		if(!is_dir($destinationRoot)) {
+			mkdir($destinationRoot, 0777, true);
+		}
+		
+		foreach($this->schema['page'] as $action) {
+			$source = $sourceRoot . '/' . ucwords($action) . '.html';
+			
+			$destination = $destinationRoot . '/' . ucwords($action) . '.php';
+			
+			if(!file_exists($source)) {
+				Index::error(sprintf(
+					self::SKIP, 
+					'Action', 
+					ucwords($action)), 
+				false);
+				
+				continue;
+			}
+			
+			$this->copy($source, $destination);
+		}
+	}
+	
+	public function generatePageTests()
+	{
+		$sourceRoot = $this->source . '/test/Action';
+		
+		$destinationRoot = $this->cwd 
+			. '/test'
+			. $this->schema['paths']['page'] 
+			. '/' . ucwords($this->schema['name']);
+		
+		if(!is_dir($destinationRoot)) {
+			mkdir($destinationRoot, 0777, true);
+		}
+		
+		foreach($this->schema['page'] as $action) {
+			$source = $sourceRoot . '/' . ucwords($action) . '.html';
+			$destination = $destinationRoot . '/' . ucwords($action) . '.php';
+			
+			if(!file_exists($source)) {
+				Index::error(sprintf(
+					self::SKIP, 
+					'test/Action', 
+					ucwords($action)), 
+				false);
+				
+				continue;
+			}
+			
+			$this->copy($source, $destination);
+		}
+	}
+	
+	public function generateTemplates()
+	{
+		$sourceRoot = $this->source . '/template';
+		
+		$destinationRoot = $this->cwd 
+			. $this->schema['paths']['template'] 
+			. '/' . strtolower($this->schema['name']);
+		
+		if(!is_dir($destinationRoot)) {
+			mkdir($destinationRoot, 0777, true);
+		}
+		
+		foreach($this->schema['page'] as $action) {
+			$source = $sourceRoot . '/' . strtolower($action) . '.html';
+			
+			$destination = $destinationRoot . '/' . strtolower($action) . '.html';
+			
+			if(!file_exists($source)) {
+				Index::error(sprintf(
+					self::SKIP, 
+					'template', 
+					strtolower($action)), 
+				false);
+				
+				continue;
+			}
+			
+			$this->copy($source, $destination);
+		}
+	}
+	
+	public function generateRests()
+	{
+		$sourceRoot = $this->source . '/Action/Rest';
+		
+		$destinationRoot = $this->cwd 
+			. $this->schema['paths']['rest'] 
+			. '/' . ucwords($this->schema['name']);
+		
+		if(!is_dir($destinationRoot)) {
+			mkdir($destinationRoot, 0777, true);
+		}
+		
+		foreach($this->schema['rest'] as $action) {
+			$source = $sourceRoot . '/' . ucwords($action) . '.html';
+			
+			$destination = $destinationRoot . '/' . ucwords($action) . '.php';
+			
+			if(!file_exists($source)) {
+				Index::error(sprintf(
+					self::SKIP, 
+					'Action', 
+					ucwords($action)), 
+				false);
+				
+				continue;
+			}
+			
+			$this->copy($source, $destination);
+		}
+	}
+	
+	public function generateRestTests()
+	{
+		$sourceRoot = $this->source . '/test/Action/Rest';
+		
+		$destinationRoot = $this->cwd 
+			. '/test'
+			. $this->schema['paths']['rest'] 
+			. '/' . ucwords($this->schema['name']);
+		
+		if(!is_dir($destinationRoot)) {
+			mkdir($destinationRoot, 0777, true);
+		}
+		
+		foreach($this->schema['rest'] as $action) {
+			$source = $sourceRoot . '/' . ucwords($action) . '.html';
+			$destination = $destinationRoot . '/' . ucwords($action) . '.php';
+			
+			if(!file_exists($source)) {
+				Index::error(sprintf(
+					self::SKIP, 
+					'test/Action/Rest', 
+					ucwords($action)), 
+				false);
+				
+				continue;
+			}
+			
+			$this->copy($source, $destination);
+		}
+	}
+	
+	public function copy($source, $destination) 
+	{
+		$contents = $this('file', $source)->getContent();
 			
 		$code = $this->engine->render($contents, $this->schema);
 		$code = str_replace('\\\\', '\\', $code);
@@ -311,9 +433,9 @@ class Generate extends \Eve\Framework\Base
 		$code = str_replace('\{', '{', $code);
 		$code = str_replace('{ ', '{', $code);
 		
-		Index::info('Installing to '.$this->cwd . $destination);
+		Index::info('Installing to' . $destination);
 		
-		$this('file', $this->cwd . $destination)->setContent($code);
+		$this('file', $destination)->setContent($code);
 		
 		return $this;
 	}
@@ -333,6 +455,31 @@ class Generate extends \Eve\Framework\Base
 		//what is the namespace?
 		if(!isset($this->schema['namespace'])) {
 			$this->schema['namespace'] = $this->namespace;
+		}
+		
+		if(!isset($this->schema['url'])) {
+			$this->schema['url'] = '';
+		}
+		
+		//paths
+		$paths = array(
+			'rest' 		=> '/Action/Rest',
+			'page' 		=> '/Action',
+			'model' 	=> '/Model',
+			'job' 		=> '/Job',
+			'template' 	=> '/template'
+		);
+		
+		foreach($paths as $key => $path) {
+			if(!isset($this->schema['paths'][$key])) {
+				$this->schema['paths'][$key] = $path;
+			}
+			
+			$this->schema[$key.'_namespace'] = trim($this->namespace
+				. str_replace('/', '\\', $this->schema['paths'][$key]), '\\');
+				
+			$this->schema[$key.'_test_namespace'] = trim($this->namespace
+				. str_replace(' ', '', ucwords(str_replace('/', ' ', $this->schema['paths'][$key]))), '\\');
 		}
 		
 		foreach($this->schema['fields'] as $name => $field) {

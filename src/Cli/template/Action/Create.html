@@ -6,7 +6,7 @@
  * distributed with this package.
  */
 
-namespace {{namespace}}\\Action\\{{capital name}};
+namespace {{page_namespace}}\\{{capital name}};
 
 use Eve\\Framework\\Action\\Html;
 
@@ -79,7 +79,7 @@ class Create extends Html
             //permission check failed
             return $this->fail(
                 self::FAIL_401,
-                '/{{name}}/search');
+                '{{url}}/{{name}}/search');
         }
         
         $data['{{permissions}}_id'] = $_SESSION['me']['{{permissions}}_id'];
@@ -162,6 +162,6 @@ class Create extends Html
         //success
         return $this->success(
             self::SUCCESS_200, 
-            '/{{name}}/search');
+            '{{url}}/{{name}}/search');
     }
 }

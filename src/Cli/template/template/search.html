@@ -12,7 +12,7 @@
 <!-- END: SEARCH FORM -->
 
 <span>
-    <a class="btn btn-success" href="/{{name}}/create">
+    <a class="btn btn-success" href="create">
         <i class="fa fa-plus"></i>
         Create New {{singular}}
     </a>
@@ -27,7 +27,7 @@
                 <ul class="nav nav-pills pull-right" role="tablist">
                     <li role="presentation" class="\{\{#when mode '!=' 'trash'\}\}active\{\{/when\}\}">
                         <a 
-                            href="/{{name}}/search\{\{#if keyword\}\}?keyword=\{\{keyword\}\}\{\{/if\}\}" 
+                            href="{{url}}/{{name}}/search\{\{#if keyword\}\}?keyword=\{\{keyword\}\}\{\{/if\}\}" 
                             aria-controls="details" 
                             role="tab">
                             Active
@@ -35,7 +35,7 @@
                     </li>
                     <li role="presentation" class="\{\{#when mode '==' 'trash'\}\}active\{\{/when\}\}">
                         <a 
-                            href="/{{name}}/search?mode=trash\{\{#if keyword\}\}&keyword=\{\{keyword\}\}\{\{/if\}\}" 
+                            href="{{url}}/{{name}}/search?mode=trash\{\{#if keyword\}\}&keyword=\{\{keyword\}\}\{\{/if\}\}" 
                             aria-controls="details" 
                             role="tab">
                             Trash
@@ -77,13 +77,13 @@
                         <td><input name="id[]" value="\{\{ {{name}}_id\}\}" type="checkbox" class="form-control" /></td>
                         <td>
                             \{\{#when {{name}}_active '==' 1\}\}
-                            <a title="Edit" href="/{{name}}/update/\{\{ {{name}}_id\}\}">
+                            <a title="Edit" href="{{url}}/{{name}}/update/\{\{ {{name}}_id\}\}">
                             <i class="fa fa-edit"></i></a> &nbsp; 
-                            <a title="Remove" href="/{{name}}/remove/\{\{ {{name}}_id\}\}"
+                            <a title="Remove" href="{{url}}/{{name}}/remove/\{\{ {{name}}_id\}\}"
                             class="text-danger remove"><i class="fa fa-times"></i></a>
                             \{\{/when\}\}
                             \{\{#when {{name}}_active '==' 0\}\}
-                            <a title="Restore" href="/{{name}}/restore/\{\{ {{name}}_id\}\}" class="text-success restore">
+                            <a title="Restore" href="{{url}}/{{name}}/restore/\{\{ {{name}}_id\}\}" class="text-success restore">
                             <i class="fa fa-external-link"></i></a>
                             \{\{/when\}\}
                         </td>

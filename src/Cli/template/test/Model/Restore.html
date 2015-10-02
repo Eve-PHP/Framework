@@ -7,13 +7,13 @@
  * distributed with this package.
  */
 
-class {{model_test_namespace}}{{capital name}}RemoveTest extends PHPUnit_Framework_TestCase
+class {{model_test_namespace}}{{capital name}}RestoreTest extends PHPUnit_Framework_TestCase
 {
     public function testErrors() 
     {
         $errors = eve()
             ->model('{{name}}')
-            ->remove()
+            ->restore()
             ->errors();
             
         $this->assertEquals('Cannot be empty', $errors['{{name}}_id']);
@@ -25,10 +25,10 @@ class {{model_test_namespace}}{{capital name}}RemoveTest extends PHPUnit_Framewo
 
         $row = eve()
             ->model('{{name}}')
-            ->remove()
+            ->restore()
             ->process(array( 
                 '{{name}}_id' => ${{name}}['{{name}}_id'] ));
 
-        $this->assertEquals(0, $row['{{name}}_active']);
+        $this->assertEquals(1, $row['{{name}}_active']);
     }
 }
