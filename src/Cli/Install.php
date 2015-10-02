@@ -142,6 +142,8 @@ class Install extends \Eve\Framework\Base
 		
 		Index::info('Copying settings..');	
 		$this('file', $this->cwd.'/settings/databases.php')->setData($this->databases);
+		copy($this->cwd.'/settings/sample.config.php', $this->cwd.'/settings/config.php');
+		copy($this->cwd.'/settings/sample.test.php', $this->cwd.'/settings/test.php');
 		
 		Index::info('Creating database..');	
 		
