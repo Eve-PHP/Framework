@@ -109,8 +109,19 @@ class {{capital job_action}} extends Base
                 ->process($this->data);
         }
         {{/when}}
-        {{#when value.[0] '===' 'link'}}
+        {{#when value.[0] '===' 'link'}}{{#if value.[2]}}
+        //NEXT ...
         
+        //if there is a {{value.[1]}}_id
+        if(isset($this->data['{{value.[1]}}_id'])) {
+            //link the {{value.[1]}}
+            eve()
+                ->model('{{value.[1]}}')
+                ->link{{capital ../name}}(
+                    $this->data['{{value.[1]}}_id'],
+                    $results['{{../name}}']['{{../name}}_id']);
+        }
+        {{else}}
         //NEXT ...
         
         //if there is a {{value.[1]}}_id
@@ -122,7 +133,7 @@ class {{capital job_action}} extends Base
                     $results['{{../name}}']['{{../name}}_id'],
                     $this->data['{{value.[1]}}_id']);
         }
-        {{/when}}
+        {{/if}}{{/when}}
         {{#when value.[0] '===' 'linkAll'}}
         
         //NEXT ...
@@ -152,7 +163,20 @@ class {{capital job_action}} extends Base
             }
         }
         {{/when}}
-        {{#when value.[0] '===' 'unlink'}}
+        {{#when value.[0] '===' 'unlink'}}{{#if value.[2]}}
+        
+        //NEXT ...
+        
+        //if there is a {{value.[1]}}_id
+        if(isset($this->data['{{value.[1]}}_id'])) {
+            //unlink the {{value.[1]}}
+            eve()
+                ->model('{{value.[1]}}')
+                ->unlink{{capital ../name}}(
+                    $this->data['{{value.[1]}}_id'],
+                    $results['{{../name}}']['{{../name}}_id']);
+        }
+        {{else}}
         
         //NEXT ...
         
@@ -165,7 +189,7 @@ class {{capital job_action}} extends Base
                     $results['{{../name}}']['{{../name}}_id'],
                     $this->data['{{value.[1]}}_id']);
         }
-        {{/when}}
+        {{/if}}{{/when}}
         {{#when value.[0] '===' 'unlinkAll'}}
         
         //NEXT ...

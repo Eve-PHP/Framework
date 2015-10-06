@@ -86,6 +86,7 @@ class Install extends \Eve\Framework\Base
 			->setUrl('https://github.com/Eve-PHP/Shade/archive/master.zip')
 			->setFile($this->file)
 			->setFollowLocation(true)
+			->setSslVerifyPeer(false)
 			->send();
 		
 		fclose($this->file);
