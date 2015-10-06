@@ -209,10 +209,10 @@ return array(
 	//offset time helper
 	'time' => function($offset, $options) {
 		$date = '';
-		$offset = preg_replace('/\s/is', $offset);
+		$offset = preg_replace('/\s/', '', $offset);
 		
 		try {
-			eval('$offset = ' . $offset);
+			eval('$offset = ' . $offset.';');
 			$date = date('Y-m-d', time() + $offset);
 		} catch(Exception $e) {}
 		
