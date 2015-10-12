@@ -49,14 +49,14 @@ class Update extends Base
         // {{name}}_id - required
         if(!isset($data['{{name}}_id'])
         || !$this('validation', $data['{{name}}_id'])->isType('int', true)) {
-            $errors['{{name}}_id'] = self::INVALID_REQUIRED;
+            $errors['{{name}}_id'] = self::INVALID_ID;
         }
         {{#loop fields}}{{#if value.required}}
         
         // {{key}} - required
         if(isset($data['{{key}}'])
         && empty($data['{{key}}'])) {
-            $errors['{{key}}'] = self::INVALID_ID;
+            $errors['{{key}}'] = self::INVALID_EMPTY;
         }
         {{/if}}{{/loop}}
         
@@ -349,7 +349,7 @@ class Update extends Base
         // {{name}}_flag - small
         if(isset($data['{{name}}_flag']) 
             && !empty($data['{{name}}_flag'])
-            && !$this('validate', $data['{{name}}_flag'])->isType('small', true)
+            && !$this('validation', $data['{{name}}_flag'])->isType('small', true)
         ) {
             $errors['{{name}}_flag'] = self::INVALID_SMALL;
         }

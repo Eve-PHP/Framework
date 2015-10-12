@@ -48,7 +48,7 @@ class Remove extends Base
         // {{name}}_id - required
         if(!isset($data['{{name}}_id'])
         || !$this('validation', $data['{{name}}_id'])->isType('int', true)) {
-            $errors['{{name}}_id'] = self::INVALID_REQUIRED;
+            $errors['{{name}}_id'] = self::INVALID_ID;
         }
         
         return $errors;

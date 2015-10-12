@@ -4,9 +4,6 @@
 
 namespace Eve\Framework\Cli;
 
-use Handlebars\Handlebars;
-use Handlebars\Loader\StringLoader as HandlebarsLoader;
-
 class Generate extends \Eve\Framework\Base
 {
 	const SKIP = 'We don\'t have a template for %s/%s. Skipping..';
@@ -31,10 +28,8 @@ class Generate extends \Eve\Framework\Base
 		//we need the generator/template directory
 		$this->source = __DIR__ . '/template';
 		
-		//make a new loader
-		$loader = new HandlebarsLoader();
 		//create engine
-		$this->engine = new Handlebars(array('loader' => $loader));
+		$this->engine = eden('handlebars');
 		
 		//add helpers
 		$helpers = include(__DIR__.'/../Action/helpers.php');
@@ -431,7 +426,9 @@ class Generate extends \Eve\Framework\Base
 	{
 		$contents = $this('file', $source)->getContent();
 			
-		$code = $this->engine->render($contents, $this->schema);
+		$template = $this->engine->compile($contents);
+		$code = $template($this->schema)
+		;
 		$code = str_replace('\\\\', '\\', $code);
 		$code = str_replace('\}', '}', $code);
 		$code = str_replace('\{', '{', $code);

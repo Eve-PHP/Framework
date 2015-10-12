@@ -9,10 +9,6 @@
 
 namespace Eve\Framework\Action;
 
-use Handlebars\Handlebars;
-use Handlebars\Loader\FilesystemLoader as HandlebarsLoader;
-use Handlebars\SafeString;
-
 /**
  * The base class for any class that defines a view.
  * A view controls how templates are loaded as well as 
@@ -114,7 +110,7 @@ abstract class Html extends Base
 	/**
 	 * Returns the default template engine
 	 *
-	 * @return Handlebars
+	 * @return Eden\Handlebars\Index
 	 */
 	public function getEngine()
 	{
@@ -125,13 +121,8 @@ abstract class Html extends Base
 		//get the template path
 		$path = eve()->path('template');
 		
-		//make a new loader
-		$loader = new HandlebarsLoader($path, array('extension' => static::TEMPLATE_EXTENSION));
-		
 		//create engine
-		$this->engine = new Handlebars(array(
-			'loader' => $loader,
-			'partials_loader' => $loader));
+		$this->engine = eve('handlebars');
 		
 		//add helpers
 		$helpers = include(__DIR__.'/helpers.php');
@@ -199,17 +190,20 @@ abstract class Html extends Base
         
 		$path = eve()->path('template');
 		
-		if(file_exists($path.$file.'.php') 
+		if(file_exists($path.'/'.$file.'.php') 
 			&& static::TEMPLATE_EXTENSION !== 'php'
 		) {
-			return eve('template')->set($data)->parsePHP($path.$file.'.php');
+			return eve('template')->set($data)->parsePHP($path.'/'.$file.'.php');
 		} else if(file_exists($path.$file.'.phtml') 
 			&& static::TEMPLATE_EXTENSION !== 'phtml'
 		) {
-			return eve('template')->set($data)->parsePHP($path.$file.'.phtml');
+			return eve('template')->set($data)->parsePHP($path.'/'.$file.'.phtml');
 		}
 		
-		return $this->getEngine()->render($file, $data);
+		$contents = file_get_contents($path . '/'. $file . '.' . static::TEMPLATE_EXTENSION);
+		$template = $this->getEngine()->compile($contents);
+		
+		return $template($data);
     }
     
     /**

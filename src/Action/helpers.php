@@ -9,6 +9,62 @@ return array(
 		return eve()->translate((string) $key, $args);
 	},
 	
+	'partial' => function($name) {
+		//get args
+		$args = func_get_args();
+		
+		//get the name ond options
+		$name = array_shift($args);
+		
+		//get the template root
+		$path = eve()->path('template');
+		
+		//if the name doesn't have an extension
+		if(strpos($name, '.') === false) {
+			//make it html
+			$name .= '.html';
+		}
+		
+		//if the name doesn't start with a /
+		if(strpos($name, '/') !== 0) {
+			//add if
+			$name = '/' . $name;
+		}
+		
+		//if the file does not exist
+		if(!file_exists($path.$name)) {
+			//return nothing
+			return '';
+		}
+		
+		//yay, get the content
+		$contents = file_get_contents($path.$name);
+		
+		//we need the options
+		$options = array_pop($args);
+		
+		//we need the existing context
+		$context = $options['handlebars']->getContext();
+		
+		//we need a lambda too
+		$lambda = $options['handlebars']->getLambdaHelper();
+		
+		//if there are still arguments
+		if(count($args)) {
+			//push it
+			$context->push($args[0]);
+		}
+		
+		//render the results
+		$results = $lambda->render($contents);
+		
+		//and pop it
+		if(count($args)) {
+			$context->pop();
+		}
+		
+		return $results;
+	},
 	
 	'root' => function($absolute = false) {
 		$root = eve()->rootUrl;

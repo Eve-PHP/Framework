@@ -4,9 +4,6 @@
 
 namespace Eve\Framework\Cli;
 
-use Handlebars\Handlebars;
-use Handlebars\Loader\StringLoader as HandlebarsLoader;
-
 class Help extends \Eve\Framework\Base
 {
 	protected $cwd = null;

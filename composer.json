@@ -24,21 +24,22 @@
     },
     "require": {
 		"php": ">=5.4.1",
-        "eden/core": "4.x-dev",
-        "eden/cookie": "4.x-dev",
-        "eden/folder": "4.x-dev",
-        "eden/handler": "4.x-dev",
-        "eden/image": "4.x-dev",
-        "eden/language": "4.x-dev",
-        "eden/mail": "4.x-dev",
-        "eden/mysql": "4.x-dev",
-        "eden/postgre": "4.x-dev",
-        "eden/sqlite": "4.x-dev",
-        "eden/oauth": "4.x-dev",
-        "eden/server": "4.x-dev",
-        "eden/session": "4.x-dev",
-        "eden/timezone": "4.x-dev",
-        "eden/validation": "4.x-dev",
+        "eden/cookie": "4.*",
+        "eden/folder": "4.*",
+        "eden/handler": "4.*",
+        "eden/handlebars": "4.*",
+        "eden/image": "4.*",
+        "eden/language": "4.*",
+        "eden/mail": "4.*",
+        "eden/mysql": "4.*",
+        "eden/postgre": "4.*",
+        "eden/sqlite": "4.*",
+        "eden/oauth": "4.*",
+        "eden/server": "4.*",
+        "eden/session": "4.*",
+        "eden/template": "4.*",
+        "eden/timezone": "4.*",
+        "eden/validation": "4.*",
 		"ruflin/elastica": "2.3.0",
 		"videlalvaro/php-amqplib": "2.5.2"
     },
@@ -46,9 +47,6 @@
         "psr-4": {
 			"Eve\\Framework\\": "/src",
 			"Eve\\": "/../../../"
-		},
-		"psr-0": {
-            "Handlebars": "handlebars/"
-        }
+		}
     }
 }

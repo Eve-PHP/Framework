@@ -349,7 +349,7 @@ class Create extends Base
         // {{name}}_flag - small
         if(isset($data['{{name}}_flag']) 
             && !empty($data['{{name}}_flag'])
-            && !$this('validate', $data['{{name}}_flag'])->isType('small', true)
+            && !$this('validation', $data['{{name}}_flag'])->isType('small', true)
         ) {
             $errors['{{name}}_flag'] = self::INVALID_SMALL;
         }
