@@ -522,6 +522,7 @@ class Generate extends \Eve\Framework\Base
         $code = str_replace('\}', '}', $code);
         $code = str_replace('\{', '{', $code);
         $code = str_replace('{ ', '{', $code);
+		$code = preg_replace('/\n\s*\n\s*\n/', "\n\n", $code);
 
         Index::info('Installing to' . $destination);
 

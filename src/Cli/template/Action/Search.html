@@ -103,17 +103,15 @@ class Search extends Html
 
         //-----------------------//
         // 2. Validate
-        {{#if permissions}}
-        //if no {{permissions}}_id
+        {{#if permissions}}//if no {{permissions}}_id
         if (!isset($_SESSION['me']['{{permissions}}_id'])) {
             //permission check failed
             return $this->fail(
                 self::FAIL_401,
                 '{{url}}/login'
             );
-        }
-
-        {{/if}}
+        }{{/if}}
+        
         //-----------------------//
         // 3. Process
         if (!empty($_POST)) {
@@ -124,10 +122,10 @@ class Search extends Html
 
         $mode = 'active';
         if (isset($data['mode'])) {
-           $mode = $data['mode'];
+            $mode = $data['mode'];
         }
 
-        switch($mode) {
+        switch ($mode) {
             case 'active':
                 $data['filter']['{{name}}_active'] = 1;
                 break;
@@ -141,12 +139,12 @@ class Search extends Html
             ->search()
             ->process($data);
 
-        {{#if permissions}}
-        //join {{permissions}}_id
+        {{#if permissions}}//join {{permissions}}_id
         $search
             ->innerJoinOn(
                 '{{name}}_{{permissions}}',
-                '{{name}}_{{permissions}}_{{name}} = {{name}}_id')
+                '{{name}}_{{permissions}}_{{name}} = {{name}}_id'
+            )
             ->filterBy{{capital name}}{{capital permissions}}{{capital permissions}}($_SESSION['me']['{{permissions}}_id']);
 
         {{/if}}
@@ -155,34 +153,27 @@ class Search extends Html
         //get total
         $total = $search->getTotal();
 
-        foreach ($rows as $i => $row) {
-            {{#loop fields}}
-            {{#when value.type '==' 'date'}}
+        foreach ($rows as $i => $row) { {{#loop fields}}{{#when value.type '==' 'date'}}
             if (!strtotime($row['{{key}}'])) {
                    $rows[$i]['{{key}}'] = null;
             } else {
                 $rows[$i]['{{key}}'] = date('M d', strtotime($row['{{key}}']));
             }
-            {{/when}}
-            {{#when value.type '==' 'datetime'}}
+            {{/when}}{{#when value.type '==' 'datetime'}}
             if (!strtotime($row['{{key}}'])) {
                    $rows[$i]['{{key}}'] = null;
             } else {
                 $rows[$i]['{{key}}'] = date('M d', strtotime($row['{{key}}']));
             }
-            {{/when}}
-            {{#when value.type '==' 'time'}}
+            {{/when}}{{#when value.type '==' 'time'}}
             if (!strtotime($row['{{key}}'])) {
                    $rows[$i]['{{key}}'] = null;
             } else {
                 $rows[$i]['{{key}}'] = date('g:i A', strtotime($row['{{key}}']));
             }
-            {{/when}}
-            {{#when value.type '==' 'boolean'}}
+            {{/when}}{{#when value.type '==' 'boolean'}}
             $rows[$i]['{{key}}'] = ((int) $row['{{key}}']) ? 'Yes': 'No';
-            {{/when}}
-            {{/loop}}
-
+            {{/when}}{{/loop}}
             $rows[$i]['{{name}}_updated'] = date('M d', strtotime($row['{{name}}_updated']));
         }
 

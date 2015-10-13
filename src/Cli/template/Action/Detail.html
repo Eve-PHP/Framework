@@ -110,8 +110,7 @@ class Detail extends Html
             );
         }
 
-        {{#if permissions}}
-        //if no {{permissions}}_id
+        {{#if permissions}}//if no {{permissions}}_id
         if (!isset($_SESSION['me']['{{permissions}}_id'])) {
             //permission check failed
             return $this->fail(
@@ -120,13 +119,11 @@ class Detail extends Html
             );
         }
 
-        $data['{{permissions}}_id'] = $_SESSION['me']['{{permissions}}_id'];
-        {{/if}}
+        $data['{{permissions}}_id'] = $_SESSION['me']['{{permissions}}_id'];{{/if}}
 
         //-----------------------//
         // 2. Validate
-        {{#if permissions}}
-        //check permissions
+        {{#if permissions}}//check permissions
         $yes = eve()
             ->model('{{name}}')
             ->permissions(
@@ -141,9 +138,7 @@ class Detail extends Html
                 '{{url}}/{{name}}/search'
             );
         }
-
-        {{else}}
-        //does it exist?
+        {{else}}//does it exist?
         $total = eve()
             ->model('{{name}}')
             ->detail()
@@ -155,8 +150,7 @@ class Detail extends Html
                 self::FAIL_404,
                 '{{url}}/{{name}}/search'
             );
-        }
-        {{/if}}
+        }{{/if}}
 
         //-----------------------//
         // 3. Process

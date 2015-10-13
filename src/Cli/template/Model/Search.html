@@ -113,14 +113,19 @@ class Search extends Base
 
         //keyword?
         if ($keyword) {
-            $search->addFilter('(' . implode(' OR ', array(
-                {{#each fields}}{{#if search}}
-                '{{@key}} LIKE %s',
-                {{/if}}{{/each}}
-            )) . ')'
-                {{#each fields}}{{#if search}}
-                , '%'.$keyword.'%'
-                {{/if}}{{/each}}
+            $or = '(' . implode(
+                ' OR ',
+                array({{#each fields}}{{#if search}}
+                    '{{@key}} LIKE %s',{{/if}}{{/each}}
+                )
+            ) . ')';
+
+            $search->callArray(
+                'addFilter',
+                array(
+                    $or,{{#each fields}}{{#if search}}
+                    '%'.$keyword.'%',{{/if}}{{/each}}
+                )
             );
         }
 

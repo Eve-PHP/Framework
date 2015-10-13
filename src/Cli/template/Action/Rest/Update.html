@@ -115,26 +115,22 @@ class Update extends Json
             return $this->fail(self::FAIL_404);
         }
 
-        {{#if permissions}}
-        //if no {{permissions}}_id
+        {{#if permissions}}//if no {{permissions}}_id
         if (!$this->request->isKey('source', '{{permissions}}_id')) {
             //permission check failed
             return $this->fail(self::FAIL_401);
         }
 
         $source = $this->request->get('source', '{{permissions}}_id');
-        $data['{{permissions}}_id'] = $source;
-        {{/if}}
+        $data['{{permissions}}_id'] = $source;{{/if}}
 
-        {{#loop fields}}{{#when value.field.[0] '==' 'checkbox'}}{{#if value.options}}
-        //merge {{key}}
+        {{#loop fields}}{{#when value.field.[0] '==' 'checkbox'}}{{#if value.options}}//merge {{key}}
         if (isset($data['{{key}}'])
             && is_array($data['{{key}}'])
         ) {
             $data['{{key}}'] = implode(',', $data['{{key}}']);
-        }
-
-        {{/if}}{{/when}}{{/loop}}
+        }{{/if}}{{/when}}{{/loop}}
+        
         //-----------------------//
         // 2. Validate
         //check fields
@@ -151,8 +147,7 @@ class Update extends Json
             );
         }
 
-        {{#if permissions}}
-        //check permissions
+        {{#if permissions}}//check permissions
         $yes = eve()
             ->model('{{name}}')
             ->permissions(
@@ -164,8 +159,7 @@ class Update extends Json
         if (!$yes) {
             return $this->fail(self::FAIL_401);
         }
-        {{else}}
-        //does it exist?
+        {{else}}//does it exist?
         $total = eve()
             ->model('{{name}}')
             ->detail()
@@ -174,8 +168,7 @@ class Update extends Json
 
         if (!$total) {
             return $this->fail(self::FAIL_404);
-        }
-        {{/if}}
+        }{{/if}}
 
         //-----------------------//
         // 3. Process

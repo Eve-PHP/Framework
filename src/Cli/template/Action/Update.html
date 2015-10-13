@@ -106,7 +106,8 @@ class Update extends Html
 
         //was it not included in the url ?
         if (!$data['{{name}}_id']
-        && isset($_SESSION['me']['{{name}}_id'])) {
+            && isset($_SESSION['me']['{{name}}_id'])
+        ) {
             //get it from the session
             $data['{{name}}_id'] = $_SESSION['me']['{{name}}_id'];
         }
@@ -120,8 +121,7 @@ class Update extends Html
             );
         }
 
-        {{#if permissions}}
-        //if no {{permissions}}_id
+        {{#if permissions}}//if no {{permissions}}_id
         if (!isset($_SESSION['me']['{{permissions}}_id'])) {
             //permission check failed
             return $this->fail(
@@ -130,13 +130,11 @@ class Update extends Html
             );
         }
 
-        $data['{{permissions}}_id'] = $_SESSION['me']['{{permissions}}_id'];
-        {{/if}}
+        $data['{{permissions}}_id'] = $_SESSION['me']['{{permissions}}_id'];{{/if}}
 
         //-----------------------//
         // 2. Validate
-        {{#if permissions}}
-        //check permissions
+        {{#if permissions}}//check permissions
         $yes = eve()
             ->model('{{name}}')
             ->permissions(
@@ -150,8 +148,8 @@ class Update extends Html
                 self::FAIL_401,
                 '{{url}}/{{name}}/search'
             );
-        }
-        {{/if}}
+        }{{/if}}
+        
         //does it exist?
         $row = eve()
             ->model('{{name}}')
@@ -194,21 +192,19 @@ class Update extends Html
         // 1. Get Data
         $data = array('item' => array_merge($data, $this->request->get('post')));
 
-        {{#loop fields}}{{#when value.field.[0] '==' 'checkbox'}}{{#if value.options}}
-        //merge {{key}}
+        {{#loop fields}}{{#when value.field.[0] '==' 'checkbox'}}{{#if value.options}}//merge {{key}}
         if (isset($data['item']['{{key}}'])
             && is_array($data['item']['{{key}}'])
         ) {
             $data['item']['{{key}}'] = implode(',', $data['item']['{{key}}']);
         }
-
         {{/if}}{{/when}}{{#when value.field.[0] '===' 'date'}}
         if (isset($data['item']['{{key}}'])
             && !strtotime($data['item']['{{key}}'])
         ) {
             $data['item']['{{key}}'] = null;
-        }
-        {{/when}}{{/loop}}
+        }{{/when}}{{/loop}}
+
         //-----------------------//
         //2. Validate
         $errors = eve()
