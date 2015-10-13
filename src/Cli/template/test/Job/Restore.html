@@ -14,7 +14,7 @@ class {{job_test_namespace}}{{capital name}}RestoreTest extends PHPUnit_Framewor
             eve()
                 ->job('{{name}}-restore')
                 ->run();
-        } catch(Exception $e) {
+        } catch (Exception $e) {
             $this->assertInstanceOf('Eve\\Framework\\Job\\Exception', $e);
             $thrown = true;
         }

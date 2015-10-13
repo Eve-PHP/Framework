@@ -171,7 +171,7 @@ class Restore extends Json
                 ->job('{{name}}-restore')
                 ->setData($data)
                 ->run();
-        } catch(\Exception $e) {
+        } catch (\Exception $e) {
             return $this->fail($e->getMessage());
         }
 

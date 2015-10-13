@@ -14,7 +14,7 @@ class {{job_test_namespace}}{{capital name}}UpdateTest extends PHPUnit_Framework
             eve()
                 ->job('{{name}}-update')
                 ->run();
-        } catch(Exception $e) {
+        } catch (Exception $e) {
             $this->assertInstanceOf('Eve\\Framework\\Job\\Exception', $e);
             $thrown = true;
         }

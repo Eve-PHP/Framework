@@ -184,7 +184,7 @@ class Update extends Json
                 ->job('{{name}}-update')
                 ->setData($data)
                 ->run();
-        } catch(\Exception $e) {
+        } catch (\Exception $e) {
             return $this->fail($e->getMessage());
         }
 

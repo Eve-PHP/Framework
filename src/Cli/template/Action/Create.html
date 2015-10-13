@@ -173,7 +173,7 @@ class Create extends Html
                 ->job('{{name}}-create')
                 ->setData($data['item'])
                 ->run();
-        } catch(\Exception $e) {
+        } catch (\Exception $e) {
             return $this->fail(
                 $e->getMessage(),
                 array(),

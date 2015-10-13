@@ -133,7 +133,7 @@ class Create extends Json
                 ->job('{{name}}-create')
                 ->setData($data)
                 ->run();
-        } catch(\Exception $e) {
+        } catch (\Exception $e) {
             return $this->fail($e->getMessage());
         }
 
