@@ -123,7 +123,8 @@ class {{capital job_action}} extends Base
                 ->model('{{value.[1]}}')
                 ->link{{capital ../name}}(
                     $this->data['{{value.[1]}}_id'],
-                    $results['{{../name}}']['{{../name}}_id']);
+                    $results['{{../name}}']['{{../name}}_id']
+                );
         }
         {{else}}
         //NEXT ...
@@ -135,7 +136,8 @@ class {{capital job_action}} extends Base
                 ->model('{{../name}}')
                 ->link{{capital value.[1]}}(
                     $results['{{../name}}']['{{../name}}_id'],
-                    $this->data['{{value.[1]}}_id']);
+                    $this->data['{{value.[1]}}_id']
+                );
         }
         {{/if}}{{/when}}
         {{#when value.[0] '===' 'linkAll'}}
@@ -161,7 +163,8 @@ class {{capital job_action}} extends Base
                     ->model('{{../name}}')
                     ->link{{capital value.[1]}}(
                         $results['{{../name}}']['{{../name}}_id'],
-                        $row['{{value.[1]}}_id']);
+                        $row['{{value.[1]}}_id']
+                    );
 
             }
         }
@@ -176,7 +179,8 @@ class {{capital job_action}} extends Base
                 ->model('{{value.[1]}}')
                 ->unlink{{capital ../name}}(
                     $this->data['{{value.[1]}}_id'],
-                    $results['{{../name}}']['{{../name}}_id']);
+                    $results['{{../name}}']['{{../name}}_id']
+                );
         }
         {{else}}
         //NEXT ...
