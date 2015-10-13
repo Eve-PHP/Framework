@@ -95,14 +95,14 @@ class Detail extends Html
         $data['{{name}}_id'] = $this->request->get('variables', 0);
 
         //was it not included in the url ?
-        if(!$data['{{name}}_id']
+        if (!$data['{{name}}_id']
         && isset($_SESSION['me']['{{name}}_id'])) {
             //get it from the session
             $data['{{name}}_id'] = $_SESSION['me']['{{name}}_id'];
         }
 
         //it's going to fail if we don't have the {{name}}_id
-        if(!$data['{{name}}_id']) {
+        if (!$data['{{name}}_id']) {
             //we might as we an fail it now
             return $this->fail(
                 self::FAIL_404,
@@ -111,7 +111,7 @@ class Detail extends Html
 
         {{#if permissions}}
         //if no {{permissions}}_id
-        if(!isset($_SESSION['me']['{{permissions}}_id'])) {
+        if (!isset($_SESSION['me']['{{permissions}}_id'])) {
             //permission check failed
             return $this->fail(
                 self::FAIL_401,
@@ -132,7 +132,7 @@ class Detail extends Html
                 $data['{{permissions}}_id']);
 
         //if not permitted, fail
-        if(!$yes) {
+        if (!$yes) {
             return $this->fail(
                 self::FAIL_401,
                 '{{url}}/{{name}}/search');
@@ -146,7 +146,7 @@ class Detail extends Html
             ->process($data)
             ->getTotal();
 
-        if(!$total) {
+        if (!$total) {
             return $this->fail(
                 self::FAIL_404,
                 '{{url}}/{{name}}/search');

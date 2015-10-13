@@ -92,7 +92,7 @@ class Create extends Json
 
         {{#loop fields}}{{#when value.field.[0] '==' 'checkbox'}}{{#if value.options}}
         //merge {{key}}
-        if(isset($data['{{key}}'])
+        if (isset($data['{{key}}'])
             && is_array($data['{{key}}'])
         ) {
             $data['{{key}}'] = implode(',', $data['{{key}}']);
@@ -101,7 +101,7 @@ class Create extends Json
         {{/if}}{{/when}}{{/loop}}
         {{#if permissions}}
         //if no {{permissions}}_id
-        if(!$this->request->isKey('source', '{{permissions}}_id')) {
+        if (!$this->request->isKey('source', '{{permissions}}_id')) {
             //permission check failed
             return $this->fail(self::FAIL_401);
         }
@@ -119,7 +119,7 @@ class Create extends Json
             ->errors($data);
 
         //if there are errors
-        if(!empty($errors)) {
+        if (!empty($errors)) {
             return $this->fail(
                 self::FAIL_406,
                 $errors);

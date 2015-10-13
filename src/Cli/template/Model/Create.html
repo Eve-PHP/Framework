@@ -53,7 +53,7 @@ class Create extends Base
         //REQUIRED
         {{#loop fields}}{{#if value.required}}{{#when value.field.[0] '==' 'file'}}
         // {{key}} - required
-        if(!isset($_FILES['{{key}}']['tmp_name'])
+        if (!isset($_FILES['{{key}}']['tmp_name'])
             || empty($_FILES['{{key}}']['tmp_name'])
         ) {
             $errors['{{key}}'] = self::INVALID_REQUIRED;
@@ -61,7 +61,7 @@ class Create extends Base
 
         {{else}}
         // {{key}} - required
-        if(!isset($data['{{key}}']) || empty($data['{{key}}'])) {
+        if (!isset($data['{{key}}']) || empty($data['{{key}}'])) {
             $errors['{{key}}'] = self::INVALID_REQUIRED;
         }
 
@@ -72,7 +72,7 @@ class Create extends Base
         {{#when value.[0] '===' 'empty'}}
 
         // {{../key}} - empty
-        if(isset($data['{{../key}}'])
+        if (isset($data['{{../key}}'])
             && empty($data['{{../key}}'])
         ) {
             $errors['{{../key}}'] = self::INVALID_EMPTY;
@@ -81,7 +81,7 @@ class Create extends Base
 
         // {{../key}} - one of
         $choices = array({{implode value.[1] ', '}});
-        if(isset($data['{{../key}}'])
+        if (isset($data['{{../key}}'])
             && !empty($data['{{../key}}'])
             && !in_array($data['{{../key}}'], $choices)
         ) {
@@ -90,7 +90,7 @@ class Create extends Base
         {{/when}}{{#when value.[0] '===' 'email'}}
 
         // {{../key}} - email
-        if(isset($data['{{../key}}'])
+        if (isset($data['{{../key}}'])
             && !empty($data['{{../key}}'])
             && !$this('validation', $data['{{../key}}'])->isType('email')
         ) {
@@ -99,7 +99,7 @@ class Create extends Base
         {{/when}}{{#when value.[0] '===' 'hex'}}
 
         // {{../key}} - hex
-        if(isset($data['{{../key}}'])
+        if (isset($data['{{../key}}'])
             && !empty($data['{{../key}}'])
             && !$this('validation', str_replace('#', '', $data['{{../key}}']))->isType('hex')
         ) {
@@ -108,7 +108,7 @@ class Create extends Base
         {{/when}}{{#when value.[0] '===' 'cc'}}
 
         // {{../key}} - cc
-        if(isset($data['{{../key}}'])
+        if (isset($data['{{../key}}'])
             && !empty($data['{{../key}}'])
             && !$this('validation', $data['{{../key}}'])->isType('cc')
         ) {
@@ -117,7 +117,7 @@ class Create extends Base
         {{/when}}{{#when value.[0] '===' 'html'}}
 
         // {{../key}} - html
-        if(isset($data['{{../key}}'])
+        if (isset($data['{{../key}}'])
             && !empty($data['{{../key}}'])
             && !$this('validation', $data['{{../key}}'])->isType('html')
         ) {
@@ -126,7 +126,7 @@ class Create extends Base
         {{/when}}{{#when value.[0] '===' 'url'}}
 
         // {{../key}} - url
-        if(isset($data['{{../key}}'])
+        if (isset($data['{{../key}}'])
             && !empty($data['{{../key}}'])
             && !$this('validation', $data['{{../key}}'])->isType('url')
         ) {
@@ -135,7 +135,7 @@ class Create extends Base
         {{/when}}{{#when value.[0] '===' 'slug'}}
 
         // {{../key}} - slug
-        if(isset($data['{{../key}}'])
+        if (isset($data['{{../key}}'])
             && !empty($data['{{../key}}'])
             && !$this('validation', $data['{{../key}}'])->isType('slug')
         ) {
@@ -144,7 +144,7 @@ class Create extends Base
         {{/when}}{{#when value.[0] '===' 'json'}}
 
         // {{../key}} - json
-        if(isset($data['{{../key}}'])
+        if (isset($data['{{../key}}'])
             && !empty($data['{{../key}}'])
             && !$this('validation', $data['{{../key}}'])->isType('json')
         ) {
@@ -153,7 +153,7 @@ class Create extends Base
         {{/when}}{{#when value.[0] '===' 'date'}}
 
         // {{../key}} - date
-        if(isset($data['{{../key}}'])
+        if (isset($data['{{../key}}'])
             && !empty($data['{{../key}}'])
             && !$this('validation', $data['{{../key}}'])->isType('date')
         ) {
@@ -162,7 +162,7 @@ class Create extends Base
         {{/when}}{{#when value.[0] '===' 'time'}}
 
         // {{../key}} - time
-        if(isset($data['{{../key}}'])
+        if (isset($data['{{../key}}'])
             && !empty($data['{{../key}}'])
             && !$this('validation', $data['{{../key}}'])->isType('time')
         ) {
@@ -171,7 +171,7 @@ class Create extends Base
         {{/when}}{{#when value.[0] '===' 'alphanum'}}
 
         // {{../key}} - alphanum
-        if(isset($data['{{../key}}'])
+        if (isset($data['{{../key}}'])
             && !empty($data['{{../key}}'])
             && !$this('validation', $data['{{../key}}'])->isType('alphanum')
         ) {
@@ -180,7 +180,7 @@ class Create extends Base
         {{/when}}{{#when value.[0] '===' 'alphanum-'}}
 
         // {{../key}} - alphanum-
-        if(isset($data['{{../key}}'])
+        if (isset($data['{{../key}}'])
             && !empty($data['{{../key}}'])
             && !$this('validation', $data['{{../key}}'])->isType('alphanum-')
         ) {
@@ -189,7 +189,7 @@ class Create extends Base
         {{/when}}{{#when value.[0] '===' 'alphanum_'}}
 
         // {{../key}} - alphanum_
-        if(isset($data['{{../key}}'])
+        if (isset($data['{{../key}}'])
             && !empty($data['{{../key}}'])
             && !$this('validation', $data['{{../key}}'])->isType('alphanum_')
         ) {
@@ -198,7 +198,7 @@ class Create extends Base
         {{/when}}{{#when value.[0] '===' 'alphanum-_'}}
 
         // {{../key}} - alphanum-_
-        if(isset($data['{{../key}}'])
+        if (isset($data['{{../key}}'])
             && !empty($data['{{../key}}'])
             && !$this('validation', $data['{{../key}}'])->isType('alphanum-_')
         ) {
@@ -207,7 +207,7 @@ class Create extends Base
         {{/when}}{{#when value.[0] '===' 'regex'}}
 
         // {{../key}} - regex
-        if(isset($data['{{../key}}'])
+        if (isset($data['{{../key}}'])
             && !empty($data['{{../key}}'])
             && !preg_match('{{value.[1]}}', $data['{{../key}}'])
         ) {
@@ -216,7 +216,7 @@ class Create extends Base
         {{/when}}{{#when value.[0] '===' 'bool'}}
 
         // {{../key}} - bool
-        if(isset($data['{{../key}}'])
+        if (isset($data['{{../key}}'])
             && !empty($data['{{../key}}'])
             && !$this('validation', $data['{{../key}}'])->isType('bool', true)
         ) {
@@ -225,7 +225,7 @@ class Create extends Base
         {{/when}}{{#when value.[0] '===' 'small'}}
 
         // {{../key}} - small
-        if(isset($data['{{../key}}'])
+        if (isset($data['{{../key}}'])
             && !empty($data['{{../key}}'])
             && !$this('validation', $data['{{../key}}'])->isType('small', true)
         ) {
@@ -234,7 +234,7 @@ class Create extends Base
         {{/when}}{{#when value.[0] '===' 'int'}}
 
         // {{../key}} - int
-        if(isset($data['{{../key}}'])
+        if (isset($data['{{../key}}'])
             && !empty($data['{{../key}}'])
             && !$this('validation', $data['{{../key}}'])->isType('int', true)
         ) {
@@ -243,7 +243,7 @@ class Create extends Base
         {{/when}}{{#when value.[0] '===' 'float'}}
 
         // {{../key}} - float
-        if(isset($data['{{../key}}'])
+        if (isset($data['{{../key}}'])
             && !empty($data['{{../key}}'])
             && !$this('validation', $data['{{../key}}'])->isType('float', true)
         ) {
@@ -252,7 +252,7 @@ class Create extends Base
         {{/when}}{{#when value.[0] '==' 'price'}}
 
         // {{../key}} - float
-        if(isset($data['{{../key}}'])
+        if (isset($data['{{../key}}'])
             && !empty($data['{{../key}}'])
             && !$this('validation', $data['{{../key}}'])->isType('float', true)
         ) {
@@ -262,7 +262,7 @@ class Create extends Base
         {{#when value.[0] '===' 'number'}}
 
         // {{../key}} - number
-        if(isset($data['{{../key}}'])
+        if (isset($data['{{../key}}'])
             && !empty($data['{{../key}}'])
             && !$this('validation', $data['{{../key}}'])->isType('number', true)
         ) {
@@ -272,7 +272,7 @@ class Create extends Base
         {{#when value.[0] '===' 'gt'}}
 
         // {{../key}} - greater than
-        if(isset($data['{{../key}}'])
+        if (isset($data['{{../key}}'])
             && is_numeric($data['{{../key}}'])
             && !($data['{{../key}}'] > {{value.[1]}})
         ) {
@@ -282,7 +282,7 @@ class Create extends Base
         {{#when value.[0] '===' 'gte'}}
 
         // {{../key}} - greater than or equal
-        if(isset($data['{{../key}}'])
+        if (isset($data['{{../key}}'])
             && is_numeric($data['{{../key}}'])
             && !($data['{{../key}}'] >= {{value.[1]}})
         ) {
@@ -292,7 +292,7 @@ class Create extends Base
         {{#when value.[0] '===' 'lt'}}
 
         // {{../key}} - less than
-        if(isset($data['{{../key}}'])
+        if (isset($data['{{../key}}'])
             && is_numeric($data['{{../key}}'])
             && !($data['{{../key}}'] < {{value.[1]}})
         ) {
@@ -302,7 +302,7 @@ class Create extends Base
         {{#when value.[0] '===' 'lte'}}
 
         // {{../key}} - less than or equal
-        if(isset($data['{{../key}}'])
+        if (isset($data['{{../key}}'])
             && is_numeric($data['{{../key}}'])
             && !($data['{{../key}}'] <= {{value.[1]}})
         ) {
@@ -312,7 +312,7 @@ class Create extends Base
         {{#when value.[0] '===' 'sgt'}}
 
         // {{../key}} - length greater than
-        if(isset($data['{{../key}}'])
+        if (isset($data['{{../key}}'])
             && is_string($data['{{../key}}'])
             && !(strlen($data['{{../key}}']) > {{value.[1]}})
         ) {
@@ -322,7 +322,7 @@ class Create extends Base
         {{#when value.[0] '===' 'sgte'}}
 
         // {{../key}} - length greater than or equal
-        if(isset($data['{{../key}}'])
+        if (isset($data['{{../key}}'])
             && is_string($data['{{../key}}'])
             && !(strlen($data['{{../key}}']) >= {{value.[1]}})
         ) {
@@ -332,7 +332,7 @@ class Create extends Base
         {{#when value.[0] '===' 'slt'}}
 
         // {{../key}} - length less than
-        if(isset($data['{{../key}}'])
+        if (isset($data['{{../key}}'])
             && is_string($data['{{../key}}'])
             && !(strlen($data['{{../key}}']) < {{value.[1]}})
         ) {
@@ -342,7 +342,7 @@ class Create extends Base
         {{#when value.[0] '===' 'slte'}}
 
         // {{../key}} - length less than or equal
-        if(isset($data['{{../key}}'])
+        if (isset($data['{{../key}}'])
             && is_string($data['{{../key}}'])
             && !(strlen($data['{{../key}}']) <= {{value.[1]}})
         ) {
@@ -353,7 +353,7 @@ class Create extends Base
         {{/loop}}
 
         // {{name}}_flag - small
-        if(isset($data['{{name}}_flag'])
+        if (isset($data['{{name}}_flag'])
             && !empty($data['{{name}}_flag'])
             && !$this('validation', $data['{{name}}_flag'])->isType('small', true)
         ) {
@@ -373,7 +373,7 @@ class Create extends Base
     public function process(array $data = array())
     {
         //prevent uncatchable error
-        if(count($this->errors($data))) {
+        if (count($this->errors($data))) {
             throw new Exception(self::FAIL_406);
         }
 
@@ -386,12 +386,12 @@ class Create extends Base
 
         {{#loop fields}}{{#when value.field.[0] '==' 'file'}}
         //upload {{key}}
-        if(isset($_FILES['{{key}}']['tmp_name'])
+        if (isset($_FILES['{{key}}']['tmp_name'])
             && !empty($_FILES['{{key}}']['tmp_name'])
         ) {
             $destination = eve()->path('upload');
 
-            if(!is_dir($destination)) {
+            if (!is_dir($destination)) {
                 mkdir($destination);
             }
 
@@ -435,21 +435,21 @@ class Create extends Base
         {{#loop fields}}{{#if value.required}}{{else}}{{#if value.encoding}}
         {{#when value.encoding '===' 'md5'}}
         // {{key}}
-        if(isset($data['{{key}}'])
+        if (isset($data['{{key}}'])
             && !empty($data['{{key}}'])
         ) {
             $model->set{{capitalCamel key}}(md5($data['{{key}}']));
         }
         {{/when}}{{#when value.encoding '===' 'sha1'}}
         // {{key}}
-        if(isset($data['{{key}}'])
+        if (isset($data['{{key}}'])
             && !empty($data['{{key}}'])
         ) {
             $model->set{{capitalCamel key}}(sha1($data['{{key}}']));
         }
         {{/when}}{{else}}
         // {{key}}
-        if(isset($data['{{key}}'])
+        if (isset($data['{{key}}'])
             && !empty($data['{{key}}'])
         ) {
             $model->set{{capitalCamel key}}($data['{{key}}']);
@@ -457,14 +457,14 @@ class Create extends Base
         {{/if}}{{/if}}{{/loop}}
 
         // {{name}}_type
-        if(isset($data['{{name}}_type'])
+        if (isset($data['{{name}}_type'])
             && !empty($data['{{name}}_type'])
         ) {
             $model->set{{capital name}}Type($data['{{name}}_type']);
         }
 
         // {{name}}_flag
-        if(isset($data['{{name}}_flag'])
+        if (isset($data['{{name}}_flag'])
             && !empty($data['{{name}}_flag'])
         ) {
             $model->set{{capital name}}Flag($data['{{name}}_flag']);

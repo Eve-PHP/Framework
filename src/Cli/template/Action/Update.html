@@ -105,14 +105,14 @@ class Update extends Html
         $data['{{name}}_id'] = $this->request->get('variables', 0);
 
         //was it not included in the url ?
-        if(!$data['{{name}}_id']
+        if (!$data['{{name}}_id']
         && isset($_SESSION['me']['{{name}}_id'])) {
             //get it from the session
             $data['{{name}}_id'] = $_SESSION['me']['{{name}}_id'];
         }
 
         //it's going to fail if we don't have the {{name}}_id
-        if(!$data['{{name}}_id']) {
+        if (!$data['{{name}}_id']) {
             //we might as we an fail it now
             return $this->fail(
                 self::FAIL_404,
@@ -121,7 +121,7 @@ class Update extends Html
 
         {{#if permissions}}
         //if no {{permissions}}_id
-        if(!isset($_SESSION['me']['{{permissions}}_id'])) {
+        if (!isset($_SESSION['me']['{{permissions}}_id'])) {
             //permission check failed
             return $this->fail(
                 self::FAIL_401,
@@ -142,7 +142,7 @@ class Update extends Html
                 $data['{{permissions}}_id']);
 
         //if not permitted, fail
-        if(!$yes) {
+        if (!$yes) {
             return $this->fail(
                 self::FAIL_401,
                 '{{url}}/{{name}}/search');
@@ -155,7 +155,7 @@ class Update extends Html
             ->process($data)
             ->getRow();
 
-        if(!$row) {
+        if (!$row) {
             return $this->fail(
                 self::FAIL_404,
                 '{{url}}/{{name}}/search');
@@ -164,7 +164,7 @@ class Update extends Html
         //-----------------------//
         // 3. Process
         //if it's a post
-        if(!empty($_POST)) {
+        if (!empty($_POST)) {
             return $this->check($data);
         }
 
@@ -191,14 +191,14 @@ class Update extends Html
 
         {{#loop fields}}{{#when value.field.[0] '==' 'checkbox'}}{{#if value.options}}
         //merge {{key}}
-        if(isset($data['item']['{{key}}'])
+        if (isset($data['item']['{{key}}'])
             && is_array($data['item']['{{key}}'])
         ) {
             $data['item']['{{key}}'] = implode(',', $data['item']['{{key}}']);
         }
 
         {{/if}}{{/when}}{{#when value.field.[0] '===' 'date'}}
-        if(isset($data['item']['{{key}}'])
+        if (isset($data['item']['{{key}}'])
             && !strtotime($data['item']['{{key}}'])
         ) {
             $data['item']['{{key}}'] = null;
@@ -212,7 +212,7 @@ class Update extends Html
             ->errors($data['item']);
 
         //if there are errors
-        if(!empty($errors)) {
+        if (!empty($errors)) {
             return $this->fail(
                 self::FAIL_406,
                 $errors,

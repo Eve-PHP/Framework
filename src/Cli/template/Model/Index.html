@@ -111,7 +111,7 @@ class Index extends Base
             ->filterBy{{capital name}}{{capital permissions}}{{capital permissions}}(${{permissions}}Id)
             ->getRow();
 
-        if(!$row) {
+        if (!$row) {
             return false;
         }
 
@@ -178,11 +178,11 @@ class Index extends Base
                 '{{../name}}_{{key}}_{{key}} = {{key}}_id')
             ->filterBy{{capital ../name}}{{capital key}}{{capital ../name}}(${{../name}}Id);
 
-        if(!empty($types)) {
+        if (!empty($types)) {
             $or = array();
             $where = array();
 
-            foreach($types as $type) {
+            foreach ($types as $type) {
                 $where[] = '{{key}}_type = %s';
                 $or[] = $type;
             }

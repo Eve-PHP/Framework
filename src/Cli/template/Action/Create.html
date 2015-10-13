@@ -95,7 +95,7 @@ class Create extends Html
         $data = array();
         {{#if permissions}}
         //if no {{permissions}}_id
-        if(!isset($_SESSION['me']['{{permissions}}_id'])) {
+        if (!isset($_SESSION['me']['{{permissions}}_id'])) {
             //permission check failed
             return $this->fail(
                 self::FAIL_401,
@@ -106,7 +106,7 @@ class Create extends Html
         {{/if}}
 
         //if it's a post
-        if(!empty($_POST)) {
+        if (!empty($_POST)) {
             return $this->check($data);
         }
 
@@ -135,14 +135,14 @@ class Create extends Html
 
         {{#loop fields}}{{#when value.field.[0] '==' 'checkbox'}}{{#if value.options}}
         //merge {{key}}
-        if(isset($data['item']['{{key}}'])
+        if (isset($data['item']['{{key}}'])
             && is_array($data['item']['{{key}}'])
         ) {
             $data['item']['{{key}}'] = implode(',', $data['item']['{{key}}']);
         }
 
         {{/if}}{{/when}}{{#when value.field.[0] '===' 'date'}}
-        if(isset($data['item']['{{key}}'])
+        if (isset($data['item']['{{key}}'])
             && !strtotime($data['item']['{{key}}'])
         ) {
             $data['item']['{{key}}'] = null;
@@ -157,7 +157,7 @@ class Create extends Html
             ->errors($data['item']);
 
         //if there are errors
-        if(!empty($errors)) {
+        if (!empty($errors)) {
             return $this->fail(
                 self::FAIL_406,
                 $errors,

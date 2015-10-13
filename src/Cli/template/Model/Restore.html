@@ -51,7 +51,7 @@ class Restore extends Base
         $data = $this->prepare($data);
 
         // {{name}}_id - required
-        if(!isset($data['{{name}}_id'])
+        if (!isset($data['{{name}}_id'])
         || !$this('validation', $data['{{name}}_id'])->isType('int', true)) {
             $errors['{{name}}_id'] = self::INVALID_ID;
         }
@@ -69,7 +69,7 @@ class Restore extends Base
     public function process(array $data = array())
     {
         //prevent uncatchable error
-        if(count($this->errors($data))) {
+        if (count($this->errors($data))) {
             throw new Exception(self::FAIL_406);
         }
 

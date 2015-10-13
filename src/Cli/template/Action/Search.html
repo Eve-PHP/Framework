@@ -105,7 +105,7 @@ class Search extends Html
         // 2. Validate
         {{#if permissions}}
         //if no {{permissions}}_id
-        if(!isset($_SESSION['me']['{{permissions}}_id'])) {
+        if (!isset($_SESSION['me']['{{permissions}}_id'])) {
             //permission check failed
             return $this->fail(
                 self::FAIL_401,
@@ -115,14 +115,14 @@ class Search extends Html
         {{/if}}
         //-----------------------//
         // 3. Process
-        if(!empty($_POST)) {
+        if (!empty($_POST)) {
             return $this->check();
         }
 
         $data['range'] = $this->range;
 
         $mode = 'active';
-        if(isset($data['mode'])) {
+        if (isset($data['mode'])) {
            $mode = $data['mode'];
         }
 
@@ -154,24 +154,24 @@ class Search extends Html
         //get total
         $total = $search->getTotal();
 
-        foreach($rows as $i => $row) {
+        foreach ($rows as $i => $row) {
             {{#loop fields}}
             {{#when value.type '==' 'date'}}
-            if(!strtotime($row['{{key}}'])) {
+            if (!strtotime($row['{{key}}'])) {
                    $rows[$i]['{{key}}'] = null;
             } else {
                 $rows[$i]['{{key}}'] = date('M d', strtotime($row['{{key}}']));
             }
             {{/when}}
             {{#when value.type '==' 'datetime'}}
-            if(!strtotime($row['{{key}}'])) {
+            if (!strtotime($row['{{key}}'])) {
                    $rows[$i]['{{key}}'] = null;
             } else {
                 $rows[$i]['{{key}}'] = date('M d', strtotime($row['{{key}}']));
             }
             {{/when}}
             {{#when value.type '==' 'time'}}
-            if(!strtotime($row['{{key}}'])) {
+            if (!strtotime($row['{{key}}'])) {
                    $rows[$i]['{{key}}'] = null;
             } else {
                 $rows[$i]['{{key}}'] = date('g:i A', strtotime($row['{{key}}']));
@@ -191,7 +191,7 @@ class Search extends Html
         $this->body['mode'] = $mode;
         $this->body['keyword'] = null;
 
-        if(isset($_GET['keyword'])) {
+        if (isset($_GET['keyword'])) {
             $this->body['keyword'] = $_GET['keyword'];
         }
 
@@ -214,7 +214,7 @@ class Search extends Html
 
         //-----------------------//
         //2. Validate
-        if(!isset($data['action'])
+        if (!isset($data['action'])
             || !isset($data['id'])
             || !is_array($data['id'])
         ) {
@@ -225,7 +225,7 @@ class Search extends Html
 
         //-----------------------//
         //3. Process
-        foreach($data['id'] as $id) {
+        foreach ($data['id'] as $id) {
                $item = array('{{name}}_id' => $id);
 
             try {

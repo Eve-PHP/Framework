@@ -96,28 +96,28 @@ class Update extends Json
         $data = $this->request->get('post');
 
         //was the id not included in the post?
-        if(!isset($data['{{name}}_id'])
+        if (!isset($data['{{name}}_id'])
         && $this->request->isKey('variables', 0)) {
             //get it from the url
             $data['{{name}}_id'] = $this->request->get('variables', 0);
         }
 
         //was it not included in the url ?
-        if(!isset($data['{{name}}_id'])
+        if (!isset($data['{{name}}_id'])
         && $this->request->isKey('source', '{{name}}_id')) {
             //get it from the source
             $data['{{name}}_id'] = $this->request->get('source', '{{name}}_id');
         }
 
         //it's going to fail if we don't have the {{name}}_id
-        if(!isset($data['{{name}}_id'])) {
+        if (!isset($data['{{name}}_id'])) {
             //we might as we an fail it now
             return $this->fail(self::FAIL_404);
         }
 
         {{#if permissions}}
         //if no {{permissions}}_id
-        if(!$this->request->isKey('source', '{{permissions}}_id')) {
+        if (!$this->request->isKey('source', '{{permissions}}_id')) {
             //permission check failed
             return $this->fail(self::FAIL_401);
         }
@@ -128,7 +128,7 @@ class Update extends Json
 
         {{#loop fields}}{{#when value.field.[0] '==' 'checkbox'}}{{#if value.options}}
         //merge {{key}}
-        if(isset($data['{{key}}'])
+        if (isset($data['{{key}}'])
             && is_array($data['{{key}}'])
         ) {
             $data['{{key}}'] = implode(',', $data['{{key}}']);
@@ -144,7 +144,7 @@ class Update extends Json
             ->errors($data);
 
         //if there are errors
-        if(!empty($errors)) {
+        if (!empty($errors)) {
             return $this->fail(
                 self::FAIL_406,
                 $errors);
@@ -159,7 +159,7 @@ class Update extends Json
                 $data['{{permissions}}_id']);
 
         //if not permitted, fail
-        if(!$yes) {
+        if (!$yes) {
             return $this->fail(self::FAIL_401);
         }
         {{else}}
@@ -170,7 +170,7 @@ class Update extends Json
             ->process($data)
             ->getTotal();
 
-        if(!$total) {
+        if (!$total) {
             return $this->fail(self::FAIL_404);
         }
         {{/if}}

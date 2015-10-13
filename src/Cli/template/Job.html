@@ -52,7 +52,7 @@ class {{capital job_action}} extends Base
     public function run()
     {
         //if no data
-        if(empty($this->data)) {
+        if (empty($this->data)) {
             //there should be a global catch somewhere
             throw new Exception(self::FAIL_406);
         }
@@ -67,7 +67,7 @@ class {{capital job_action}} extends Base
         //NEXT ...
 
         //if there is no {{value.[1]}}_id provided
-        if(!isset($this->data['{{value.[1]}}_id'])) {
+        if (!isset($this->data['{{value.[1]}}_id'])) {
             //create the {{value.[1]}}
             $results['{{value.[1]}}'] = eve()
                 ->model('{{value.[1]}}')
@@ -83,7 +83,7 @@ class {{capital job_action}} extends Base
         //NEXT ...
 
         //if there is a {{value.[1]}}_id
-        if(isset($this->data['{{value.[1]}}_id'])) {
+        if (isset($this->data['{{value.[1]}}_id'])) {
             //remove the {{value.[1]}}
             $results['{{value.[1]}}'] = eve()
                 ->model('{{value.[1]}}')
@@ -96,7 +96,7 @@ class {{capital job_action}} extends Base
         //NEXT ...
 
         //if there is a {{value.[1]}}_id
-        if(isset($this->data['{{value.[1]}}_id'])) {
+        if (isset($this->data['{{value.[1]}}_id'])) {
             //restore the {{value.[1]}}
             $results['{{value.[1]}}'] = eve()
                 ->model('{{value.[1]}}')
@@ -109,7 +109,7 @@ class {{capital job_action}} extends Base
         //NEXT ...
 
         //if there is a {{value.[1]}}_id
-        if(isset($this->data['{{value.[1]}}_id'])) {
+        if (isset($this->data['{{value.[1]}}_id'])) {
             //update the {{value.[1]}}
             $results['{{value.[1]}}'] = eve()
                 ->model('{{value.[1]}}')
@@ -121,7 +121,7 @@ class {{capital job_action}} extends Base
         //NEXT ...
 
         //if there is a {{value.[1]}}_id
-        if(isset($this->data['{{value.[1]}}_id'])) {
+        if (isset($this->data['{{value.[1]}}_id'])) {
             //link the {{value.[1]}}
             eve()
                 ->model('{{value.[1]}}')
@@ -133,7 +133,7 @@ class {{capital job_action}} extends Base
         //NEXT ...
 
         //if there is a {{value.[1]}}_id
-        if(isset($this->data['{{value.[1]}}_id'])) {
+        if (isset($this->data['{{value.[1]}}_id'])) {
             //link the {{value.[1]}}
             eve()
                 ->model('{{../name}}')
@@ -147,12 +147,12 @@ class {{capital job_action}} extends Base
         //NEXT ...
 
         //if there is a list of {{value.[1]}}
-        if(isset($this->data['{{value.[1]}}'])
+        if (isset($this->data['{{value.[1]}}'])
             && is_array($this->data['{{value.[1]}}'])
         ) {
-            foreach($this->data['{{value.[1]}}'] as $row) {
+            foreach ($this->data['{{value.[1]}}'] as $row) {
                    //if no {{value.[1]}}_id
-                if(!isset($row['{{value.[1]}}_id'])) {
+                if (!isset($row['{{value.[1]}}_id'])) {
                     //create the {{value.[1]}}
                     $row = eve()
                         ->model('{{value.[1]}}')
@@ -176,7 +176,7 @@ class {{capital job_action}} extends Base
         //NEXT ...
 
         //if there is a {{value.[1]}}_id
-        if(isset($this->data['{{value.[1]}}_id'])) {
+        if (isset($this->data['{{value.[1]}}_id'])) {
             //unlink the {{value.[1]}}
             eve()
                 ->model('{{value.[1]}}')
@@ -189,7 +189,7 @@ class {{capital job_action}} extends Base
         //NEXT ...
 
         //if there is a {{value.[1]}}_id
-        if(isset($this->data['{{value.[1]}}_id'])) {
+        if (isset($this->data['{{value.[1]}}_id'])) {
             //unlink the {{value.[1]}}
             eve()
                 ->model('{{../name}}')
@@ -213,7 +213,7 @@ class {{capital job_action}} extends Base
         //NEXT ...
 
         //if there is a {{value.[1]}}_id
-        if(isset($this->data['{{value.[1]}}_id'])) {
+        if (isset($this->data['{{value.[1]}}_id'])) {
             //remove the {{value.[1]}}
             $results['{{value.[1]}}'] = eve()
                 ->model('{{value.[1]}}')

@@ -89,14 +89,14 @@ class Detail extends Json
         $data['{{name}}_id'] = $this->request->get('variables', 0);
 
         //was it not included in the url ?
-        if(!$data['{{name}}_id']
+        if (!$data['{{name}}_id']
         && $this->request->isKey('source', '{{name}}_id')) {
             //get it from the source
             $data['{{name}}_id'] = $this->request->get('source', '{{name}}_id');
         }
 
         //it's going to fail if we don't have the {{name}}_id
-        if(!$data['{{name}}_id']) {
+        if (!$data['{{name}}_id']) {
             //we might as we an fail it now
             return $this->fail(self::FAIL_404);
         }
@@ -110,7 +110,7 @@ class Detail extends Json
             ->process($data)
             ->getRow();
 
-        if(!$row) {
+        if (!$row) {
             return $this->fail(
                 self::FAIL_404,
                 '/{{name}}/search');
