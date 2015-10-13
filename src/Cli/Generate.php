@@ -66,7 +66,7 @@ class Generate extends \Eve\Framework\Base
         $this->source = __DIR__ . '/template';
 
         //create engine
-        $this->engine = eden('handlebars');
+        $this->engine = $this('handlebars');
 
         //add helpers
         $helpers = include(__DIR__.'/../Action/helpers.php');
