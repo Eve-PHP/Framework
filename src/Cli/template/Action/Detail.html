@@ -106,7 +106,8 @@ class Detail extends Html
             //we might as we an fail it now
             return $this->fail(
                 self::FAIL_404,
-                '{{url}}/{{name}}/search');
+                '{{url}}/{{name}}/search'
+            );
         }
 
         {{#if permissions}}
@@ -115,7 +116,8 @@ class Detail extends Html
             //permission check failed
             return $this->fail(
                 self::FAIL_401,
-                '{{url}}/{{name}}/search');
+                '{{url}}/{{name}}/search'
+            );
         }
 
         $data['{{permissions}}_id'] = $_SESSION['me']['{{permissions}}_id'];
@@ -129,13 +131,15 @@ class Detail extends Html
             ->model('{{name}}')
             ->permissions(
                 $data['{{name}}_id'],
-                $data['{{permissions}}_id']);
+                $data['{{permissions}}_id']
+            );
 
         //if not permitted, fail
         if (!$yes) {
             return $this->fail(
                 self::FAIL_401,
-                '{{url}}/{{name}}/search');
+                '{{url}}/{{name}}/search'
+            );
         }
 
         {{else}}
@@ -149,7 +153,8 @@ class Detail extends Html
         if (!$total) {
             return $this->fail(
                 self::FAIL_404,
-                '{{url}}/{{name}}/search');
+                '{{url}}/{{name}}/search'
+            );
         }
         {{/if}}
 

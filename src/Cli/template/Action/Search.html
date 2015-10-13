@@ -109,7 +109,8 @@ class Search extends Html
             //permission check failed
             return $this->fail(
                 self::FAIL_401,
-                '{{url}}/login');
+                '{{url}}/login'
+            );
         }
 
         {{/if}}
@@ -220,13 +221,14 @@ class Search extends Html
         ) {
             return $this->fail(
                 self::FAIL_404,
-                '{{url}}/{{name}}/search');
+                '{{url}}/{{name}}/search'
+            );
         }
 
         //-----------------------//
         //3. Process
         foreach ($data['id'] as $id) {
-               $item = array('{{name}}_id' => $id);
+            $item = array('{{name}}_id' => $id);
 
             try {
                 eve()
@@ -234,14 +236,16 @@ class Search extends Html
                     ->setData($item)
                     ->run();
             } catch(\Exception $e) {
-                   return $this->fail(
+                return $this->fail(
                     $e->getMessage(),
-                    '{{url}}/{{name}}/search');
+                    '{{url}}/{{name}}/search'
+                );
             }
         }
 
         return $this->success(
             sprintf(self::SUCCESS_200, $data['action'].'d'),
-            '{{url}}/{{name}}/search');
+            '{{url}}/{{name}}/search'
+        );
     }
 }

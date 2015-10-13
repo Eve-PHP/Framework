@@ -74,7 +74,7 @@ class {{capital job_action}} extends Base
                 ->process($this->data)
                 ->get();
 
-           $this->data['{{value.[1]}}_id'] = $results['{{value.[1]}}']['{{value.[1]}}_id'];
+            $this->data['{{value.[1]}}_id'] = $results['{{value.[1]}}']['{{value.[1]}}_id'];
         }
         {{/when}}
         {{#when value.[0] '===' 'remove'}}

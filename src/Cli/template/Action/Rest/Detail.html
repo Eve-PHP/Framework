@@ -113,7 +113,8 @@ class Detail extends Json
         if (!$row) {
             return $this->fail(
                 self::FAIL_404,
-                '/{{name}}/search');
+                '/{{name}}/search'
+            );
         }
 
         //-----------------------//

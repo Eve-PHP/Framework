@@ -99,7 +99,8 @@ class Create extends Html
             //permission check failed
             return $this->fail(
                 self::FAIL_401,
-                '{{url}}/{{name}}/search');
+                '{{url}}/{{name}}/search'
+            );
         }
 
         $data['{{permissions}}_id'] = $_SESSION['me']['{{permissions}}_id'];
@@ -161,7 +162,8 @@ class Create extends Html
             return $this->fail(
                 self::FAIL_406,
                 $errors,
-                $data['item']);
+                $data['item']
+            );
         }
 
         //-----------------------//
@@ -175,7 +177,8 @@ class Create extends Html
             return $this->fail(
                 $e->getMessage(),
                 array(),
-                $data['item']);
+                $data['item']
+            );
         }
 
         //NOTE: do something with results here
@@ -183,6 +186,7 @@ class Create extends Html
         //success
         return $this->success(
             self::SUCCESS_200,
-            '{{url}}/{{name}}/search');
+            '{{url}}/{{name}}/search'
+        );
     }
 }

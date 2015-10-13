@@ -122,7 +122,8 @@ class Create extends Json
         if (!empty($errors)) {
             return $this->fail(
                 self::FAIL_406,
-                $errors);
+                $errors
+            );
         }
 
         //-----------------------//

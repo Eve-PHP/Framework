@@ -134,7 +134,8 @@ class Restore extends Json
         if (!empty($errors)) {
             return $this->fail(
                 self::FAIL_406,
-                $errors);
+                $errors
+            );
         }
 
         {{#if permissions}}
@@ -143,7 +144,8 @@ class Restore extends Json
             ->model('{{name}}')
             ->permissions(
                 $data['{{name}}_id'],
-                $data['{{permissions}}_id']);
+                $data['{{permissions}}_id']
+            );
 
         //if not permitted, fail
         if (!$yes) {

@@ -111,7 +111,8 @@ class Remove extends Html
             //we might as we an fail it now
             return $this->fail(
                 self::FAIL_404,
-                '{{url}}/{{name}}/search');
+                '{{url}}/{{name}}/search'
+            );
         }
 
         {{#if permissions}}
@@ -120,7 +121,8 @@ class Remove extends Html
             //permission check failed
             return $this->fail(
                 self::FAIL_401,
-                '{{url}}/{{name}}/search');
+                '{{url}}/{{name}}/search'
+            );
         }
 
         $data['{{permissions}}_id'] = $_SESSION['me']['{{permissions}}_id'];
@@ -138,7 +140,8 @@ class Remove extends Html
         if (!empty($errors)) {
             return $this->fail(
                 self::FAIL_406,
-                '{{url}}/{{name}}/search');
+                '{{url}}/{{name}}/search'
+            );
         }
 
         {{#if permissions}}
@@ -147,13 +150,15 @@ class Remove extends Html
             ->model('{{name}}')
             ->permissions(
                 $data['{{name}}_id'],
-                $data['{{permissions}}_id']);
+                $data['{{permissions}}_id']
+            );
 
         //if not permitted, fail
         if (!$yes) {
             return $this->fail(
                 self::FAIL_401,
-                '{{url}}/{{name}}/search');
+                '{{url}}/{{name}}/search'
+            );
         }
         {{else}}
         //does it exist?
@@ -166,7 +171,8 @@ class Remove extends Html
         if (!$total) {
            return $this->fail(
                self::FAIL_404,
-               '{{url}}/{{name}}/search');
+               '{{url}}/{{name}}/search'
+           );
         }
         {{/if}}
 
@@ -180,13 +186,15 @@ class Remove extends Html
         } catch(\Exception $e) {
             return $this->fail(
                 $e->getMessage(),
-                '{{url}}/{{name}}/search');
+                '{{url}}/{{name}}/search'
+            );
         }
 
         //NOTE: do something with results here
 
         return $this->success(
             self::SUCCESS_200,
-            '{{url}}/{{name}}/search');
+            '{{url}}/{{name}}/search'
+        );
     }
 }
