@@ -7,7 +7,7 @@
         value="\{\{keyword\}\}" class="form-control" />
         <input type="hidden" name="mode" value="\{\{mode\}\}" />
     </div>
-    <button class="btn"><i class="fa fa-search"></i></button>    
+    <button class="btn"><i class="fa fa-search"></i></button>
 </form>
 <!-- END: SEARCH FORM -->
 
@@ -26,24 +26,24 @@
                 <!-- START: FILTER BUTTONS -->
                 <ul class="nav nav-pills pull-right" role="tablist">
                     <li role="presentation" class="\{\{#when mode '!=' 'trash'\}\}active\{\{/when\}\}">
-                        <a 
-                            href="{{url}}/{{name}}/search\{\{#if keyword\}\}?keyword=\{\{keyword\}\}\{\{/if\}\}" 
-                            aria-controls="details" 
+                        <a
+                            href="{{url}}/{{name}}/search\{\{#if keyword\}\}?keyword=\{\{keyword\}\}\{\{/if\}\}"
+                            aria-controls="details"
                             role="tab">
                             Active
                         </a>
                     </li>
                     <li role="presentation" class="\{\{#when mode '==' 'trash'\}\}active\{\{/when\}\}">
-                        <a 
-                            href="{{url}}/{{name}}/search?mode=trash\{\{#if keyword\}\}&keyword=\{\{keyword\}\}\{\{/if\}\}" 
-                            aria-controls="details" 
+                        <a
+                            href="{{url}}/{{name}}/search?mode=trash\{\{#if keyword\}\}&keyword=\{\{keyword\}\}\{\{/if\}\}"
+                            aria-controls="details"
                             role="tab">
                             Trash
                         </a>
                     </li>
                 </ul>
                 <!-- END: FILTER BUTTONS -->
-                
+
                 \{\{#if rows\}\}
                 <!-- START: BULK ACTION -->
                 <div>
@@ -78,7 +78,7 @@
                         <td>
                             \{\{#when {{name}}_active '==' 1\}\}
                             <a title="Edit" href="{{url}}/{{name}}/update/\{\{ {{name}}_id\}\}">
-                            <i class="fa fa-edit"></i></a> &nbsp; 
+                            <i class="fa fa-edit"></i></a> &nbsp;
                             <a title="Remove" href="{{url}}/{{name}}/remove/\{\{ {{name}}_id\}\}"
                             class="text-danger remove"><i class="fa fa-times"></i></a>
                             \{\{/when\}\}
@@ -90,9 +90,9 @@
                         <td>\{\{ {{name}}_id\}\}</td>{{#loop fields}}{{#in value.field.[0] 'password,textarea,wysiwyg,markdown,file'}}{{else}}
                         <td>\{\{ {{key}}\}\}</td>{{/in}}{{/loop}}
                         <td>\{\{ {{name}}_updated\}\}</td>
-                    </tr>    
+                    </tr>
                     \{\{/each\}\}
-                </tbody>    
+                </tbody>
             </table>
             <!-- END: POST TABLE -->
             \{\{else\}\}
@@ -102,7 +102,7 @@
             \{\{/if\}\}
         </div>
     </div>
-    
+
     <ul class="pagination">
         \{\{#pagination total range\}\}
         <li\{\{#if active\}\} class="active"\{\{/if\}\}><a href="?\{\{href\}\}">\{\{page\}\}</a></li>
@@ -112,14 +112,14 @@
 
 <script type="text/javascript">
 $('tbody input[type="checkbox"]').click(function() {
-    setTimeout(function() {    
+    setTimeout(function() {
         var allChecked = true;
         $('tbody input[type="checkbox"]').each(function() {
             if(!this.checked) {
                 allChecked = false;
             }
         });
-        
+
         $('th input.checkall')[0].checked = allChecked;
     }, 1);
 });

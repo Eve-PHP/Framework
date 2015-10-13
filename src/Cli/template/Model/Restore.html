@@ -1,9 +1,8 @@
 <?php //-->
-/*
- * This file is part of the Eden package.
- * (c) 2014-2016 Openovate Labs
+/**
+ * A Custom Project
  *
- * Copyright and license information can be found at LICENSE.txt
+ * Copyright and license information can be found at LICENSE
  * distributed with this package.
  */
 
@@ -30,56 +29,63 @@ use Eve\\Framework\\Model\\Exception;
  *    from the settings path. ie. settings/foo.php
  *
  *    -- eve()->registry() - Returns Eden\\Registry\\Index used globally
+ *
+ * @vendor   Custom
+ * @package  Project
+ * @author   My Name <my@email.com>
+ * @standard PSR-2
  */
 class Restore extends Base
 {
     /**
      * Returns errors if any
      *
-     * @param array submitted data
-     * @param array existing errors
+     * @param array $data   The item before processing
+     * @param array $errors Existing errors
+     *
      * @return array error
      */
-    public function errors(array $data = array(), array $errors = array()) 
+    public function errors(array $data = array(), array $errors = array())
     {
         //prepare
         $data = $this->prepare($data);
-        
+
         // {{name}}_id - required
         if(!isset($data['{{name}}_id'])
         || !$this('validation', $data['{{name}}_id'])->isType('int', true)) {
             $errors['{{name}}_id'] = self::INVALID_ID;
         }
-        
+
         return $errors;
     }
-    
+
     /**
      * Processes the form
      *
-     * @param array data
-     * @return void
+     * @param array $data The item to process
+     *
+     * @return mixed
      */
-    public function process(array $data = array()) 
+    public function process(array $data = array())
     {
         //prevent uncatchable error
         if(count($this->errors($data))) {
             throw new Exception(self::FAIL_406);
         }
-        
+
         //prepare
         $data = $this->prepare($data);
-        
+
         $model = eve()
             ->database()
             ->model()
             ->set{{capital name}}Id($data['{{name}}_id'])
             ->set{{capital name}}Active('1');
-        
+
         $model->save('{{name}}');
-        
+
         $this->trigger('{{name}}-restore', $model);
-        
+
         return $model;
     }
 }

@@ -1,6 +1,6 @@
 <?php //-->
-/*
- * A Custom Library
+/**
+ * A Custom Project
  *
  * Copyright and license information can be found at LICENSE
  * distributed with this package.
@@ -39,7 +39,7 @@ use Eve\\Framework\\Action\\Html;
  *    -- $this->request->get('server') - $_SERVER data
  *       You are free to use the $_SERVER variable if you like
  *
- *    -- $this->request->get('body') - raw body for 
+ *    -- $this->request->get('body') - raw body for
  *       POST requests that provide JSON data for example
  *       instead of the default x-form-data
  *
@@ -50,34 +50,57 @@ use Eve\\Framework\\Action\\Html;
  *    -- $this->response->set('body', 'Foo') - Sets the response body.
  *       Alternative for returning a string in render()
  *
- *    -- $this->response->set('headers', 'Foo', 'Bar') - Sets a 
+ *    -- $this->response->set('headers', 'Foo', 'Bar') - Sets a
  *       header item to 'Foo: Bar' given key/value
  *
- *    -- $this->response->set('headers', 'Foo', '') - Sets a 
+ *    -- $this->response->set('headers', 'Foo', '') - Sets a
  *       header item to 'Foo' given that no value is present
  *       QUIRK: $this->response->set('headers', 'Foo') will erase
  *       all existing headers
+ *
+ * @vendor   Custom
+ * @package  Project
+ * @author   My Name <my@email.com>
+ * @standard PSR-2
  */
-class Search extends Html 
+class Search extends Html
 {
+    /**
+     * @const string FAIL_401 Error template
+     */
     const FAIL_401 = 'You do not have permissions to search';
+
+    /**
+     * @const string FAIL_404 Error template
+     */
     const FAIL_404 = 'No IDs or action found.';
+
+    /**
+     * @const string SUCCESS_200 Success template
+     */
     const SUCCESS_200 = '{{plural}} successfully %s';
-    
+
+    /**
+     * @var string $title Page title
+     */
     protected $title = 'Search {{Plural}}';
+
+    /**
+     * @var string $range Search range
+     */
     protected $range = 50;
-    
+
     /**
      * Main action call
      *
      * @return string|null|void
      */
-    public function render() 
+    public function render()
     {
         //-----------------------//
         // 1. Get Data
         $data = $this->request->get('get');
-        
+
         //-----------------------//
         // 2. Validate
         {{#if permissions}}
@@ -88,21 +111,21 @@ class Search extends Html
                 self::FAIL_401,
                 '{{url}}/login');
         }
-        
+
         {{/if}}
         //-----------------------//
         // 3. Process
         if(!empty($_POST)) {
             return $this->check();
         }
-        
+
         $data['range'] = $this->range;
-        
+
         $mode = 'active';
         if(isset($data['mode'])) {
            $mode = $data['mode'];
         }
-        
+
         switch($mode) {
             case 'active':
                 $data['filter']['{{name}}_active'] = 1;
@@ -111,26 +134,26 @@ class Search extends Html
                 $data['filter']['{{name}}_active'] = 0;
                 break;
         }
-        
+
         $search = eve()
             ->model('{{name}}')
             ->search()
             ->process($data);
-        
+
         {{#if permissions}}
         //join {{permissions}}_id
         $search
             ->innerJoinOn(
-                '{{name}}_{{permissions}}', 
+                '{{name}}_{{permissions}}',
                 '{{name}}_{{permissions}}_{{name}} = {{name}}_id')
             ->filterBy{{capital name}}{{capital permissions}}{{capital permissions}}($_SESSION['me']['{{permissions}}_id']);
-        
+
         {{/if}}
-        //get rows  
+        //get rows
         $rows = $search->getRows();
         //get total
         $total = $search->getTotal();
-        
+
         foreach($rows as $i => $row) {
             {{#loop fields}}
             {{#when value.type '==' 'date'}}
@@ -158,67 +181,67 @@ class Search extends Html
             $rows[$i]['{{key}}'] = ((int) $row['{{key}}']) ? 'Yes': 'No';
             {{/when}}
             {{/loop}}
-            
+
             $rows[$i]['{{name}}_updated'] = date('M d', strtotime($row['{{name}}_updated']));
         }
-        
+
         $this->body['rows'] = $rows;
         $this->body['total'] = $total;
         $this->body['range'] = $this->range;
         $this->body['mode'] = $mode;
         $this->body['keyword'] = null;
-        
+
         if(isset($_GET['keyword'])) {
             $this->body['keyword'] = $_GET['keyword'];
         }
-        
+
         //NOTE: add anything extra to body here
-        
+
         //success
         return $this->success();
     }
-    
+
     /**
      * When the form is submitted
      *
-     * @return void
+     * @return string|null|void
      */
-    protected function check() 
+    protected function check()
     {
         //-----------------------//
         // 1. Get Data
         $data = $this->request->get('post');
-        
+
         //-----------------------//
         //2. Validate
-        if(!isset($data['action']) 
-            || !isset($data['id']) 
+        if(!isset($data['action'])
+            || !isset($data['id'])
             || !is_array($data['id'])
         ) {
             return $this->fail(
                 self::FAIL_404,
                 '{{url}}/{{name}}/search');
         }
-        
+
         //-----------------------//
         //3. Process
         foreach($data['id'] as $id) {
                $item = array('{{name}}_id' => $id);
-            
+
             try {
                 eve()
                     ->job('{{name}}-'.$data['action'])
                     ->setData($item)
                     ->run();
             } catch(\Exception $e) {
-           		return $this->fail(
+                   return $this->fail(
                     $e->getMessage(),
                     '{{url}}/{{name}}/search');
             }
         }
-        
+
         return $this->success(
-            sprintf(self::SUCCESS_200, $data['action'].'d'), 
+            sprintf(self::SUCCESS_200, $data['action'].'d'),
             '{{url}}/{{name}}/search');
     }
 }

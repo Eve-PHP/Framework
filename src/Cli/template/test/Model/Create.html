@@ -1,7 +1,6 @@
 <?php //-->
-/*
- * This file is part of the Type package of the Eden PHP Library.
- * (c) 2013-2014 Openovate Labs
+/**
+ * A Custom Project
  *
  * Copyright and license information can be found at LICENSE
  * distributed with this package.
@@ -10,15 +9,15 @@
 class {{model_test_namespace}}{{capital name}}CreateTest extends PHPUnit_Framework_TestCase
 {
     public function testErrors()
-	{
+    {
         $errors = eve()->model('{{name}}')->create()->errors();
 
         {{#loop fields}}{{#if value.required}}
         $this->assertEquals('Cannot be empty', $errors['{{key}}']);
         {{/if}}{{/loop}}
     }
-	
-	 public function testProcess() 
+
+     public function testProcess()
     {
         {{#loop fields}}
         {{#when value.field.[0] '===' 'file'}}
@@ -28,7 +27,7 @@ class {{model_test_namespace}}{{capital name}}CreateTest extends PHPUnit_Framewo
         eve('file', $path)->setContent($contents);
         {{/when}}
         {{/loop}}
-        
+
         $model = eve()->model('{{name}}')->create()->process(array(
             {{#loop fields}}{{#if value.required}}
             {{#when value.field.[0] '==' 'password'}}
@@ -39,9 +38,9 @@ class {{model_test_namespace}}{{capital name}}CreateTest extends PHPUnit_Framewo
             '{{key}}' => $_FILES['{{key}}']['tmp_name'],
             {{/when}}
             {{/if}}{{/loop}}
-			));
-        
-		eve()->registry()->set('test', '{{name}}', $model->get());
+            ));
+
+        eve()->registry()->set('test', '{{name}}', $model->get());
         $this->assertTrue(is_numeric($model['{{name}}_id']));
     }
 }

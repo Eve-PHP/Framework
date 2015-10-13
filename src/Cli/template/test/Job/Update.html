@@ -1,29 +1,29 @@
 <?php //-->
-/*
- * A Custom Library
+/**
+ * A Custom Project
  *
  * Copyright and license information can be found at LICENSE
  * distributed with this package.
  */
 class {{job_test_namespace}}{{capital name}}UpdateTest extends PHPUnit_Framework_TestCase
 {
-	public function testRun()
-	{
-		$thrown = false;
-		try {
-			eve()
-				->job('{{name}}-update')
-				->run();
-		} catch(Exception $e) {
-			$this->assertInstanceOf('Eve\\Framework\\Job\\Exception', $e);
-			$thrown = true;
-		}
-		
-		$this->assertTrue($thrown);
-		
-		${{name}} = eve()->registry()->get('test', '{{name}}');
-		
-		{{#loop fields}}
+    public function testRun()
+    {
+        $thrown = false;
+        try {
+            eve()
+                ->job('{{name}}-update')
+                ->run();
+        } catch(Exception $e) {
+            $this->assertInstanceOf('Eve\\Framework\\Job\\Exception', $e);
+            $thrown = true;
+        }
+
+        $this->assertTrue($thrown);
+
+        ${{name}} = eve()->registry()->get('test', '{{name}}');
+
+        {{#loop fields}}
         {{#when value.field.[0] '===' 'file'}}
         $path = eve()->path('public') . '/logo.png';
         $_FILES['{{key}}']['tmp_name'] = sys_get_temp_dir().'/test-123';
@@ -32,29 +32,29 @@ class {{job_test_namespace}}{{capital name}}UpdateTest extends PHPUnit_Framework
         {{/when}}
         {{/loop}}
 
-		$results = eve()
-			->job('{{name}}-update')
-			->setData(array(
-				'{{name}}_id' => ${{name}}['{{name}}_id'],
-				{{#loop fields}}{{#if value.required}}
-	            {{#when value.field.[0] '!=' 'file'}}
-	            '{{key}}' => {{value.sample}},
-	            {{/when}}{{#when value.field.[0] '==' 'file'}}
-	            '{{key}}' => $_FILES['{{key}}']['tmp_name'],
-	            {{/when}}
-	            {{/if}}{{/loop}}
-			))
-			->run();
-		
-		$this->assertTrue(is_numeric($results['{{name}}']['{{name}}_id']));
-		
-		{{#loop fields}}{{#if value.required}}
-		{{#when value.field.[0] '==' 'password' }}
-		$this->assertEquals(md5({{value.sample}}), $results['{{../name}}']['{{key}}']);
-		{{/when}}{{#when value.field.[0] '!=' 'password' }}
-		{{#when value.field.[0] '!=' 'file'}}
-		$this->assertEquals({{value.sample}}, $results['{{../name}}']['{{key}}']);
+        $results = eve()
+            ->job('{{name}}-update')
+            ->setData(array(
+                '{{name}}_id' => ${{name}}['{{name}}_id'],
+                {{#loop fields}}{{#if value.required}}
+                {{#when value.field.[0] '!=' 'file'}}
+                '{{key}}' => {{value.sample}},
+                {{/when}}{{#when value.field.[0] '==' 'file'}}
+                '{{key}}' => $_FILES['{{key}}']['tmp_name'],
+                {{/when}}
+                {{/if}}{{/loop}}
+            ))
+            ->run();
+
+        $this->assertTrue(is_numeric($results['{{name}}']['{{name}}_id']));
+
+        {{#loop fields}}{{#if value.required}}
+        {{#when value.field.[0] '==' 'password' }}
+        $this->assertEquals(md5({{value.sample}}), $results['{{../name}}']['{{key}}']);
+        {{/when}}{{#when value.field.[0] '!=' 'password' }}
+        {{#when value.field.[0] '!=' 'file'}}
+        $this->assertEquals({{value.sample}}, $results['{{../name}}']['{{key}}']);
         {{/when}}{{/when}}
-		{{/if}}{{/loop}}
-	}
+        {{/if}}{{/loop}}
+    }
 }

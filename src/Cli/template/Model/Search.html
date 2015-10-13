@@ -1,6 +1,6 @@
 <?php //-->
-/*
- * A Custom Library
+/**
+ * A Custom Project
  *
  * Copyright and license information can be found at LICENSE
  * distributed with this package.
@@ -29,101 +29,108 @@ use Eve\\Framework\\Model\\Exception;
  *    from the settings path. ie. settings/foo.php
  *
  *    -- eve()->registry() - Returns Eden\\Registry\\Index used globally
+ *
+ * @vendor   Custom
+ * @package  Project
+ * @author   My Name <my@email.com>
+ * @standard PSR-2
  */
 class Search extends Base
 {
     /**
      * Returns errors if any
      *
-     * @param array submitted data
-     * @param array existing errors
+     * @param array $data   The item before processing
+     * @param array $errors Existing errors
+     *
      * @return array error
      */
-    public function errors(array $data = array(), array $errors = array()) 
+    public function errors(array $data = array(), array $errors = array())
     {
         return $errors;
     }
-    
+
     /**
      * Processes the form
      *
-     * @param array data
-     * @return void
+     * @param array $data The item to process
+     *
+     * @return mixed
      */
-    public function process(array $data = array()) 
+    public function process(array $data = array())
     {
         //prevent uncatchable error
         if(count($this->errors($data))) {
             throw new Exception(self::FAIL_406);
         }
-        
+
         //prepare
         $data = $this->prepare($data);
-    
+
         $filter = array();
         $range = 50;
         $start = 0;
         $order = array();
         $count = 0;
         $keyword = null;
-        
+
         if(isset($data['filter']) && is_array($data['filter'])) {
             $filter = $data['filter'];
         }
-        
+
         if(isset($data['range']) && is_numeric($data['range'])) {
             $range = $data['range'];
         }
-        
+
         if(isset($data['start']) && is_numeric($data['start'])) {
             $start = $data['start'];
         }
-        
+
         if(isset($data['order']) && is_array($data['order'])) {
             $order = $data['order'];
         }
-        
+
         if(isset($data['keyword']) && is_scalar($data['keyword'])) {
             $keyword = $data['keyword'];
         }
-            
+
         $search = eve()
             ->database()
             ->search('{{name}}')
             ->setStart($start)
             ->setRange($range);
-        
+
         if(!isset($filter['{{name}}_active'])) {
             $filter['{{name}}_active'] = 1;
         }
-        
+
         //add filters
         foreach($filter as $column => $value) {
             if(preg_match('/^[a-zA-Z0-9-_]+$/', $column)) {
                 $search->addFilter($column . ' = %s', $value);
             }
         }
-        
+
         //keyword?
         if($keyword) {
             $search->addFilter('(' . implode(' OR ', array(
                 {{#each fields}}{{#if search}}
-                '{{@key}} LIKE %s', 
+                '{{@key}} LIKE %s',
                 {{/if}}{{/each}}
-            )) . ')' 
+            )) . ')'
                 {{#each fields}}{{#if search}}
-                , '%'.$keyword.'%' 
+                , '%'.$keyword.'%'
                 {{/if}}{{/each}}
             );
         }
-        
+
         //add sorting
         foreach($order as $sort => $direction) {
             $search->addSort($sort, $direction);
         }
-        
+
         $this->trigger('{{name}}-search', $search);
-        
+
         return $search;
     }
 }

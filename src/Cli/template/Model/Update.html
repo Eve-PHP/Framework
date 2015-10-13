@@ -1,6 +1,6 @@
 <?php //-->
-/*
- * A Custom Library
+/**
+ * A Custom Project
  *
  * Copyright and license information can be found at LICENSE
  * distributed with this package.
@@ -29,42 +29,48 @@ use Eve\\Framework\\Model\\Exception;
  *    from the settings path. ie. settings/foo.php
  *
  *    -- eve()->registry() - Returns Eden\\Registry\\Index used globally
+ *
+ * @vendor   Custom
+ * @package  Project
+ * @author   My Name <my@email.com>
+ * @standard PSR-2
  */
 class Update extends Base
 {
     /**
      * Returns errors if any
      *
-     * @param array submitted data
-     * @param array existing errors
+     * @param array $data   The item before processing
+     * @param array $errors Existing errors
+     *
      * @return array error
      */
-    public function errors(array $data = array(), array $errors = array()) 
+    public function errors(array $data = array(), array $errors = array())
     {
         //prepare
         $data = $this->prepare($data);
-        
+
         //REQUIRED
-        
+
         // {{name}}_id - required
         if(!isset($data['{{name}}_id'])
         || !$this('validation', $data['{{name}}_id'])->isType('int', true)) {
             $errors['{{name}}_id'] = self::INVALID_ID;
         }
         {{#loop fields}}{{#if value.required}}
-        
+
         // {{key}} - required
         if(isset($data['{{key}}'])
         && empty($data['{{key}}'])) {
             $errors['{{key}}'] = self::INVALID_EMPTY;
         }
         {{/if}}{{/loop}}
-        
+
         //OPTIONAL
         {{#loop fields}}
         {{#loop value.valid}}
         {{#when value.[0] '===' 'empty'}}
-        
+
         // {{../key}} - empty
         if(isset($data['{{../key}}'])
             && empty($data['{{../key}}'])
@@ -72,181 +78,181 @@ class Update extends Base
             $errors['{{../key}}'] = self::INVALID_EMPTY;
         }
         {{/when}}{{#when value.[0] '===' 'one'}}
-        
+
         // {{../key}} - one of
         $choices = array({{implode value.[1] ', '}});
-        if(isset($data['{{../key}}']) 
+        if(isset($data['{{../key}}'])
             && !empty($data['{{../key}}'])
             && !in_array($data['{{../key}}'], $choices)
         ) {
             $errors['{{../key}}'] = sprintf(self::INVALID_ONEOF, implode(',', $choices));
         }
         {{/when}}{{#when value.[0] '===' 'email'}}
-        
+
         // {{../key}} - email
-        if(isset($data['{{../key}}']) 
+        if(isset($data['{{../key}}'])
             && !empty($data['{{../key}}'])
             && !$this('validation', $data['{{../key}}'])->isType('email')
         ) {
             $errors['{{../key}}'] = self::INVALID_EMAIL;
         }
         {{/when}}{{#when value.[0] '===' 'hex'}}
-        
+
         // {{../key}} - hex
-        if(isset($data['{{../key}}']) 
+        if(isset($data['{{../key}}'])
             && !empty($data['{{../key}}'])
             && !$this('validation', str_replace('#', '', $data['{{../key}}']))->isType('hex')
         ) {
             $errors['{{../key}}'] = self::INVALID_HEX;
         }
         {{/when}}{{#when value.[0] '===' 'cc'}}
-        
+
         // {{../key}} - cc
         if(isset($data['{{../key}}'])
-            && !empty($data['{{../key}}']) 
+            && !empty($data['{{../key}}'])
             && !$this('validation', $data['{{../key}}'])->isType('cc')
         ) {
             $errors['{{../key}}'] = self::INVALID_CC;
         }
         {{/when}}{{#when value.[0] '===' 'html'}}
-        
+
         // {{../key}} - html
         if(isset($data['{{../key}}'])
-            && !empty($data['{{../key}}']) 
+            && !empty($data['{{../key}}'])
             && !$this('validation', $data['{{../key}}'])->isType('html')
         ) {
             $errors['{{../key}}'] = self::INVALID_HTML;
         }
         {{/when}}{{#when value.[0] '===' 'url'}}
-        
+
         // {{../key}} - url
-        if(isset($data['{{../key}}']) 
+        if(isset($data['{{../key}}'])
             && !empty($data['{{../key}}'])
             && !$this('validation', $data['{{../key}}'])->isType('url')
         ) {
             $errors['{{../key}}'] = self::INVALID_URL;
         }
         {{/when}}{{#when value.[0] '===' 'slug'}}
-        
+
         // {{../key}} - slug
-        if(isset($data['{{../key}}']) 
+        if(isset($data['{{../key}}'])
             && !empty($data['{{../key}}'])
             && !$this('validation', $data['{{../key}}'])->isType('slug')
         ) {
             $errors['{{../key}}'] = self::INVALID_SLUG;
         }
         {{/when}}{{#when value.[0] '===' 'json'}}
-        
+
         // {{../key}} - json
-        if(isset($data['{{../key}}']) 
+        if(isset($data['{{../key}}'])
             && !empty($data['{{../key}}'])
             && !$this('validation', $data['{{../key}}'])->isType('json')
         ) {
             $errors['{{../key}}'] = self::INVALID_JSON;
         }
         {{/when}}{{#when value.[0] '===' 'date'}}
-        
+
         // {{../key}} - date
-        if(isset($data['{{../key}}']) 
+        if(isset($data['{{../key}}'])
             && !empty($data['{{../key}}'])
             && !$this('validation', $data['{{../key}}'])->isType('date')
         ) {
             $errors['{{../key}}'] = self::INVALID_DATE;
         }
         {{/when}}{{#when value.[0] '===' 'time'}}
-        
+
         // {{../key}} - time
-        if(isset($data['{{../key}}']) 
+        if(isset($data['{{../key}}'])
             && !empty($data['{{../key}}'])
             && !$this('validation', $data['{{../key}}'])->isType('time')
         ) {
             $errors['{{../key}}'] = self::INVALID_TIME;
         }
         {{/when}}{{#when value.[0] '===' 'alphanum'}}
-        
+
         // {{../key}} - alphanum
-        if(isset($data['{{../key}}']) 
+        if(isset($data['{{../key}}'])
             && !empty($data['{{../key}}'])
             && !$this('validation', $data['{{../key}}'])->isType('alphanum')
         ) {
             $errors['{{../key}}'] = self::INVALID_ALPHANUM;
-        }    
+        }
         {{/when}}{{#when value.[0] '===' 'alphanum-'}}
-        
+
         // {{../key}} - alphanum-
-        if(isset($data['{{../key}}']) 
+        if(isset($data['{{../key}}'])
             && !empty($data['{{../key}}'])
             && !$this('validation', $data['{{../key}}'])->isType('alphanum-')
         ) {
             $errors['{{../key}}'] = self::INVALID_ALPHANUM_HYPHEN;
         }
         {{/when}}{{#when value.[0] '===' 'alphanum_'}}
-        
+
         // {{../key}} - alphanum_
         if(isset($data['{{../key}}'])
-            && !empty($data['{{../key}}']) 
+            && !empty($data['{{../key}}'])
             && !$this('validation', $data['{{../key}}'])->isType('alphanum_')
         ) {
             $errors['{{../key}}'] = self::INVALID_ALPHANUM_SCORE;
         }
         {{/when}}{{#when value.[0] '===' 'alphanum-_'}}
-        
+
         // {{../key}} - alphanum-_
-        if(isset($data['{{../key}}']) 
+        if(isset($data['{{../key}}'])
             && !empty($data['{{../key}}'])
             && !$this('validation', $data['{{../key}}'])->isType('alphanum-_')
         ) {
             $errors['{{../key}}'] = self::INVALID_ALPHANUM_LINE;
         }
         {{/when}}{{#when value.[0] '===' 'regex'}}
-        
+
         // {{../key}} - regex
-        if(isset($data['{{../key}}']) 
+        if(isset($data['{{../key}}'])
             && !empty($data['{{../key}}'])
             && !preg_match('{{value.[1]}}', $data['{{../key}}'])
         ) {
             $errors['{{../key}}'] = self::INVALID_REGEX;
         }
         {{/when}}{{#when value.[0] '===' 'bool'}}
-        
+
         // {{../key}} - bool
-        if(isset($data['{{../key}}']) 
+        if(isset($data['{{../key}}'])
             && !empty($data['{{../key}}'])
             && !$this('validation', $data['{{../key}}'])->isType('bool', true)
         ) {
             $errors['{{../key}}'] = self::INVALID_BOOL;
         }
         {{/when}}{{#when value.[0] '===' 'small'}}
-        
+
         // {{../key}} - small
         if(isset($data['{{../key}}'])
-            && !empty($data['{{../key}}']) 
+            && !empty($data['{{../key}}'])
             && !$this('validation', $data['{{../key}}'])->isType('small', true)
         ) {
             $errors['{{../key}}'] = self::INVALID_SMALL;
         }
         {{/when}}{{#when value.[0] '===' 'int'}}
-        
+
         // {{../key}} - int
-        if(isset($data['{{../key}}']) 
+        if(isset($data['{{../key}}'])
             && !empty($data['{{../key}}'])
             && !$this('validation', $data['{{../key}}'])->isType('int', true)
         ) {
             $errors['{{../key}}'] = self::INVALID_INT;
         }
         {{/when}}{{#when value.[0] '===' 'float'}}
-        
+
         // {{../key}} - float
-        if(isset($data['{{../key}}']) 
+        if(isset($data['{{../key}}'])
             && !empty($data['{{../key}}'])
             && !$this('validation', $data['{{../key}}'])->isType('float', true)
         ) {
             $errors['{{../key}}'] = self::INVALID_FLOAT;
         }
         {{/when}}{{#when value.[0] '==' 'price'}}
-        
+
         // {{../key}} - float
-        if(isset($data['{{../key}}']) 
+        if(isset($data['{{../key}}'])
             && !empty($data['{{../key}}'])
             && !$this('validation', $data['{{../key}}'])->isType('float', true)
         ) {
@@ -254,9 +260,9 @@ class Update extends Base
         }
         {{/when}}
         {{#when value.[0] '===' 'number'}}
-        
+
         // {{../key}} - number
-        if(isset($data['{{../key}}']) 
+        if(isset($data['{{../key}}'])
             && !empty($data['{{../key}}'])
             && !$this('validation', $data['{{../key}}'])->isType('number', true)
         ) {
@@ -264,80 +270,80 @@ class Update extends Base
         }
         {{/when}}
         {{#when value.[0] '===' 'gt'}}
-        
+
         // {{../key}} - greater than
-        if(isset($data['{{../key}}']) 
-        	&& is_numeric($data['{{../key}}'])
+        if(isset($data['{{../key}}'])
+            && is_numeric($data['{{../key}}'])
             && !($data['{{../key}}'] > {{value.[1]}})
         ) {
             $errors['{{../key}}'] = sprintf(self::INVALID_GT, {{value.[1]}});
         }
         {{/when}}
         {{#when value.[0] '===' 'gte'}}
-        
+
         // {{../key}} - greater than or equal
-        if(isset($data['{{../key}}']) 
-        	&& is_numeric($data['{{../key}}'])
+        if(isset($data['{{../key}}'])
+            && is_numeric($data['{{../key}}'])
             && !($data['{{../key}}'] >= {{value.[1]}})
         ) {
             $errors['{{../key}}'] = sprintf(self::INVALID_GTE, {{value.[1]}});
         }
         {{/when}}
         {{#when value.[0] '===' 'lt'}}
-        
+
         // {{../key}} - less than
-        if(isset($data['{{../key}}']) 
-        	&& is_numeric($data['{{../key}}'])
+        if(isset($data['{{../key}}'])
+            && is_numeric($data['{{../key}}'])
             && !($data['{{../key}}'] < {{value.[1]}})
         ) {
             $errors['{{../key}}'] = sprintf(self::INVALID_LT, {{value.[1]}});
         }
         {{/when}}
         {{#when value.[0] '===' 'lte'}}
-        
+
         // {{../key}} - less than or equal
-        if(isset($data['{{../key}}']) 
-        	&& is_numeric($data['{{../key}}'])
+        if(isset($data['{{../key}}'])
+            && is_numeric($data['{{../key}}'])
             && !($data['{{../key}}'] <= {{value.[1]}})
         ) {
             $errors['{{../key}}'] = sprintf(self::INVALID_LTE, {{value.[1]}});
         }
         {{/when}}
         {{#when value.[0] '===' 'sgt'}}
-        
+
         // {{../key}} - length greater than
-        if(isset($data['{{../key}}']) 
-        	&& is_string($data['{{../key}}'])
+        if(isset($data['{{../key}}'])
+            && is_string($data['{{../key}}'])
             && !(strlen($data['{{../key}}']) > {{value.[1]}})
         ) {
             $errors['{{../key}}'] = sprintf(self::INVALID_SGT, {{value.[1]}});
         }
         {{/when}}
         {{#when value.[0] '===' 'sgte'}}
-        
+
         // {{../key}} - length greater than or equal
-        if(isset($data['{{../key}}']) 
-        	&& is_string($data['{{../key}}'])
+        if(isset($data['{{../key}}'])
+            && is_string($data['{{../key}}'])
             && !(strlen($data['{{../key}}']) >= {{value.[1]}})
         ) {
             $errors['{{../key}}'] = sprintf(self::INVALID_SGTE, {{value.[1]}});
         }
         {{/when}}
         {{#when value.[0] '===' 'slt'}}
-        
+
         // {{../key}} - length less than
-        if(isset($data['{{../key}}']) 
-        	&& is_string($data['{{../key}}'])
+        if(isset($data['{{../key}}'])
+            && is_string($data['{{../key}}'])
             && !(strlen($data['{{../key}}']) < {{value.[1]}})
         ) {
             $errors['{{../key}}'] = sprintf(self::INVALID_SLT, {{value.[1]}});
         }
         {{/when}}
         {{#when value.[0] '===' 'slte'}}
-        
+
         // {{../key}} - length less than or equal
-        if(isset($data['{{../key}}']) 
-        	&& is_string($data['{{../key}}'])
+        if(isset($data['{{../key}}'])
+            && is_string($data['{{../key}}'])
             && !(strlen($data['{{../key}}']) <= {{value.[1]}})
         ) {
             $errors['{{../key}}'] = sprintf(self::INVALID_SLTE, {{value.[1]}});
@@ -345,69 +351,70 @@ class Update extends Base
         {{/when}}
         {{/loop}}
         {{/loop}}
-        
+
         // {{name}}_flag - small
-        if(isset($data['{{name}}_flag']) 
+        if(isset($data['{{name}}_flag'])
             && !empty($data['{{name}}_flag'])
             && !$this('validation', $data['{{name}}_flag'])->isType('small', true)
         ) {
             $errors['{{name}}_flag'] = self::INVALID_SMALL;
         }
-        
+
         return $errors;
     }
-    
+
     /**
      * Processes the form
      *
-     * @param array data
-     * @return void
+     * @param array $data The item to process
+     *
+     * @return mixed
      */
-    public function process(array $data = array()) 
+    public function process(array $data = array())
     {
         //prevent uncatchable error
         if(count($this->errors($data))) {
             throw new Exception(self::FAIL_406);
         }
-        
+
         //prepare
         $data = $this->prepare($data);
-        
+
         //generate stuff
         $updated = date('Y-m-d H:i:s');
-        
+
         {{#loop fields}}{{#when value.field.[0] '==' 'file'}}
         //upload {{key}}
         if(isset($_FILES['{{key}}']['tmp_name'])
             && !empty($_FILES['{{key}}']['tmp_name'])
         ) {
             $destination = eve()->path('upload');
-            
+
             if(!is_dir($destination)) {
                 mkdir($destination);
             }
-            
+
             $file = '/' . md5(uniqid()) . '-' . $_FILES['{{key}}']['name'];
-            
+
             move_uploaded_file($_FILES['{{key}}']['tmp_name'], $destination.$file);
-            
+
             $data['{{key}}'] = 'http://'.$_SERVER['HTTP_HOST'].'/upload'.$file;
         }
-        
+
         {{/when}}{{/loop}}
         //SET WHAT WE KNOW
         $model = eve()
             ->database()
             ->model()
-            
+
             // {{name}}_id
             ->set{{capital name}}Id($data['{{name}}_id'])
-            
+
             // {{name}}_updated
             ->set{{capital name}}Updated($updated);
-        
+
         //REQUIRED
-        
+
         {{#loop fields}}{{#if value.required}}{{#if value.encoding}}
         {{#when value.encoding '===' 'md5'}}
         // {{key}}
@@ -431,7 +438,7 @@ class Update extends Base
             $model->set{{capitalCamel key}}($data['{{key}}']);
         }
         {{/if}}{{/if}}{{/loop}}
-        
+
         //OPTIONAL
         {{#loop fields}}{{#if value.required}}{{else}}
         // {{key}}
@@ -441,26 +448,26 @@ class Update extends Base
             $model->set{{capitalCamel key}}($data['{{key}}']);
         }
         {{/if}}{{/loop}}
-        
+
         // {{name}}_type
         if(isset($data['{{name}}_type'])
             && !empty($data['{{name}}_type'])
         ) {
             $model->set{{capital name}}Type($data['{{name}}_type']);
         }
-        
+
         // {{name}}_flag
         if(isset($data['{{name}}_flag'])
             && !empty($data['{{name}}_flag'])
         ) {
             $model->set{{capital name}}Flag($data['{{name}}_flag']);
         }
-        
+
         //what's left ?
         $model->save('{{name}}');
-        
+
         eve()->trigger('{{name}}-update', $model);
-        
+
         return $model;
     }
 }

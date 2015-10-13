@@ -1,6 +1,6 @@
 <?php //-->
-/*
- * A Custom Library
+/**
+ * A Custom Project
  *
  * Copyright and license information can be found at LICENSE
  * distributed with this package.
@@ -8,26 +8,26 @@
 class {{job_test_namespace}}{{capital name}}RestoreTest extends PHPUnit_Framework_TestCase
 {
     public function testRun()
-	{
-		$thrown = false;
-		try {
-			eve()
-				->job('{{name}}-restore')
-				->run();
-		} catch(Exception $e) {
-			$this->assertInstanceOf('Eve\\Framework\\Job\\Exception', $e);
-			$thrown = true;
-		}
-		
-		$this->assertTrue($thrown);
-		
-		${{name}} = eve()->registry()->get('test', '{{name}}');
-		
-		$results = eve()
-			->job('{{name}}-restore')
-			->setData(array('{{name}}_id' => ${{name}}['{{name}}_id']))
-			->run();
-		
-		$this->assertTrue(is_numeric($results['{{name}}']['{{name}}_id']));
-	}
+    {
+        $thrown = false;
+        try {
+            eve()
+                ->job('{{name}}-restore')
+                ->run();
+        } catch(Exception $e) {
+            $this->assertInstanceOf('Eve\\Framework\\Job\\Exception', $e);
+            $thrown = true;
+        }
+
+        $this->assertTrue($thrown);
+
+        ${{name}} = eve()->registry()->get('test', '{{name}}');
+
+        $results = eve()
+            ->job('{{name}}-restore')
+            ->setData(array('{{name}}_id' => ${{name}}['{{name}}_id']))
+            ->run();
+
+        $this->assertTrue(is_numeric($results['{{name}}']['{{name}}_id']));
+    }
 }

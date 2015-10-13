@@ -1,6 +1,6 @@
 <?php //-->
-/*
- * A Custom Library
+/**
+ * A Custom Project
  *
  * Copyright and license information can be found at LICENSE
  * distributed with this package.
@@ -39,7 +39,7 @@ use Eve\\Framework\\Action\\Html;
  *    -- $this->request->get('server') - $_SERVER data
  *       You are free to use the $_SERVER variable if you like
  *
- *    -- $this->request->get('body') - raw body for 
+ *    -- $this->request->get('body') - raw body for
  *       POST requests that provide JSON data for example
  *       instead of the default x-form-data
  *
@@ -50,44 +50,67 @@ use Eve\\Framework\\Action\\Html;
  *    -- $this->response->set('body', 'Foo') - Sets the response body.
  *       Alternative for returning a string in render()
  *
- *    -- $this->response->set('headers', 'Foo', 'Bar') - Sets a 
+ *    -- $this->response->set('headers', 'Foo', 'Bar') - Sets a
  *       header item to 'Foo: Bar' given key/value
  *
- *    -- $this->response->set('headers', 'Foo', '') - Sets a 
+ *    -- $this->response->set('headers', 'Foo', '') - Sets a
  *       header item to 'Foo' given that no value is present
  *       QUIRK: $this->response->set('headers', 'Foo') will erase
  *       all existing headers
+ *
+ * @vendor   Custom
+ * @package  Project
+ * @author   My Name <my@email.com>
+ * @standard PSR-2
  */
-class Update extends Html 
+class Update extends Html
 {
-    const FAIL_406 = 'There are some errors on the form.';
-    const FAIL_401 = 'You do not have permissions to update.';
+    /**
+     * @const string FAIL_401 Error template
+     */
+    const FAIL_401 = 'You do not have permissions to update';
+
+    /**
+     * @const string FAIL_404 Error template
+     */
     const FAIL_404 = '{{singular}} does not exist';
+
+    /**
+     * @const string FAIL_406 Error template
+     */
+    const FAIL_406 = 'There are some errors on the form.';
+
+    /**
+     * @const string SUCCESS_200 Success template
+     */
     const SUCCESS_200 = '{{singular}} successfully updated!';
 
+    /**
+     * @var string $title Page title
+     */
     protected $title = 'Update {{singular}}';
-    
+
     /**
      * Main action call
      *
      * @return string|null|void
      */
-    public function render() 
+    public function render()
     {
         //-----------------------//
         // 1. Get Data
         $data = array();
-        
+
         //get id from the url
         $data['{{name}}_id'] = $this->request->get('variables', 0);
-        
+
         //was it not included in the url ?
-        if(!$data['{{name}}_id'] 
+        if(!$data['{{name}}_id']
         && isset($_SESSION['me']['{{name}}_id'])) {
             //get it from the session
             $data['{{name}}_id'] = $_SESSION['me']['{{name}}_id'];
         }
-        
+
         //it's going to fail if we don't have the {{name}}_id
         if(!$data['{{name}}_id']) {
             //we might as we an fail it now
@@ -95,7 +118,7 @@ class Update extends Html
                 self::FAIL_404,
                 '{{url}}/{{name}}/search');
         }
-        
+
         {{#if permissions}}
         //if no {{permissions}}_id
         if(!isset($_SESSION['me']['{{permissions}}_id'])) {
@@ -104,10 +127,10 @@ class Update extends Html
                 self::FAIL_401,
                 '{{url}}/{{name}}/search');
         }
-        
+
         $data['{{permissions}}_id'] = $_SESSION['me']['{{permissions}}_id'];
         {{/if}}
-        
+
         //-----------------------//
         // 2. Validate
         {{#if permissions}}
@@ -115,7 +138,7 @@ class Update extends Html
         $yes = eve()
             ->model('{{name}}')
             ->permissions(
-                $data['{{name}}_id'], 
+                $data['{{name}}_id'],
                 $data['{{permissions}}_id']);
 
         //if not permitted, fail
@@ -131,24 +154,24 @@ class Update extends Html
             ->detail()
             ->process($data)
             ->getRow();
-        
+
         if(!$row) {
             return $this->fail(
                 self::FAIL_404,
                 '{{url}}/{{name}}/search');
         }
-        
+
         //-----------------------//
         // 3. Process
         //if it's a post
         if(!empty($_POST)) {
             return $this->check($data);
         }
-        
+
         $this->body['item'] = $row;
-        
+
         //NOTE: add anything extra to body here
-        
+
         //success
         return $this->success();
     }
@@ -156,15 +179,16 @@ class Update extends Html
     /**
      * When the form is submitted
      *
-     * @param array
-     * @return void
+     * @param *array $data Data from the initial page load
+     *
+     * @return string|null|void
      */
-    protected function check($data) 
+    protected function check($data)
     {
         //-----------------------//
         // 1. Get Data
         $data = array('item' => array_merge($data, $this->request->get('post')));
-        
+
         {{#loop fields}}{{#when value.field.[0] '==' 'checkbox'}}{{#if value.options}}
         //merge {{key}}
         if(isset($data['item']['{{key}}'])
@@ -172,9 +196,9 @@ class Update extends Html
         ) {
             $data['item']['{{key}}'] = implode(',', $data['item']['{{key}}']);
         }
-        
+
         {{/if}}{{/when}}{{#when value.field.[0] '===' 'date'}}
-        if(isset($data['item']['{{key}}']) 
+        if(isset($data['item']['{{key}}'])
             && !strtotime($data['item']['{{key}}'])
         ) {
             $data['item']['{{key}}'] = null;
@@ -186,15 +210,15 @@ class Update extends Html
             ->model('{{name}}')
             ->update()
             ->errors($data['item']);
-        
+
         //if there are errors
         if(!empty($errors)) {
             return $this->fail(
-                self::FAIL_406, 
-                $errors, 
+                self::FAIL_406,
+                $errors,
                 $data['item']);
         }
-        
+
         //-----------------------//
         //3. Process
         try {
@@ -204,15 +228,15 @@ class Update extends Html
                 ->run();
         } catch(\Exception $e) {
             return $this->fail(
-                $e->getMessage(), 
-                array(), 
+                $e->getMessage(),
+                array(),
                 $data['item']);
         }
-        
+
         //NOTE: do something with results here
-        
+
         return $this->success(
-            self::SUCCESS_200, 
+            self::SUCCESS_200,
             '{{url}}/{{name}}/search');
     }
 }

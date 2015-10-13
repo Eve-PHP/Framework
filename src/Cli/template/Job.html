@@ -1,6 +1,6 @@
 <?php //-->
-/*
- * A Custom Library
+/**
+ * A Custom Project
  *
  * Copyright and license information can be found at LICENSE
  * distributed with this package.
@@ -31,33 +31,41 @@ use Eve\\Framework\\Job\\Exception;
  *
  * -- $this->data - Provides all raw data
  *    originally passed into the job
+ *
+ * @vendor   Custom
+ * @package  Project
+ * @author   My Name <my@email.com>
+ * @standard PSR-2
  */
-class {{capital job_action}} extends Base 
+class {{capital job_action}} extends Base
 {
+    /**
+     * @const string FAIL_406 Error template
+     */
     const FAIL_406 = 'Invalid Data';
-    
+
     /**
      * Executes the job
      *
      * @return void
      */
-    public function run() 
+    public function run()
     {
         //if no data
         if(empty($this->data)) {
             //there should be a global catch somewhere
             throw new Exception(self::FAIL_406);
         }
-        
+
         //this will be returned at the end
         $results = array();
         {{#if job_instructions}}
         {{#loop job_instructions}}
         {{#in value.[0] 'create,remove,restore,update,link,linkAll,unlink,unlinkAll'}}
         {{#when value.[0] '===' 'create'}}
-        
+
         //NEXT ...
-        
+
         //if there is no {{value.[1]}}_id provided
         if(!isset($this->data['{{value.[1]}}_id'])) {
             //create the {{value.[1]}}
@@ -66,14 +74,14 @@ class {{capital job_action}} extends Base
                 ->create()
                 ->process($this->data)
                 ->get();
-           
+
            $this->data['{{value.[1]}}_id'] = $results['{{value.[1]}}']['{{value.[1]}}_id'];
         }
         {{/when}}
         {{#when value.[0] '===' 'remove'}}
-        
+
         //NEXT ...
-        
+
         //if there is a {{value.[1]}}_id
         if(isset($this->data['{{value.[1]}}_id'])) {
             //remove the {{value.[1]}}
@@ -84,9 +92,9 @@ class {{capital job_action}} extends Base
         }
         {{/when}}
         {{#when value.[0] '===' 'restore'}}
-        
+
         //NEXT ...
-        
+
         //if there is a {{value.[1]}}_id
         if(isset($this->data['{{value.[1]}}_id'])) {
             //restore the {{value.[1]}}
@@ -97,9 +105,9 @@ class {{capital job_action}} extends Base
         }
         {{/when}}
         {{#when value.[0] '===' 'update'}}
-        
+
         //NEXT ...
-        
+
         //if there is a {{value.[1]}}_id
         if(isset($this->data['{{value.[1]}}_id'])) {
             //update the {{value.[1]}}
@@ -111,7 +119,7 @@ class {{capital job_action}} extends Base
         {{/when}}
         {{#when value.[0] '===' 'link'}}{{#if value.[2]}}
         //NEXT ...
-        
+
         //if there is a {{value.[1]}}_id
         if(isset($this->data['{{value.[1]}}_id'])) {
             //link the {{value.[1]}}
@@ -123,7 +131,7 @@ class {{capital job_action}} extends Base
         }
         {{else}}
         //NEXT ...
-        
+
         //if there is a {{value.[1]}}_id
         if(isset($this->data['{{value.[1]}}_id'])) {
             //link the {{value.[1]}}
@@ -135,9 +143,9 @@ class {{capital job_action}} extends Base
         }
         {{/if}}{{/when}}
         {{#when value.[0] '===' 'linkAll'}}
-        
+
         //NEXT ...
-        
+
         //if there is a list of {{value.[1]}}
         if(isset($this->data['{{value.[1]}}'])
             && is_array($this->data['{{value.[1]}}'])
@@ -152,21 +160,21 @@ class {{capital job_action}} extends Base
                         ->process($row)
                         ->get();
                 }
-                
+
                 //now link the {{value.[1]}}
                 eve()
                     ->model('{{../name}}')
                     ->link{{capital value.[1]}}(
                         $results['{{../name}}']['{{../name}}_id'],
                         $row['{{value.[1]}}_id']);
-                
+
             }
         }
         {{/when}}
         {{#when value.[0] '===' 'unlink'}}{{#if value.[2]}}
-        
+
         //NEXT ...
-        
+
         //if there is a {{value.[1]}}_id
         if(isset($this->data['{{value.[1]}}_id'])) {
             //unlink the {{value.[1]}}
@@ -177,9 +185,9 @@ class {{capital job_action}} extends Base
                     $results['{{../name}}']['{{../name}}_id']);
         }
         {{else}}
-        
+
         //NEXT ...
-        
+
         //if there is a {{value.[1]}}_id
         if(isset($this->data['{{value.[1]}}_id'])) {
             //unlink the {{value.[1]}}
@@ -191,9 +199,9 @@ class {{capital job_action}} extends Base
         }
         {{/if}}{{/when}}
         {{#when value.[0] '===' 'unlinkAll'}}
-        
+
         //NEXT ...
-        
+
         //unlink all {{value.[1]}}
         eve()
             ->model('{{../name}}')
@@ -201,9 +209,9 @@ class {{capital job_action}} extends Base
                 $results['{{../name}}']['{{../name}}_id']);
         {{/when}}
         {{else}}
-        
+
         //NEXT ...
-        
+
         //if there is a {{value.[1]}}_id
         if(isset($this->data['{{value.[1]}}_id'])) {
             //remove the {{value.[1]}}
@@ -215,7 +223,7 @@ class {{capital job_action}} extends Base
         {{/in}}
         {{/loop}}
         {{/if}}
-        
+
         return $results;
     }
 }

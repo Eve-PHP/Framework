@@ -1,7 +1,7 @@
 <div class="panel panel-default clear" >
     <div class="panel-heading brand">
         <div class="panel-title">Create {{singular}}</div>
-    </div>     
+    </div>
 
     <div class="panel-body" >
         <form enctype="multipart/form-data" method="post">
@@ -10,33 +10,33 @@
                 <label class="control-label">{{value.label}}</label>
                 <div>
                     {{#when value.field.[0] '==' 'text'}}
-                    <input 
-                        type="text" 
-                        name="{{key}}" 
-                        class="form-control" 
-                        placeholder="{{value.holder}}" 
+                    <input
+                        type="text"
+                        name="{{key}}"
+                        class="form-control"
+                        placeholder="{{value.holder}}"
                         value="\{\{item.{{key}}\}\}" />
-                        
+
                     \{\{#if errors.{{key}}\}\}
                     <span class="help-text">\{\{errors.{{key}}\}\}</span>
                     \{\{/if\}\}
                     {{/when}}{{#when value.field.[0] '==' 'password'}}
-                    <input 
-                        type="password" 
-                        name="{{key}}" 
-                        class="form-control" 
-                        placeholder="{{value.holder}}" 
+                    <input
+                        type="password"
+                        name="{{key}}"
+                        class="form-control"
+                        placeholder="{{value.holder}}"
                         value="\{\{item.{{key}}\}\}" />
-                        
+
                     \{\{#if errors.{{key}}\}\}
                     <span class="help-text">\{\{errors.{{key}}\}\}</span>
                     \{\{/if\}\}
                     {{/when}}{{#when value.field.[0] '==' 'number'}}
-                    <input 
-                        type="number" 
-                        name="{{key}}" 
-                        class="form-control" 
-                        placeholder="{{value.holder}}" 
+                    <input
+                        type="number"
+                        name="{{key}}"
+                        class="form-control"
+                        placeholder="{{value.holder}}"
                         {{#if value.field.min}}
                         min="{{value.field.min}}"
                         {{/if}}{{#if value.field.max}}
@@ -44,79 +44,79 @@
                         {{/if}}{{#if value.field.step}}
                         step="{{value.field.step}}"
                         {{/if}}value="\{\{item.{{key}}\}\}" />
-                        
+
                     \{\{#if errors.{{key}}\}\}
                     <span class="help-text">\{\{errors.{{key}}\}\}</span>
                     \{\{/if\}\}
                     {{/when}}{{#when value.field.[0] '==' 'date'}}
-                    <input 
-                        type="date" 
-                        name="{{key}}" 
-                        class="form-control" 
-                        placeholder="{{value.holder}}" 
+                    <input
+                        type="date"
+                        name="{{key}}"
+                        class="form-control"
+                        placeholder="{{value.holder}}"
                         value="\{\{date item.{{key}} 'Y-m-d'\}\}" />
-                        
+
                     \{\{#if errors.{{key}}\}\}
                     <span class="help-text">\{\{errors.{{key}}\}\}</span>
                     \{\{/if\}\}
                     {{/when}}{{#when value.field.[0] '==' 'email'}}
-                    <input 
-                        type="email" 
-                        name="{{key}}" 
-                        class="form-control" 
-                        placeholder="{{value.holder}}" 
+                    <input
+                        type="email"
+                        name="{{key}}"
+                        class="form-control"
+                        placeholder="{{value.holder}}"
                         value="\{\{item.{{key}}\}\}" />
-                        
+
                     \{\{#if errors.{{key}}\}\}
                     <span class="help-text">\{\{errors.{{key}}\}\}</span>
                     \{\{/if\}\}
                     {{/when}}{{#when value.field.[0] '==' 'color'}}
-                    <input 
-                        type="color" 
-                        name="{{key}}" 
-                        class="form-control" 
+                    <input
+                        type="color"
+                        name="{{key}}"
+                        class="form-control"
                         value="\{\{item.{{key}}\}\}" />
-                        
+
                     \{\{#if errors.{{key}}\}\}
                     <span class="help-text">\{\{errors.{{key}}\}\}</span>
                     \{\{/if\}\}
                     {{/when}}{{#when value.field.[0] '==' 'file'}}
-                    <input 
-                        type="file" 
-                        name="{{key}}" 
+                    <input
+                        type="file"
+                        name="{{key}}"
                         {{#if value.field.accept}}
                         accept="{{value.field.accept}}"
                         {{/if}}{{#if value.field.multiple}}
                         multiple
                         {{/if}}
                         class="form-control" />
-                        
+
                     \{\{#if errors.{{key}}\}\}
                     <span class="help-text">\{\{errors.{{key}}\}\}</span>
                     \{\{/if\}\}
                     {{/when}}{{#when value.field.[0] '==' 'textarea'}}
-                    <textarea 
-                        name="{{key}}" 
-                        class="form-control" 
+                    <textarea
+                        name="{{key}}"
+                        class="form-control"
                         placeholder="{{value.holder}}"
-                        >\{\{item.{{key}}\}\}</textarea> 
-                        
+                        >\{\{item.{{key}}\}\}</textarea>
+
                     \{\{#if errors.{{key}}\}\}
                     <span class="help-text">\{\{errors.{{key}}\}\}</span>
                     \{\{/if\}\}
                     {{/when}}{{#when value.field.[0] '==' 'select'}}
                     <select name="{{key}}" class="form-control">
                         {{#loop value.options}}
-                        <option 
+                        <option
                             value="{{value.value}}"
-                            \{\{#when item.{{../key}} '===' '{{value.value}}'\}\} 
+                            \{\{#when item.{{../key}} '===' '{{value.value}}'\}\}
                             selected
                             \{\{/when\}\}>
                             {{value.label}}
                         </option>
                         {{/loop}}
-                    </select> 
-                        
+                    </select>
+
                     \{\{#if errors.{{key}}\}\}
                     <span class="help-text">\{\{errors.{{key}}\}\}</span>
                     \{\{/if\}\}
@@ -124,31 +124,31 @@
                     {{#if value.options}}{{#loop value.options}}
                     <div>
                         <label>
-                            <input 
-                                type="checkbox" 
-                                name="{{../key}}[]" 
+                            <input
+                                type="checkbox"
+                                name="{{../key}}[]"
                                 value="{{value.value}}"
-                                \{\{#in '{{value.value}}' item.{{../key}}\}\} 
+                                \{\{#in '{{value.value}}' item.{{../key}}\}\}
                                 checked
                                 \{\{/in\}\} />
                                 {{value.label}}
-                        </label> 
+                        </label>
                     </div>
                     {{/loop}}
                     {{else}}
                     <input type="hidden" name="{{key}}" value="0" />
                     <label>
-                        <input 
-                            type="checkbox" 
-                            name="{{key}}" 
+                        <input
+                            type="checkbox"
+                            name="{{key}}"
                             value="1"
-                            \{\{#if item.{{key}}\}\} 
+                            \{\{#if item.{{key}}\}\}
                             checked
                             \{\{/if\}\} />
                             {{value.label}}
-                    </label> 
-                    {{/if}}   
-                     
+                    </label>
+                    {{/if}}
+
                     \{\{#if errors.{{key}}\}\}
                     <span class="help-text">\{\{errors.{{key}}\}\}</span>
                     \{\{/if\}\}
@@ -156,31 +156,31 @@
                     {{#if value.options}}{{#loop value.options}}
                     <div>
                         <label>
-                            <input 
-                                type="radio" 
-                                name="{{../key}}" 
+                            <input
+                                type="radio"
+                                name="{{../key}}"
                                 value="{{value.value}}"
-                                \{\{#when item.{{../key}} '===' '{{value.value}}'\}\} 
+                                \{\{#when item.{{../key}} '===' '{{value.value}}'\}\}
                                 checked
                                 \{\{/when\}\} />
                                 {{value.label}}
-                        </label> 
+                        </label>
                     </div>
                     {{/loop}}
                     {{else}}
                     <input type="hidden" name="{{key}}" value="0" />
                     <label>
-                        <input 
-                            type="radio" 
-                            name="{{key}}" 
+                        <input
+                            type="radio"
+                            name="{{key}}"
                             value="1"
-                            \{\{#if item.{{key}}\}\} 
+                            \{\{#if item.{{key}}\}\}
                             checked
                             \{\{/if\}\} />
                             {{value.label}}
-                    </label> 
-                    {{/if}}   
-                     
+                    </label>
+                    {{/if}}
+
                     \{\{#if errors.{{key}}\}\}
                     <span class="help-text">\{\{errors.{{key}}\}\}</span>
                     \{\{/if\}\}
@@ -188,7 +188,7 @@
                 </div>
             </div>
             {{/if}}{{/loop}}
-            
+
             <div class="clear form-group">
                <button type="submit" class="btn btn-primary">Submit</button>
             </div>

@@ -1,7 +1,6 @@
 <?php //-->
-/*
- * This file is part of the Type package of the Eden PHP Library.
- * (c) 2013-2014 Openovate Labs
+/**
+ * A Custom Project
  *
  * Copyright and license information can be found at LICENSE
  * distributed with this package.
@@ -9,22 +8,22 @@
 
 class {{model_test_namespace}}{{capital name}}DetailTest extends PHPUnit_Framework_TestCase
 {
-    public function testErrors() 
-	{	
-		$errors = eve()->model('{{name}}')->detail()->errors();
-		$this->assertEquals('Cannot be empty', $errors['{{name}}_id']);
-	}
+    public function testErrors()
+    {
+        $errors = eve()->model('{{name}}')->detail()->errors();
+        $this->assertEquals('Cannot be empty', $errors['{{name}}_id']);
+    }
 
     public function testProcess() {
 
-		${{name}} = eve()->registry()->get('test', '{{name}}');
+        ${{name}} = eve()->registry()->get('test', '{{name}}');
 
         $row = eve()
-        	->model('{{name}}')
-        	->detail()
-        	->process(array('{{name}}_id' => ${{name}}['{{name}}_id']))
-        	->getRow();
-		
-		$this->assertEquals(${{name}}['{{name}}_id'], $row['{{name}}_id']);
+            ->model('{{name}}')
+            ->detail()
+            ->process(array('{{name}}_id' => ${{name}}['{{name}}_id']))
+            ->getRow();
+
+        $this->assertEquals(${{name}}['{{name}}_id'], $row['{{name}}_id']);
     }
 }

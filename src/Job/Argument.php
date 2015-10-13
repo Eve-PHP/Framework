@@ -1,5 +1,5 @@
 <?php //-->
-/*
+/**
  * This file is part of the Eve Framework Library
  * (c) 2014-2016 Openovate Labs
  *
@@ -10,10 +10,13 @@
 namespace Eve\Framework\Job;
 
 /**
- * Argument
+ * Argument class
  *
- * @vendor Eve
+ * @vendor   Eve
+ * @package  Framework
+ * @author   Christian Blanquera <cblanquera@openovate.com>
+ * @standard PSR-2
  */
-class Argument extends \Eve\Framework\Argument 
+class Argument extends \Eve\Framework\Argument
 {
 }

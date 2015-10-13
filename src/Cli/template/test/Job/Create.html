@@ -1,6 +1,6 @@
 <?php //-->
-/*
- * A Custom Library
+/**
+ * A Custom Project
  *
  * Copyright and license information can be found at LICENSE
  * distributed with this package.
@@ -8,20 +8,20 @@
 class {{job_test_namespace}}{{capital name}}CreateTest extends PHPUnit_Framework_TestCase
 {
     public function testRun()
-	{
-		$thrown = false;
-		try {
-			eve()
-				->job('{{name}}-create')
-				->run();
-		} catch(Exception $e) {
-			$this->assertInstanceOf('Eve\\Framework\\Job\\Exception', $e);
-			$thrown = true;
-		}
-		
-		$this->assertTrue($thrown);
-		
-		{{#loop fields}}
+    {
+        $thrown = false;
+        try {
+            eve()
+                ->job('{{name}}-create')
+                ->run();
+        } catch(Exception $e) {
+            $this->assertInstanceOf('Eve\\Framework\\Job\\Exception', $e);
+            $thrown = true;
+        }
+
+        $this->assertTrue($thrown);
+
+        {{#loop fields}}
         {{#when value.field.[0] '===' 'file'}}
         $path = eve()->path('public') . '/logo.png';
         $_FILES['{{key}}']['tmp_name'] = sys_get_temp_dir().'/test-123';
@@ -30,29 +30,29 @@ class {{job_test_namespace}}{{capital name}}CreateTest extends PHPUnit_Framework
         {{/when}}
         {{/loop}}
 
-		$results = eve()
-			->job('{{name}}-create')
-			->setData(array(
-				{{#loop fields}}{{#if value.required}}
-	            {{#when value.field.[0] '!=' 'file'}}
-	            '{{key}}' => {{value.sample}},
-	            {{/when}}{{#when value.field.[0] '==' 'file'}}
-	            '{{key}}' => $_FILES['{{key}}']['tmp_name'],
-	            {{/when}}
-	            {{/if}}{{/loop}}
-			))
-			->run();
-		
-		$this->assertTrue(is_numeric($results['{{name}}']['{{name}}_id']));
+        $results = eve()
+            ->job('{{name}}-create')
+            ->setData(array(
+                {{#loop fields}}{{#if value.required}}
+                {{#when value.field.[0] '!=' 'file'}}
+                '{{key}}' => {{value.sample}},
+                {{/when}}{{#when value.field.[0] '==' 'file'}}
+                '{{key}}' => $_FILES['{{key}}']['tmp_name'],
+                {{/when}}
+                {{/if}}{{/loop}}
+            ))
+            ->run();
 
-		{{#loop fields}}{{#if value.required}}
-		{{#when value.field.[0] '==' 'password' }}
-		$this->assertEquals(md5({{value.sample}}), $results['{{../name}}']['{{key}}']);
-		{{/when}}{{#when value.field.[0] '!=' 'password' }}
-		{{#when value.field.[0] '!=' 'file'}}
-		$this->assertEquals({{value.sample}}, $results['{{../name}}']['{{key}}']);
+        $this->assertTrue(is_numeric($results['{{name}}']['{{name}}_id']));
+
+        {{#loop fields}}{{#if value.required}}
+        {{#when value.field.[0] '==' 'password' }}
+        $this->assertEquals(md5({{value.sample}}), $results['{{../name}}']['{{key}}']);
+        {{/when}}{{#when value.field.[0] '!=' 'password' }}
+        {{#when value.field.[0] '!=' 'file'}}
+        $this->assertEquals({{value.sample}}, $results['{{../name}}']['{{key}}']);
         {{/when}}{{/when}}
-		{{/if}}{{/loop}}
-		eve()->registry()->set('test', '{{name}}', $results['{{name}}']);
-	}
+        {{/if}}{{/loop}}
+        eve()->registry()->set('test', '{{name}}', $results['{{name}}']);
+    }
 }

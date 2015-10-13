@@ -1,5 +1,5 @@
 <?php //-->
-/*
+/**
  * This file is part of the Eve Framework Library
  * (c) 2014-2016 Openovate Labs
  *
@@ -10,30 +10,37 @@
 namespace Eve\Framework\Job;
 
 /**
- * Exception
+ * Job base class
  *
- * @vendor Eve
+ * @vendor   Eve
+ * @package  Framework
+ * @author   Christian Blanquera <cblanquera@openovate.com>
+ * @standard PSR-2
  */
-abstract class Base extends \Eve\Framework\Base 
+abstract class Base extends \Eve\Framework\Base
 {
-	protected $data = null;
-	
-	/**
-	 * Executes the job
-	 *
-	 * @return void
-	 */
-	abstract public function run();
-	
-	/**
-	 * Sets data needed for the job
-	 *
-	 * @param mixed data
-	 * @return this
-	 */
-	public function setData($data) 
-	{
-		$this->data = $data;
-		return $this;
-	}
+    /**
+     * @var array|null $data Data needed for the job
+     */
+    protected $data = null;
+
+    /**
+     * Executes the job
+     *
+     * @return void
+     */
+    abstract public function run();
+
+    /**
+     * Sets data needed for the job
+     *
+     * @param mixed $data Data needed for the job
+     *
+     * @return Eve\Framework\Job\Base
+     */
+    public function setData($data)
+    {
+        $this->data = $data;
+        return $this;
+    }
 }
