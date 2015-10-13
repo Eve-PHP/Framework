@@ -175,7 +175,8 @@ class Index extends Base
             ->search('{{../name}}_{{key}}')
             ->innerJoinOn(
                 '{{key}}',
-                '{{../name}}_{{key}}_{{key}} = {{key}}_id')
+                '{{../name}}_{{key}}_{{key}} = {{key}}_id'
+            )
             ->filterBy{{capital ../name}}{{capital key}}{{capital ../name}}(${{../name}}Id);
 
         if (!empty($types)) {
@@ -194,10 +195,11 @@ class Index extends Base
 
         $rows = $search->getRows();
 
-        for($i = 0; $i < count($rows); $i++) {
+        for ($i = 0; $i < count($rows); $i++) {
             $this->unlink{{capital key}}(
                 ${{../name}}Id,
-                $rows[$i]['{{key}}_id']);
+                $rows[$i]['{{key}}_id']
+            );
         }
 
         return $rows;
@@ -246,4 +248,5 @@ class Index extends Base
         return Update::i();
     }
     {{/in}}
+
 }

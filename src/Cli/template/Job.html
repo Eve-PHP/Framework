@@ -63,7 +63,6 @@ class {{capital job_action}} extends Base
         {{#loop job_instructions}}
         {{#in value.[0] 'create,remove,restore,update,link,linkAll,unlink,unlinkAll'}}
         {{#when value.[0] '===' 'create'}}
-
         //NEXT ...
 
         //if there is no {{value.[1]}}_id provided
@@ -79,7 +78,6 @@ class {{capital job_action}} extends Base
         }
         {{/when}}
         {{#when value.[0] '===' 'remove'}}
-
         //NEXT ...
 
         //if there is a {{value.[1]}}_id
@@ -92,7 +90,6 @@ class {{capital job_action}} extends Base
         }
         {{/when}}
         {{#when value.[0] '===' 'restore'}}
-
         //NEXT ...
 
         //if there is a {{value.[1]}}_id
@@ -105,7 +102,6 @@ class {{capital job_action}} extends Base
         }
         {{/when}}
         {{#when value.[0] '===' 'update'}}
-
         //NEXT ...
 
         //if there is a {{value.[1]}}_id
@@ -143,7 +139,6 @@ class {{capital job_action}} extends Base
         }
         {{/if}}{{/when}}
         {{#when value.[0] '===' 'linkAll'}}
-
         //NEXT ...
 
         //if there is a list of {{value.[1]}}
@@ -172,7 +167,6 @@ class {{capital job_action}} extends Base
         }
         {{/when}}
         {{#when value.[0] '===' 'unlink'}}{{#if value.[2]}}
-
         //NEXT ...
 
         //if there is a {{value.[1]}}_id
@@ -185,7 +179,6 @@ class {{capital job_action}} extends Base
                     $results['{{../name}}']['{{../name}}_id']);
         }
         {{else}}
-
         //NEXT ...
 
         //if there is a {{value.[1]}}_id
@@ -199,17 +192,16 @@ class {{capital job_action}} extends Base
         }
         {{/if}}{{/when}}
         {{#when value.[0] '===' 'unlinkAll'}}
-
         //NEXT ...
 
         //unlink all {{value.[1]}}
         eve()
             ->model('{{../name}}')
             ->unlinkAll{{capital value.[1]}}(
-                $results['{{../name}}']['{{../name}}_id']);
+                $results['{{../name}}']['{{../name}}_id']
+            );
         {{/when}}
         {{else}}
-
         //NEXT ...
 
         //if there is a {{value.[1]}}_id
