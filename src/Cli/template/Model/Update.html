@@ -383,7 +383,7 @@ class Update extends Base
         //generate stuff
         $updated = date('Y-m-d H:i:s');
 
-        {{#loop fields}}{{#when value.field.[0] '==' 'file'}}
+        {{#loop fields}}{{#when value.field.[0] '===' 'file'}}
         //upload {{key}}
         if (isset($_FILES['{{key}}']['tmp_name'])
             && !empty($_FILES['{{key}}']['tmp_name'])
