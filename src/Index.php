@@ -157,6 +157,11 @@ namespace Eve\Framework
                         break;
                 }
 
+                // Allow custom objects
+                if(is_object($info['type'])) {
+                    $database = $info['type'];
+                }
+                
                 $this->registry()->set('database', $key, $database);
 
                 if($info['default']) {
