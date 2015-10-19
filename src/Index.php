@@ -158,7 +158,7 @@ namespace Eve\Framework
                 }
 
                 // Allow custom objects
-                if(is_object($info['type'])) {
+                if (is_object($info['type'])) {
                     $database = $info['type'];
                 }
                 
@@ -196,6 +196,8 @@ namespace Eve\Framework
             if(!$config['debug_mode']) {
                 //stop argument testing
                 Argument::i()->stop();
+            } else if (!ini_get('display_errors')) {
+                ini_set('display_errors', '1');
             }
 
             //turn on error handling
