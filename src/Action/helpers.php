@@ -6,6 +6,12 @@ return array(
         $key = array_shift($args);
         $options = array_pop($args);
 
+        $more = explode(' __ ', $options['fn']());
+
+		foreach($more as $arg) {
+            $args[] = $arg;
+        }
+
         return eve()->translate((string) $key, $args);
     },
 

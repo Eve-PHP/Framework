@@ -51,7 +51,7 @@ class Create extends Base
         $data = $this->prepare($data);
 
         //REQUIRED
-        {{#loop fields}}{{#if value.required}}{{#when value.field.[0] '==' 'file'}}
+        {{#loop fields}}{{#if value.required}}{{#when value.field.[0] '===' 'file'}}
         // {{key}} - required
         if (!isset($_FILES['{{key}}']['tmp_name'])
             || empty($_FILES['{{key}}']['tmp_name'])

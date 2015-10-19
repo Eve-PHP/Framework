@@ -31,6 +31,9 @@ abstract class Json extends Base
      */
     protected function fail($message = null, $validation = null)
     {
+        $this->trigger('json-fail', $this, $message, $validation);
+        $this->trigger('response-fail', $this, $message, $validation);
+
         $json = array('error' => true);
 
         if($message) {
@@ -59,6 +62,9 @@ abstract class Json extends Base
      */
     protected function success($results = null)
     {
+        $this->trigger('json-success', $this, $results);
+        $this->trigger('response-success', $this, $results);
+
         $json = array('error' => false);
 
         if($results) {

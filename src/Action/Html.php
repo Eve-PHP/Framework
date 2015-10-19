@@ -163,6 +163,9 @@ abstract class Html extends Base
         $this->body['errors'] = $errors;
         $this->body['item'] = $item;
 
+        $this->trigger('html-fail', $this, $message, $errors, $items);
+        $this->trigger('response-fail', $this, $message, $errors, $items);
+
         return $this->build($this->getTemplate());
     }
 
@@ -281,6 +284,9 @@ abstract class Html extends Base
             $_SESSION['flash']['type'] = 'success';
         }
 
+        $this->trigger('html-success', $this, $message, $results);
+        $this->trigger('response-success', $this, $message, $results);
+
         if(is_string($results)) {
             //redirect will forcefully exit
             return (string) eve()->redirect($results);
@@ -290,6 +296,6 @@ abstract class Html extends Base
             $this->body['results'] = $results;
         }
 
-           return $this->build($this->getTemplate());
+        return $this->build($this->getTemplate());
     }
 }

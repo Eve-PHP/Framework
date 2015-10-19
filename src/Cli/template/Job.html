@@ -113,7 +113,7 @@ class {{capital job_action}} extends Base
                 ->process($this->data);
         }
 
-        {{/when}}{{#when value.[0] '===' 'link'}}{{#if value.[2]}}
+        {{/when}}{{#when value.[0] '===' 'link'}}{{#when value.[2] '===' false}}
         //NEXT ...
 
         //if there is a {{value.[1]}}_id
