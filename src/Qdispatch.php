@@ -86,8 +86,20 @@ class Qdispatch extends \Eve\Framework\Queue
 
         // worker consuming tasks from queue
         $this->channel->basic_qos(null, 1, null);
-        $this->channel->basic_consume('queue', '', false, false, false, false, $callback);
-
+        
+        // now we need to catch the channel exception
+        // when task does not exists in our queue
+        try {
+            // comsume messages on queue
+            $this->channel->basic_consume('queue', '', false, false, false, false, $callback);
+        } catch(\PhpAmqpLib\Exception\AMQPProtocolChannelException $e) {
+            // notify that task does not exists
+            echo " * Task does not exists, creating task. Please re-run the worker. \n";
+                
+            // create the init queue
+            eve()->queue('init', array())->save();
+        }
+        
         while(count($this->channel->callbacks)) {
             $this->channel->wait();
         }
