@@ -30,7 +30,7 @@ class Queue extends \Eve\Framework\Index
     protected $appId;
     protected $corrId;
     protected $channel;
-    protected $message;
+    protected $message = array();
     protected $replyTo;
     protected $timestamp;
     protected $connection;

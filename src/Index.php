@@ -644,7 +644,7 @@ namespace Eve\Framework
          */
         public function queue($task, array $data)
         {
-            $config = $this->path('settings');
+            $config = $this->settings('config');
             $config = $config['queue'];
 
             return Queue::i(
