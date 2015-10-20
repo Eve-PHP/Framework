@@ -161,7 +161,7 @@ abstract class Html extends Base
         }
 
         $this->body['errors'] = $errors;
-        $this->body['item'] = $item;
+        $this->body['item'] = $items;
 
         $this->trigger('html-fail', $this, $message, $errors, $items);
         $this->trigger('response-fail', $this, $message, $errors, $items);
