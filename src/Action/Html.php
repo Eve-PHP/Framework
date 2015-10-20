@@ -147,7 +147,7 @@ abstract class Html extends Base
     protected function fail(
         $message = null,
         $errors = array(),
-        array $item = array()
+        array $items = array()
     ) {
         if($message) {
             $_SESSION['flash']['message'] = $message;
