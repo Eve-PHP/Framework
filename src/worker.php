@@ -14,8 +14,8 @@ Eve\Framework\Index::i(__DIR__, 'Eve')
 // set default database
 ->defaultDatabases();
 
-use Eve\Framework\Qdispatch;
+use Eve\Framework\Dispatch;
 
-Qdispatch::i('localhost', 5672, 'guest', 'guest')->run();
+Dispatch::i('localhost', 5672, 'guest', 'guest')->run();
 
 ?>
