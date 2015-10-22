@@ -8,11 +8,13 @@
 class {{model_test_namespace}}{{capital name}}IndexTest extends PHPUnit_Framework_TestCase
 {
     {{#loop model}}
+    {{#when value '!==' 'index'}}
     public function test{{capital value}}()
     {
-        $class = eve()->model('{{../name}}')->create();
-        $this->assertInstanceOf('Api\\Model\\{{capital ../name}}\\Create', $class);
+        $class = eve()->model('{{../name}}')->{{value}}();
+        $this->assertInstanceOf('Eve\\Model\\{{capital ../name}}\\{{capital value}}', $class);
     }
+    {{/when}}
     {{/loop}}
 
     {{#loop relations}}
@@ -39,6 +41,7 @@ class {{model_test_namespace}}{{capital name}}IndexTest extends PHPUnit_Framewor
     }
     {{/loop}}
 
+     {{#if permissions}}
     public function testPermissions()
     {
         ${{name}} = eve()->registry()->get('test', '{{name}}');
@@ -57,6 +60,7 @@ class {{model_test_namespace}}{{capital name}}IndexTest extends PHPUnit_Framewor
 
         $this->assertFalse($yes);
     }
+    {{/if}}
 
     {{#loop relations}}
     public function testUnlink{{capital key}}()
