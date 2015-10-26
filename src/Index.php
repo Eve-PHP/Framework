@@ -124,7 +124,11 @@ namespace Eve\Framework
          */
         public function defaultDatabases(array $databases = null)
         {
-            if(!$databases && strpos($_SERVER['HTTP_HOST'], 'testsuites') !== false) {
+            if(!$databases 
+				&& isset($_SERVER['HTTP_HOST']) 
+				&& !empty($_SERVER['HTTP_HOST']) 
+				&& strpos($_SERVER['HTTP_HOST'], 'testsuites') !== false
+			) {
                 $test = $this->settings('test');
                 $databases = $test['database'];
             }
@@ -851,5 +855,15 @@ namespace Eve\Framework
 
             return $this->language()->get($string);
         }
+		
+		/**
+		 * Starts worker
+		 *
+		 * @return Eve\Framework\Dispatcher
+		 */
+		public function work()
+		{
+			Dispatcher::i('localhost', 5672, 'guest', 'guest')->run();
+		}
     }
 }
