@@ -125,10 +125,10 @@ namespace Eve\Framework
         public function defaultDatabases(array $databases = null)
         {
             if(!$databases 
-				&& isset($_SERVER['HTTP_HOST']) 
-				&& !empty($_SERVER['HTTP_HOST']) 
-				&& strpos($_SERVER['HTTP_HOST'], 'testsuites') !== false
-			) {
+                && !empty($_SERVER) 
+                && isset($_SERVER['HTTP_HOST'])
+                && strpos($_SERVER['HTTP_HOST'], 'testsuites') !== false
+            ) {
                 $test = $this->settings('test');
                 $databases = $test['database'];
             }
@@ -855,15 +855,23 @@ namespace Eve\Framework
 
             return $this->language()->get($string);
         }
-		
-		/**
-		 * Starts worker
-		 *
-		 * @return Eve\Framework\Dispatcher
-		 */
-		public function work()
-		{
-			Dispatcher::i('localhost', 5672, 'guest', 'guest')->run();
-		}
+
+        /**
+         * Runs the worker.
+         *
+         * @return Eve\Framwork\Index
+         */
+        public function work()
+        {
+            $config = $this->settings('config');
+            $config = $config['queue'];
+
+            Dispatcher::i(
+                $config['host'],
+                $config['port'],
+                $config['username'],
+                $config['password']
+            )->run();
+        }
     }
 }
