@@ -872,6 +872,8 @@ namespace Eve\Framework
                 $config['username'],
                 $config['password']
             )->run();
+
+            return $this;
         }
     }
 }
