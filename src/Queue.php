@@ -131,7 +131,7 @@ class Queue extends \Eve\Framework\Index
         if($persistent) {
             $this->persistent = 2;
         }
-        
+
         return $this;
     }
 
@@ -199,6 +199,8 @@ class Queue extends \Eve\Framework\Index
 
     /**
      * Sets message content type
+     * MIME content type of message payload. Has the 
+     * same purpose/semantics as HTTP Content-Type header
      *
      * @param *string $type The content type
      *
@@ -214,6 +216,8 @@ class Queue extends \Eve\Framework\Index
 
     /**
      * Sets message content encoding
+     * MIME content encoding of message payload. Has the
+     * same purpose/semantics as HTTP Content-Encoding header.
      *
      * @param *string $encoding The content encoding
      *
@@ -228,7 +232,8 @@ class Queue extends \Eve\Framework\Index
     }
 
     /**
-     * Sets application id
+     * Sets application identifier string, 
+     * for example, "eventoverse" or "webcrawler"
      *
      * @param *string $appId The application identifier
      *
@@ -243,7 +248,9 @@ class Queue extends \Eve\Framework\Index
     }
 
     /**
-     * Sets correlation id
+     * Sets ID of the message that this message is a reply to. 
+     * Applications are encouraged to use this attribute instead 
+     * of putting this information into the message payload.
      *
      * @param *string $correlationId the correlation ID
      *
@@ -259,6 +266,8 @@ class Queue extends \Eve\Framework\Index
 
     /**
      * Sets timestamp in secs
+     * Timestamp of the moment when message 
+     * was sent, in seconds since the Epoch
      *
      * @param *string $timestamp The timestamp
      *
@@ -274,6 +283,11 @@ class Queue extends \Eve\Framework\Index
 
     /**
      * Used to name a reply queue
+     * Commonly used to name a reply queue 
+     * (or any other identifier that helps a consumer 
+     * application to direct its response). Applications 
+     * are encouraged to use this attribute instead of putting 
+     * this information into the message payload.
      *
      * @param *string $replyTo The reply name
      *
@@ -288,7 +302,9 @@ class Queue extends \Eve\Framework\Index
     }
 
     /**
-     * sets task/message type
+     * sets Message type as a string. 
+     * Recommended to be used by applications instead 
+     * of including this information into the message payload.
      *
      * @param *string $type the task type
      *
