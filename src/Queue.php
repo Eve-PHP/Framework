@@ -126,7 +126,12 @@ class Queue extends \Eve\Framework\Index
     {
         Argument::i()->test(1, 'bool');
 
-        $this->persistent = $persistent == true ? 2 : 1;
+        $this->persistent = 1;
+
+        if($persistent) {
+            $this->persistent = 2;
+        }
+        
         return $this;
     }
 
@@ -326,12 +331,12 @@ class Queue extends \Eve\Framework\Index
         $this->channel->queue_bind('queue', 'queue-xchnge');
 
         // set message
-        $msg = new AMQPMessage(json_encode($this->message), $this->setOptions());
+        $message = new AMQPMessage(json_encode($this->message), $this->setOptions());
 
         // if no delay queue it now
         if (!$this->delay) {
             // queue it up main queue container
-            $this->channel->basic_publish($msg, 'queue-xchnge');
+            $this->channel->basic_publish($message, 'queue-xchnge');
 
             return $this;
         }
@@ -351,7 +356,7 @@ class Queue extends \Eve\Framework\Index
                 // delay in seconds to milliseconds
                 'x-message-ttl' => array('I', $this->delay*1000),
                 // set an expiration to assigned seconds of delay + 1 sec
-                "x-expires" => array("I", $this->delay*1000+1000),
+                'x-expires' => array('I', $this->delay*1000+1000),
                 // after message expiration in delay queue, move message to the main queue
                 'x-dead-letter-exchange' => array('S', 'queue-xchnge')
             )
