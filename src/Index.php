@@ -657,13 +657,13 @@ namespace Eve\Framework
                     $config['host'],
                     $config['port'],
                     $config['username'],
-                    $config['password'])
-                    ->setTask($task)
-                    ->setData($data)
-                    ->setApplication(eve()->rootNameSpace);
+                    $config['password']);
             }
 
-            return $this->defaultQueue;
+            return $this->defaultQueue
+                ->setTask($task)
+                ->setData($data)
+                ->setApplication(eve()->rootNameSpace);;
         }
 
         /**
