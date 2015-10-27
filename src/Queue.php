@@ -21,8 +21,8 @@ use PhpAmqpLib\Message\AMQPMessage;
  * @author   Christian Blanquera <cblanquera@openovate.com>
  * @standard PSR-2
  */
-class Queue extends \Eve\Framework\Index
-{
+class Queue extends \Eden\Core\Base
+{   
     protected $task;
     protected $user;
     protected $type;
@@ -42,14 +42,32 @@ class Queue extends \Eve\Framework\Index
     protected $persistent = 2;
     protected $priority = 'low';
 
-    public function __construct($host, $port, $username, $password, $task = null, $data = array())
+    public function __construct($host, $port, $username, $password)
     {
         $this->connection = new AMQPConnection($host, $port, $username, $password);
         $this->channel = $this->connection->channel();
+    }
 
-        if ($task && $data) {
-            $this->setTask($task)->setData($data);
-        }
+    /**
+     * Gets connection
+     *
+     *
+     * @return  PhpAmqpLib\Connection\AMQPConnection
+     */
+    public function getConnection()
+    {
+        return $this->connection;
+    }
+
+    /**
+     * Gets channel
+     *
+     *
+     * @return  PhpAmqpLib\Connection\AMQPConnection
+     */
+    public function getChannel()
+    {
+        return $this->channel;
     }
 
     /**

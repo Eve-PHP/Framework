@@ -50,6 +50,7 @@ namespace Eve\Framework
         public $defaultDatabase = null;
         public $defaultRegistry = null;
         public $defaultLanguage = null;
+        public $defaultQueue = null;
 
         protected $rootNameSpace = null;
         protected $routeNameSpace = null;
@@ -646,18 +647,23 @@ namespace Eve\Framework
          *
          * @return string
          */
-        public function queue($task, $data = array())
-        {
-            $config = $this->settings('config');
-            $config = $config['queue'];
+        public function queue($task = null, $data = array())
+        {   
+            if(is_null($this->defaultQueue)) {
+                $config = $this->settings('config');
+                $config = $config['queue'];
 
-            return Queue::i(
-                $config['host'],
-                $config['port'],
-                $config['username'],
-                $config['password'],
-                $task,
-                $data)->setApplication(eve()->rootNameSpace);
+                $this->defaultQueue = Queue::i(
+                    $config['host'],
+                    $config['port'],
+                    $config['username'],
+                    $config['password'])
+                    ->setTask($task)
+                    ->setData($data)
+                    ->setApplication(eve()->rootNameSpace);
+            }
+
+            return $this->defaultQueue;
         }
 
         /**
