@@ -357,12 +357,12 @@ class Queue extends \Eden\Core\Base
      *
      * @return Eve\Framework\Queue
      */
-    public function save()
+    public function save($queue = 'queue')
     {
         // declare queue container
-        $this->channel->queue_declare('queue', false, false, false, false);
-        $this->channel->exchange_declare('queue-xchnge', 'direct');
-        $this->channel->queue_bind('queue', 'queue-xchnge');
+        $this->channel->queue_declare($queue, false, false, false, false);
+        $this->channel->exchange_declare($queue.'-xchnge', 'direct');
+        $this->channel->queue_bind($queue, $queue.'-xchnge');
 
         // set message
         $message = new AMQPMessage(json_encode($this->message), $this->setOptions());
@@ -370,7 +370,7 @@ class Queue extends \Eden\Core\Base
         // if no delay queue it now
         if (!$this->delay) {
             // queue it up main queue container
-            $this->channel->basic_publish($message, 'queue-xchnge');
+            $this->channel->basic_publish($message, $queue.'-xchnge');
 
             return $this;
         }
@@ -392,7 +392,7 @@ class Queue extends \Eden\Core\Base
                 // set an expiration to assigned seconds of delay + 1 sec
                 'x-expires' => array('I', $this->delay*1000+1000),
                 // after message expiration in delay queue, move message to the main queue
-                'x-dead-letter-exchange' => array('S', 'queue-xchnge')
+                'x-dead-letter-exchange' => array('S', $queue.'-xchnge')
             )
         );
 

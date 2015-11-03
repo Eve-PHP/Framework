@@ -24,7 +24,7 @@ class Dispatcher extends \Eve\Framework\Queue
      *
      * @return void
      */
-    public function run()
+    public function run($queue = 'queue')
     {
         // notify its up
         echo ' * Worker online. waiting for tasks.', "\n";
@@ -91,7 +91,7 @@ class Dispatcher extends \Eve\Framework\Queue
         // when task does not exists in our queue
         try {
             // comsume messages on queue
-            $this->channel->basic_consume('queue', '', false, false, false, false, $callback);
+            $this->channel->basic_consume($queue, '', false, false, false, false, $callback);
         } catch(\PhpAmqpLib\Exception\AMQPProtocolChannelException $e) {
             // notify that task does not exists
             echo " * Task does not exists, creating task. Please re-run the worker. \n";
