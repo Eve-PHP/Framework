@@ -400,7 +400,7 @@ class Queue extends \Eden\Core\Base
         $this->channel->queue_bind('que-delay', 'xchnge-delay');
 
         // queue it up on delay container
-        $this->channel->basic_publish($msg, 'xchnge-delay');
+        $this->channel->basic_publish($message, 'xchnge-delay');
 
         return $this;
     }
