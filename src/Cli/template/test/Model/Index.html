@@ -5,14 +5,14 @@
  * Copyright and license information can be found at LICENSE
  * distributed with this package.
  */
-class {{model_test_namespace}}{{capital name}}IndexTest extends PHPUnit_Framework_TestCase
+class {{model_test_namespace}}_{{capital name}}_Index_Test extends PHPUnit_Framework_TestCase
 {
     {{#loop model}}
     {{#when value '!==' 'index'}}
     public function test{{capital value}}()
     {
         $class = eve()->model('{{../name}}')->{{value}}();
-        $this->assertInstanceOf('Eve\\Model\\{{capital ../name}}\\{{capital value}}', $class);
+        $this->assertInstanceOf('{{model_test_namespace}}\\Model\\{{capital ../name}}\\{{capital value}}', $class);
     }
     {{/when}}
     {{/loop}}
