@@ -42,7 +42,25 @@ class Job extends \Eve\Framework\Base
 			$data = json_decode($args[2], true);
 		}
 		
-		\Eve\Framework\Index::i($this->cwd, 'Eve')
+		$namespace = 'Eve';
+		
+		if(file_exists($this->cwd.'/composer.json')) {
+			$json = $this('file', $this->cwd.'/composer.json')->getContent();
+			$json = json_decode($json, true);
+
+			if(isset($json['autoload']['psr-4'])
+				&& is_array($json['autoload']['psr-4'])
+			) {
+				foreach($json['autoload']['psr-4'] as $namespace => $path) {
+					if(strlen($path) === 0) {
+						$namespace = substr($namespace, 0, -1);
+						break;
+					}
+				}
+			}
+		}
+		
+		\Eve\Framework\Index::i($this->cwd, $namespace)
 			// set default paths
 			->defaultPaths()
 			// set default database
