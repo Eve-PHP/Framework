@@ -1,6 +1,6 @@
 <?php //-->
 return array(
-    //i18n
+    //create i18n helpers
     '_' => function($key) {
         $args = func_get_args();
         $key = array_shift($args);
@@ -14,7 +14,46 @@ return array(
 
         return eve()->translate((string) $key, $args);
     },
+	
+	'capital' => function($string, $options) {
+        return ucwords($string);
+    },
 
+    'capitalCamel' => function($string, $options) {
+        $string = str_replace('_', ' ', $string);
+        $string = ucwords($string);
+        $string = str_replace(' ', '', $string);
+
+        return $string;
+    },
+	
+	'number' => function($number, $options) {
+		return number_format((float) $number, 0);
+	},
+
+	'price' => function($price, $options) {
+		return number_format((float) $price, 2);
+	},
+	
+	//create URL helpers
+    'root' => function($absolute = false) {
+        $root = eve()->rootUrl;
+
+        if($absolute) {
+            $protocol = 'http://';
+            if(isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') {
+                $protocol = 'https://';
+            } else if($_SERVER['SERVER_PORT'] === 443) {
+                $protocol = 'https://';
+            }
+
+            $root = $protocol . $_SERVER['HTTP_HOST'] . $root;
+        }
+
+        return $root;
+    },
+	
+	//create HTML helpers
     'partial' => function($name) {
         //get args
         $args = func_get_args();
@@ -71,22 +110,106 @@ return array(
 
         return $results;
     },
+	
+	'strip' => function($html, $options) {
+		return strip_tags($html, '<p><b><em><i><strong><b><br><u><ul><li><ol>');
+	},
+	
+	'block' => function($key, $options) {
+		$args = func_get_args();
+		$options = array_pop($args);
+		$key = array_shift($args);
+		
+		try {
+			$block = eve()->block($key);
+		} catch(Exception $e) {
+			return '';
+		}
+		
+		if(!is_object($block) && is_callable($block)) {
+			try {
+				$results = call_user_func_array($block, $args);
+			} catch(Exception $e) {
+				return '';
+			}
 
-    'root' => function($absolute = false) {
-        $root = eve()->rootUrl;
-
-        if($absolute) {
-            $protocol = 'http://';
-            if(isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') {
-                $protocol = 'https://';
-            } else if($_SERVER['SERVER_PORT'] === 443) {
-                $protocol = 'https://';
-            }
-
-            $root = $protocol . $_SERVER['HTTP_HOST'] . $root;
+			if(is_string($results)) {
+				return $results;
+			}
+			
+			return $options['fn']($results);
+		}
+		
+		if(is_scalar($block)) {
+			return $block;
+		}
+		
+		if(method_exists($block, 'render')) {
+			try {
+				$results = $block->callArray('render', $args);
+			} catch(Exception $e) {
+				return '';
+			}
+			
+			if(is_string($results)) {
+				return $results;
+			}
+			
+			return $options['fn']($results);
+		}
+		
+		if(method_exists($block, '__toString')) {
+			return (string) $block;
+		}
+		
+		return $options['fn']((array) $results);
+	},
+	
+	'pagination' => function($total, $range, $options) {
+        if($range == 0) {
+            return '';
         }
 
-        return $root;
+        $show = 10;
+        $start = 0;
+
+        if(isset($_GET['start']) && is_numeric($_GET['start'])) {
+            $start = $_GET['start'];
+        }
+
+        $pages     = ceil($total / $range);
+        $page     = floor($start / $range) + 1;
+
+        $min     = $page - $show;
+        $max     = $page + $show;
+
+        if($min < 1) {
+            $min = 1;
+        }
+
+        if($max > $pages) {
+            $max = $pages;
+        }
+
+        //if no pages
+        if($pages <= 1) {
+            //return nothing
+            return '';
+        }
+
+        $buffer = array();
+
+        for($i = $min; $i <= $max; $i++) {
+            $_GET['start'] = ($i -1) * $range;
+
+            $buffer[] = $options['fn'](array(
+                'href'        => http_build_query($_GET),
+                'active'    => $i == $page,
+                'page'        => $i
+            ));
+        }
+
+        return implode('', $buffer);
     },
 
     //registry
@@ -106,7 +229,7 @@ return array(
         return $data;
     },
 
-    //create session helpers
+    //create global helpers
     'session' => function($key, $options) {
         if(!isset($_SESSION[$key])) {
             return $options['inverse']();
@@ -119,7 +242,6 @@ return array(
         return $_SESSION[$key];
     },
 
-    //create query helpers
     'server' => function($key, $options) {
         if(!isset($_SERVER[$key])) {
             return $options['inverse']();
@@ -145,8 +267,16 @@ return array(
         return $_GET[$key];
     },
 
-    'querystring' => function($options) {
-        return http_build_query($_GET);
+    'querystring' => function($key = null, $value = '') {
+        $query = $_GET;
+		
+		if(!is_null($key)) {
+			$query[$key] = $value;
+			$query = http_build_query($query);
+			parse_str(urldecode($query), $query);
+		}
+		
+		return http_build_query($query);
     },
 
     //create a better if helper
@@ -203,53 +333,9 @@ return array(
 
         return implode('', $buffer);
     },
+	
+	
 
-    'pagination' => function($total, $range, $options) {
-        if($range == 0) {
-            return '';
-        }
-
-        $show = 10;
-        $start = 0;
-
-        if(isset($_GET['start']) && is_numeric($_GET['start'])) {
-            $start = $_GET['start'];
-        }
-
-        $pages     = ceil($total / $range);
-        $page     = floor($start / $range) + 1;
-
-        $min     = $page - $show;
-        $max     = $page + $show;
-
-        if($min < 1) {
-            $min = 1;
-        }
-
-        if($max > $pages) {
-            $max = $pages;
-        }
-
-        //if no pages
-        if($pages <= 1) {
-            //return nothing
-            return '';
-        }
-
-        $buffer = array();
-
-        for($i = $min; $i <= $max; $i++) {
-            $_GET['start'] = ($i -1) * $range;
-
-            $buffer[] = $options['fn'](array(
-                'href'        => http_build_query($_GET),
-                'active'    => $i == $page,
-                'page'        => $i
-            ));
-        }
-
-        return implode('', $buffer);
-    },
 
     //array key
     'in' => function($value, $array, $options) {
@@ -267,37 +353,7 @@ return array(
 
         return $options['inverse']();
     },
-
-    //offset time helper
-    'time' => function($offset, $options) {
-        $date = '';
-        $offset = preg_replace('/\s/', '', $offset);
-
-        try {
-            eval('$offset = ' . $offset.';');
-            $date = date('Y-m-d', time() + $offset);
-        } catch(Exception $e) {}
-
-        return $date;
-    },
-
-    //date helper
-    'date' => function($time, $format, $options) {
-        return date($format, strtotime($time));
-    },
-
-    'capital' => function($string, $options) {
-        return ucwords($string);
-    },
-
-    'capitalCamel' => function($string, $options) {
-        $string = str_replace('_', ' ', $string);
-        $string = ucwords($string);
-        $string = str_replace(' ', '', $string);
-
-        return $string;
-    },
-
+	
     'implode' => function(array $list, $separator, $options) {
         foreach($list as $i => $variable) {
             if(is_string($variable)) {
@@ -311,5 +367,33 @@ return array(
         }
 
         return implode($separator, $list);
-    }
+    },
+
+	'explode' => function($string, $separator, $options) {
+		$list = explode($separator, $string);
+
+		return $options['fn'](array('this' => $list));
+	},
+
+    //create date helpers
+    'time' => function($offset, $options) {
+        $date = '';
+        $offset = preg_replace('/\s/', '', $offset);
+
+        try {
+            eval('$offset = ' . $offset.';');
+            $date = date('Y-m-d', time() + $offset);
+        } catch(Exception $e) {}
+
+        return $date;
+    },
+
+    'date' => function($time, $format, $options) {
+        return date($format, strtotime($time));
+    },
+	
+	'relative' => function($date, $options) {
+		$settings = eve()->settings('config');
+		return eve('timezone', $settings['server_timezone'], $date)->toRelative();
+	}
 );

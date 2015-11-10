@@ -31,9 +31,11 @@ class Help extends \Eve\Framework\Base
     public function run(array $args)
     {
         Index::info('Help Menu');
-        Index::info('- `eve generate <schema> <namespace>`     Generates files based on schema');
-        Index::info('- `eve database <schema>`                 Generates database table/s schema');
+        Index::info('- `eve generate <schema*> <namespace>`    Generates files based on schema');
+        Index::info('- `eve database <schema*>`                Generates database table/s schema');
         Index::info('- `eve install`                           Generates default framework files');
+        Index::info('- `eve job <name*> <data*>`               Executes a job');
+		Index::info('- `eve queue <name*> <data*>`             Queues a job');
 
         die(0);
     }

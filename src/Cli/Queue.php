@@ -4,7 +4,7 @@
 
 namespace Eve\Framework\Cli;
 
-class Job extends \Eve\Framework\Base
+class Queue extends \Eve\Framework\Base
 {
     /**
      * @var string|null $cwd The path from where this was called
@@ -60,15 +60,26 @@ class Job extends \Eve\Framework\Base
 			}
 		}
 		
-		\Eve\Framework\Index::i($this->cwd, $namespace)
+		$queue = \Eve\Framework\Index::i($this->cwd, $namespace)
 			// set default paths
 			->defaultPaths()
 			// set default database
 			->defaultDatabases()
-			->job($args[1])
-			->setData($data)
-			->run();
+			->queue($args[1])
+			->setData($data);
+			
+		if(isset($args[3]) && is_string($args[3])) {
+			$queue->setPriority(trim($args[3]));
+		} else if(isset($args[3]) && is_numeric($args[3])) {
+			$queue->setPriority($args[3]);
+		}
 		
-		Index::success('`'.$args[1].'` job has been successfully executed.');
+		if(isset($args[4]) && is_numeric($args[4])) {
+			$queue->setDelay($args[4]);
+		}
+		
+		$queue->save();
+		
+		Index::success('`'.$args[1].'` has been successfully queued.');
     }
 }

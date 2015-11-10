@@ -40,19 +40,64 @@ namespace Eve\Framework
      */
     class Index extends \Eden\Server\Index
     {
+		/**
+		 * @const int INSTANCE multiple or singleton
+		 */
         const INSTANCE = 1;
+		
+		/**
+		 * @const string NO_JOB error template
+		 */
         const NO_JOB = 'No Job: %s Found';
+		
+		/**
+		 * @const string NO_MODEL error template
+		 */
         const NO_MODEL = 'No Model: %s Found';
+		
+		/**
+		 * @const string NO_BLOCK error template
+		 */
         const NO_BLOCK = 'No Block: %s Found';
 
+		/**
+		 * @var string|null $rootUrl
+		 */
         public $rootUrl = null;
+
+		/**
+		 * @var string|null $rootPath
+		 */
         public $rootPath = null;
+
+		/**
+		 * @var string|null $defaultDatabase
+		 */
         public $defaultDatabase = null;
+
+		/**
+		 * @var string|null $defaultRegistry
+		 */
         public $defaultRegistry = null;
+
+		/**
+		 * @var string|null $defaultLanguage
+		 */
         public $defaultLanguage = null;
+
+		/**
+		 * @var string|null $defaultQueue
+		 */
         public $defaultQueue = null;
 
+		/**
+		 * @var string|null $rootNameSpace
+		 */
         protected $rootNameSpace = null;
+
+		/**
+		 * @var string|null $routeNameSpace
+		 */
         protected $routeNameSpace = null;
 
         /**
@@ -85,6 +130,55 @@ namespace Eve\Framework
             if($namespace) {
                 $this->setRootNamespace($namespace);
             }
+        }
+
+        /**
+         * Loads an HTML block
+         *
+         * @param *string $key The block name
+         *
+         * @return mixed
+         */
+        public function block($key)
+        {
+            Argument::i()->test(1, 'string');
+			
+			$key = str_replace(array('-', '_', '/'), ' ', $key);
+            $key = ucwords($key);
+            $key = str_replace(' ', '\\', $key);
+			
+			$class = $key;
+			
+			if(!class_exists($class)) {
+				$class = $this->rootNameSpace.'\\Block\\' . $key;
+	
+				if(!class_exists($class)) {
+					$path = $this->rootPath 
+						. '/Block/' 
+						. str_replace('\\', '/', trim($key, '\\')) 
+						. '.php';
+					
+					if(!file_exists($path)) {
+						$path = $this->rootPath 
+							. '/vendor/' 
+							. str_replace('\\', '/', trim($key, '\\')) 
+							. '.php';
+						
+						if(!file_exists($path)) {
+							throw new Exception(sprintf(self::NO_BLOCK, $key));	
+						}
+					}
+					
+					return include($path);
+				}
+			}
+			
+			if(strpos($class, '\\') === 0) {
+				//remove starting \\
+            	$class = substr($class, 1);
+			}			
+            
+			return $this->$class();
         }
 
         /**
