@@ -126,7 +126,11 @@ return array(
 			return '';
 		}
 		
-		if(!is_object($block) && is_callable($block)) {
+		if(is_scalar($block)) {
+			return $block;
+		}
+		
+		if(get_class($block) === 'Closure') {
 			try {
 				$results = call_user_func_array($block, $args);
 			} catch(Exception $e) {
@@ -138,10 +142,6 @@ return array(
 			}
 			
 			return $options['fn']($results);
-		}
-		
-		if(is_scalar($block)) {
-			return $block;
 		}
 		
 		if(method_exists($block, 'render')) {
@@ -162,7 +162,7 @@ return array(
 			return (string) $block;
 		}
 		
-		return $options['fn']((array) $results);
+		return $options['fn']((array) $block);
 	},
 	
 	'pagination' => function($total, $range, $options) {

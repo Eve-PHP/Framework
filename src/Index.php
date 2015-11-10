@@ -143,10 +143,9 @@ namespace Eve\Framework
         {
             Argument::i()->test(1, 'string');
 			
-			$key = str_replace(array('-', '_', '/'), ' ', $key);
+			$key = str_replace(array('_', '/'), ' ', $key);
             $key = ucwords($key);
             $key = str_replace(' ', '\\', $key);
-			
 			$class = $key;
 			
 			if(!class_exists($class)) {
