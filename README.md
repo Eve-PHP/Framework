@@ -91,9 +91,18 @@ Then `$ rm -rf App/Dialog`. Like wise, the easiest way to add a custom app is to
 
 Then `cp -rf App/Front App/Mobile`. Last Search and replace `Front` with `Mobile`. Be sure you update your routes in `App/Mobile/routes.php`
 
-Every file inside the `App` folder is designed to be a template example, so feel free to modify anything to your liking. Inside every App you will find `Route.php` and `routes.php`. Apps in the Eve framework are treated as middleware as defined in [Eden Server](http://github.com/Eden-PHP/Server/README.md) so read up about middleware before continuing. All middleware should return a function for the framework to process when all middleware has been imported. This is the purpose for `import()` inside of every `Route.php` file. The second purpose is to register routes as defined by `routes.php` where a route is assigned to an Action Class.
+Every file inside the `App` folder is designed to be a template example, so feel free to modify anything to your liking. Inside every App you will find `Route.php` and `routes.php`. Apps in the Eve framework are treated as middleware as defined in [Eden Server](https://github.com/Eden-PHP/Server/blob/master/README.md) so read up about middleware before continuing. 
 
-Action classes only require to have a `render()` function in which the request object can be accessed by `$this->request` and the response object is accessed by `$this->response`. Both objects follow the same standards defined by [Eden Registry](http://github.com/Eden-PHP/Registry/README.md). The `render()`. If you desire an output to be rendered in the browser, you may do so by simply returning the string inside of `render()`. The following example explains how this can be done.
+External Plugins are also middleware found in Packagist and can be imported like Apps. The following are example plugins you can use out of the box with Eve.
+
+ - [i10n](https://packagist.org/packages/eve-php/eve-plugin-l10n)
+ - [HTPASSWD](https://packagist.org/packages/eve-php/eve-plugin-htpasswd)
+ - [CSRF Checker](https://packagist.org/packages/eve-php/eve-plugin-csrf)
+ - [Google Captcha](https://packagist.org/packages/eve-php/eve-plugin-captcha)
+
+All middleware should return a function for the framework to process when all middleware has been imported. This is the purpose for `import()` inside of every `Route.php` file. The second purpose is to register routes as defined by `routes.php` where a route is assigned to an Action Class.
+
+Action classes only require to have a `render()` function in which the request object can be accessed by `$this->request` and the response object is accessed by `$this->response`. Both objects follow the same standards defined by [Eden Registry](https://github.com/Eden-PHP/Registry/blob/master/README.md). The `render()`. If you desire an output to be rendered in the browser, you may do so by simply returning the string inside of `render()`. The following example explains how this can be done.
 
 Create a file called `Sample.php` inside the `App/Front/Action` folder. Then paste the following code.
 
@@ -219,7 +228,7 @@ eve()
 	->run();
 ```
 
-Eve also comes with an interface to connect to *RabbitMQ*. To queue up a job you can either use the following CLI command,
+Eve also comes with an interface to connect to [RabbitMQ](http://rabbitmq.com/). To queue up a job you can either use the following CLI command,
 
 ```
 vendor/bin/eve queue send-mail "?subject=hello&body=world"
