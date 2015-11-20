@@ -358,7 +358,9 @@ So a common scenario would be retrieving data, manipulating the results and send
 
 ```
 //load database
-eden('mysql', MYSQL_HOST, MYSQL_NAME, MYSQL_USER, MYSQL_PASS)
+eve()
+	//access default database
+	->database()
 	
 	//search user table
 	->search('user')
