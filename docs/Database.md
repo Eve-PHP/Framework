@@ -1,8 +1,6 @@
 # Database / ORM
 
-Out of the box Eve uses by default [Eden MySQL](https://github.com/Eden-PHP/Mysql) and can easily be interchanged with [Eden PostGres](https://github.com/Eden-PHP/Postgre) and [Eden SQLite](https://github.com/Eden-PHP/Sqlite)
-
-by simply updating your `settings/databases.php` like the following example and choosing one to be the default database.
+Out of the box Eve uses by default [Eden MySQL](https://github.com/Eden-PHP/Mysql) and can easily be interchanged with [Eden PostGres](https://github.com/Eden-PHP/Postgre) and [Eden SQLite](https://github.com/Eden-PHP/Sqlite) by simply updating your `settings/databases.php` like the following example and choosing one to be the default database.
 
 ```
 return array (
@@ -361,29 +359,41 @@ So a common scenario would be retrieving data, manipulating the results and send
 ```
 //load database
 eden('mysql', MYSQL_HOST, MYSQL_NAME, MYSQL_USER, MYSQL_PASS)
+	
 	//search user table
 	->search('user')
+	
 	//WHERE user_gender = $_get['gender']
 	->filterByUserGender($_GET['gender'])
+	
 	//ORDER BY user_id
 	->sortByUserId('ASC')
+	
 	//LIMIT 75, 25
 	->setStart(75)->setRange(25)
+	
 	//get a collection object
 	->getCollection()
+	
 	//sets all users to active
 	->setUserActive(1)
+	
 	//Set a new column post_title
 	->setPostTitle('A '.$_GET['gender'].'\'s Post')
+	
 	//Set a new column post_detail
 	->setPostDetail('Content is King')
+	
 	//Copy the contents of user_id to a new column post_user
 	->copy('user_id', 'post_user')
+	
 	//Set a new column post_created
 	->setPostCreated(time())
 	->formatTime('post_created', 'Y-m-d H:i:s')
+	
 	//save to user table
 	->save('user')
+	
 	//save to post table
 	->save('post');
 ```
