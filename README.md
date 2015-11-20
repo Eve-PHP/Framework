@@ -59,7 +59,7 @@ Once you see `You have successfully installed this framework!` in your browser y
 <a name="structure"></a>
 ## Structure
 
-![Request Response](https://github.com/Eden-PHP/Mysql/blob/master/docs/rnr.jpg)
+![Request Response](https://github.com/Eve-PHP/Framework/blob/master/docs/rnr.jpg)
 
 Eve though heavily adopts some parts, is not a typical MVC pattern. As well as MVC, Eve adopts jobs, events, continuous deploys and REST in the normal architecture to help optimize PHP and organize your code overall. The following structure should reflect the folders of what is installed.
 
