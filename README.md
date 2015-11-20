@@ -417,6 +417,8 @@ All other methods that logically cannot follow this pattern can be put into `Mod
 eve()->model('auth')->exists(1); //--> true or false
 ```
 
+You can arbitrarily create (or generate) models at will. To know more about accessing the database directly you can refer to [Database](https://github.com/Eve-PHP/Framework/blob/master/docs/Database.md)
+
 ====
 
 <a name="generators"></a>
