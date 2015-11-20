@@ -2,7 +2,7 @@
 
 There are 3 folders where PHP would be mainly found `App`, `Job`, `Model`. Each folder separates code mainly for resuability and has a particular pupose respectively in the overall architecture. The following sample should reflect your structure if you successfully installed this framework.
 
-![Request Response](https://github.com/Eve-PHP/Framework/blob/master/docs/folders.jpg)
+![Request Response](https://github.com/Eve-PHP/Framework/blob/master/docs/folders.png)
 
 The folders in action are best represented in the following diagram.
 
