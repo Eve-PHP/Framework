@@ -1,4 +1,5 @@
 ![logo](http://eden.openovate.com/assets/images/cloud-social.png) 
+
 Eve PHP Framework, build scalable apps for enterprise deploys.
 ====
 
@@ -120,7 +121,7 @@ External Plugins are also middleware found in Packagist and can be imported like
 
 All middleware should return a function for the framework to process when all middleware has been imported. This is the purpose for `import()` inside of every `Route.php` file. The second purpose is to register routes as defined by `routes.php` where a route is assigned to an Action Class.
 
-Action classes only require to have a `render()` function in which the request object can be accessed by `$this->request` and the response object is accessed by `$this->response`. Both objects follow the same standards defined by [Eden Registry](https://github.com/Eden-PHP/Registry/blob/master/README.md). The `render()`. If you desire an output to be rendered in the browser, you may do so by simply returning the string inside of `render()`. The following example explains how this can be done.
+Action classes only require to have a `render()` function in which the request object can be accessed by `$this->request` and the response object is accessed by `$this->response`. Both objects follow the same standards defined by [Eden Registry](https://github.com/Eden-PHP/Registry/blob/master/README.md). If you desire an output to be rendered in the browser, you may do so by simply returning the string inside of `render()`. The following example explains how this can be done.
 
 Create a file called `Sample.php` inside the `App/Front/Action` folder. Then paste the following code.
 
