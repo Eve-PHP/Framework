@@ -1,6 +1,5 @@
-# Framework
-Framework Built on top of the Eden Library
-
+![logo](http://eden.openovate.com/assets/images/cloud-social.png) 
+Eve PHP Framework, build scalable apps for enterprise deploys.
 ====
 
 <a name="install"></a>
@@ -9,6 +8,21 @@ Framework Built on top of the Eden Library
 1. `$ composer install eve-php/framework`
 2. `$ vendor/bin/eve/install`
 3. Follow the instructions.
+
+====
+
+<a name="features"></a>
+## Features
+
+ - Robust [routing](https://github.com/Eve-PHP/Framework/blob/master/docs/Middleware.md#routing)
+ - [Event](https://github.com/Eve-PHP/Framework/blob/master/docs/Events.md) driven
+ - Handlebars or PHP [templating](#templating)
+ - Out of box [OAuth / REST](https://github.com/Eve-PHP/Framework/blob/master/docs/REST.md) actions
+ - Pluggable with [middleware](https://github.com/Eve-PHP/Framework/blob/master/docs/Middleware.md) from [Packagist](https://packagist.org/packages/eve-php)
+ - Code [Generator](#generators)
+ - [Delayed](#job) Processes (Queuing)
+ - Support for [Continuous Deployment](https://github.com/Eve-PHP/Framework/blob/master/docs/Tests.md)
+ - [CLI](https://github.com/Eve-PHP/Framework/blob/master/docs/CLI.md) commands to integrate your app with other apps
 
 ====
 
@@ -73,6 +87,8 @@ Eve though heavily adopts some parts, is not a typical MVC pattern. As well as M
  - `public` - static files and DMZ
  - `settings` - App specific configuration
  - `test` - Used for Continuous Integration
+
+To read more about the structure please refer to [Structure](https://github.com/Eve-PHP/Framework/blob/master/docs/Structure.md).
 
 <a name="app"></a>
 ### App Layer
@@ -159,6 +175,7 @@ class Sample extends Html
 }
 ```
 
+<a href="templating"></a>
 Create a file called `sample.html` inside the `App/Front/template` folder. Then paste the following code.
 
 ```
@@ -336,6 +353,8 @@ class Create extends Base
     }
 }
 ```
+
+To read more about Jobs please read [Jobs and Delayed Process](https://github.com/Eve-PHP/Framework/blob/master/docs/Jobs.md).
 
 <a name="model"></a>
 ### Model Layer
