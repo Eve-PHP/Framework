@@ -175,7 +175,7 @@ class Sample extends Html
 }
 ```
 
-<a href="templating"></a>
+<a name="templating"></a>
 Create a file called `sample.html` inside the `App/Front/template` folder. Then paste the following code.
 
 ```
