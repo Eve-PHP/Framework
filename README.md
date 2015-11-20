@@ -7,7 +7,7 @@ Eve PHP Framework, build scalable apps for enterprise deploys.
 ## Install
 
 1. `$ composer install eve-php/framework`
-2. `$ vendor/bin/eve/install`
+2. `$ vendor/bin/eve install`
 3. Follow the instructions.
 
 ====
@@ -385,7 +385,7 @@ eve()->model('auth')->search();
 eve()->model('auth')->detail();
 ```
 
-Each of the CRUD classes follow a similar pattern. All CRUD classes should have a method called `error()` and a method called `process()`. For example to create a new auth row you can do so given the following example.
+Each of the CRUD classes follow a similar pattern. All CRUD classes should have a method called `errors()` and a method called `process()`. For example to create a new auth row you can do so given the following example.
 
 ```
 eve()
