@@ -22,7 +22,7 @@ use PhpAmqpLib\Message\AMQPMessage;
  * @standard PSR-2
  */
 class Queue extends \Eden\Core\Base
-{   
+{
     protected $task;
     protected $user;
     protected $type;
@@ -41,6 +41,7 @@ class Queue extends \Eden\Core\Base
     protected $retry = null;
     protected $persistent = 2;
     protected $priority = 'low';
+    protected $durable = false;
 
     public function __construct($host, $port, $username, $password)
     {
@@ -114,6 +115,21 @@ class Queue extends \Eden\Core\Base
         $data['APPLICATION'] = $this->application;
 
         $this->message = $data;
+        return $this;
+    }
+
+    /**
+     * Set durable
+     *
+     * @param *array The data to send
+     *
+     * @return Eve\Framework\Queue
+     */
+    public function setDurable($durable)
+    {
+        Argument::i()->test(1, 'bool');
+
+        $this->durable = $durable;
         return $this;
     }
 
@@ -217,7 +233,7 @@ class Queue extends \Eden\Core\Base
 
     /**
      * Sets message content type
-     * MIME content type of message payload. Has the 
+     * MIME content type of message payload. Has the
      * same purpose/semantics as HTTP Content-Type header
      *
      * @param *string $type The content type
@@ -250,7 +266,7 @@ class Queue extends \Eden\Core\Base
     }
 
     /**
-     * Sets application identifier string, 
+     * Sets application identifier string,
      * for example, "eventoverse" or "webcrawler"
      *
      * @param *string $appId The application identifier
@@ -266,8 +282,8 @@ class Queue extends \Eden\Core\Base
     }
 
     /**
-     * Sets ID of the message that this message is a reply to. 
-     * Applications are encouraged to use this attribute instead 
+     * Sets ID of the message that this message is a reply to.
+     * Applications are encouraged to use this attribute instead
      * of putting this information into the message payload.
      *
      * @param *string $correlationId the correlation ID
@@ -284,7 +300,7 @@ class Queue extends \Eden\Core\Base
 
     /**
      * Sets timestamp in secs
-     * Timestamp of the moment when message 
+     * Timestamp of the moment when message
      * was sent, in seconds since the Epoch
      *
      * @param *string $timestamp The timestamp
@@ -301,10 +317,10 @@ class Queue extends \Eden\Core\Base
 
     /**
      * Used to name a reply queue
-     * Commonly used to name a reply queue 
-     * (or any other identifier that helps a consumer 
-     * application to direct its response). Applications 
-     * are encouraged to use this attribute instead of putting 
+     * Commonly used to name a reply queue
+     * (or any other identifier that helps a consumer
+     * application to direct its response). Applications
+     * are encouraged to use this attribute instead of putting
      * this information into the message payload.
      *
      * @param *string $replyTo The reply name
@@ -320,8 +336,8 @@ class Queue extends \Eden\Core\Base
     }
 
     /**
-     * sets Message type as a string. 
-     * Recommended to be used by applications instead 
+     * sets Message type as a string.
+     * Recommended to be used by applications instead
      * of including this information into the message payload.
      *
      * @param *string $type the task type
@@ -360,7 +376,7 @@ class Queue extends \Eden\Core\Base
     public function save($queue = 'queue')
     {
         // declare queue container
-        $this->channel->queue_declare($queue, false, false, false, false);
+        $this->channel->queue_declare($queue, false, $this->durable, false, false);
         $this->channel->exchange_declare($queue.'-xchnge', 'direct');
         $this->channel->queue_bind($queue, $queue.'-xchnge');
 
@@ -382,7 +398,7 @@ class Queue extends \Eden\Core\Base
         $this->channel->queue_declare(
             'que-delay',
             false,
-            false,
+            $this->durable,
             false,
             true,
             true,
