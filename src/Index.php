@@ -756,7 +756,8 @@ namespace Eve\Framework
             return $this->defaultQueue
                 ->setTask($task)
                 ->setData($data)
-                ->setApplication(eve()->rootNameSpace);;
+                ->setDurable(true)
+                ->setApplication(eve()->rootNameSpace);
         }
 
         /**
