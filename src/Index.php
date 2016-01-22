@@ -957,6 +957,29 @@ namespace Eve\Framework
         }
 
         /**
+         * Loads a validate class
+         *
+         * @param *string $key The validate factory key name
+         *
+         * @return Eve\Framework\Validate\Base
+         */
+        public function validate($key)
+        {
+            Argument::i()->test(1, 'string');
+
+            $class = $this->rootNameSpace.'\\Validate\\' . ucwords($key) . '\\Index';
+
+            if(!class_exists($class)) {
+                throw new Exception(sprintf(self::NO_VALIDATE, $key));
+            }
+
+            //remove starting \\
+            $class = substr($class, 1);
+
+            return $this->$class();
+        }
+
+        /**
          * Runs the worker.
          *
          * @return Eve\Framwork\Index
