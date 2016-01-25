@@ -43,4 +43,44 @@ abstract class Base extends \Eve\Framework\Base
         $this->data = $data;
         return $this;
     }
+
+    /**
+     * Make everything into a string
+     * remove empty strings
+     *
+     * @param array $item The item to prepare
+     *
+     * @return array
+     */
+    public function prepare($item)
+    {
+        $prepared = array();
+
+        foreach($item as $key => $value) {
+            //if it's null
+            if($value === null) {
+                //set it and continue
+                $prepared[$key] = null;
+                continue;
+            }
+
+            //if is array
+            if(is_array($value)) {
+                //recursive
+                $prepared[$key] = $this->prepare($value);
+                continue;
+            }
+
+            //if it can be converted
+            if(is_scalar($value)) {
+                $prepared[$key] = (string) $value;
+                continue;
+            }
+
+            //we tried our best ...
+            $prepared[$key] = $value;
+        }
+
+        return $prepared;
+    }
 }
