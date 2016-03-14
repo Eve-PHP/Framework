@@ -984,10 +984,10 @@ namespace Eve\Framework
          *
          * @return Eve\Framwork\Index
          */
-        public function work()
+        public function work($queue = 'queue')
         {
             $config = $this->settings('config');
-            $config = $config['queue'];
+            $config = $config[$queue];
 
             Dispatcher::i(
                 $config['host'],
