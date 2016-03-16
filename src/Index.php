@@ -745,7 +745,7 @@ namespace Eve\Framework
             if(is_null($this->defaultQueue)) {
                 $config = $this->settings('config');
                 $config = $config['queue'];
-
+                echo 'Open Queue'. PHP_EOL;
                 $this->defaultQueue = Queue::i(
                     $config['host'],
                     $config['port'],
@@ -986,15 +986,28 @@ namespace Eve\Framework
          */
         public function work($queue = 'queue')
         {
-            $config = $this->settings('config');
-            $config = $config[$queue];
+            if(!eve()->registry()->get($queue)) {
+                $config = $this->settings('config');
+                $config = $config[$queue];
+                echo 'Open Dispatcher'. PHP_EOL;
 
-            Dispatcher::i(
-                $config['host'],
-                $config['port'],
-                $config['username'],
-                $config['password']
-            )->run();
+                $queueConnection = Dispatcher::i(
+                    $config['host'],
+                    $config['port'],
+                    $config['username'],
+                    $config['password']
+                );
+
+                 eve()->registry()->set($queue, $queueConnection);
+            }
+
+            eve()->registry()->get($queue)->run();
+
+            if($this->defaultQueue !== null){
+                $this->defaultQueue->getChannel()->close();
+                $this->defaultQueue->getConnection()->close();
+                echo 'Queue closed'. PHP_EOL;
+            }
 
             return $this;
         }

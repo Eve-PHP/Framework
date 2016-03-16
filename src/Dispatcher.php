@@ -25,7 +25,7 @@ class Dispatcher extends \Eve\Framework\Queue
      * @return void
      */
     public function run($queue = 'queue')
-    {
+    {   
         // notify its up
         echo ' * Worker online. waiting for tasks.', "\n";
 
@@ -103,5 +103,9 @@ class Dispatcher extends \Eve\Framework\Queue
         while(count($this->channel->callbacks)) {
             $this->channel->wait();
         }
+
+        $this->channel->close();
+        $this->connection->close();
+        echo 'Closing Dispatcher'. PHP_EOL;
     }
 }
