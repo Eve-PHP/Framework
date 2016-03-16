@@ -417,6 +417,8 @@ class Queue extends \Eden\Core\Base
 
         // queue it up on delay container
         $this->channel->basic_publish($message, 'xchnge-delay');
+        $this->channel->close();
+        $this->connection->close();
 
         return $this;
     }
