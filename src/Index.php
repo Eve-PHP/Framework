@@ -745,7 +745,6 @@ namespace Eve\Framework
             if(is_null($this->defaultQueue)) {
                 $config = $this->settings('config');
                 $config = $config['queue'];
-                echo 'Open Queue'. PHP_EOL;
                 $this->defaultQueue = Queue::i(
                     $config['host'],
                     $config['port'],
