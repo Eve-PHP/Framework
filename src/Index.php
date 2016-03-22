@@ -971,7 +971,11 @@ namespace Eve\Framework
         {
             Argument::i()->test(1, 'string');
 
-            $class = $this->rootNameSpace.'\\Validate\\' . ucwords($key) . '\\Index';
+            $key = str_replace(array('-', '_', '/'), ' ', $key);
+            $key = ucwords($key);
+            $key = str_replace(' ', '\\', $key);
+
+            $class = $this->rootNameSpace.'\\Validate\\' . $key . '\\Index';
 
             if(!class_exists($class)) {
                 throw new Exception(sprintf(self::NO_VALIDATE, $key));
