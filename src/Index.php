@@ -54,6 +54,11 @@ namespace Eve\Framework
 		 * @const string NO_MODEL error template
 		 */
         const NO_MODEL = 'No Model: %s Found';
+
+        /**
+         * @const string NO_VALIDATE error template
+         */
+        const NO_VALIDATE = 'No Validate: %s Found';
 		
 		/**
 		 * @const string NO_BLOCK error template
