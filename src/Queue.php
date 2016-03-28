@@ -376,7 +376,14 @@ class Queue extends \Eden\Core\Base
     public function save($queue = 'queue')
     {
         // declare queue container
-        $this->channel->queue_declare($queue, false, $this->durable, false, false);
+        $this->channel->queue_declare(
+            $queue, 
+            false, 
+            $this->durable, 
+            false, 
+            false,
+            false,
+            ['x-max-priority' => ['I', 10]]);
         $this->channel->exchange_declare($queue.'-xchnge', 'direct');
         $this->channel->queue_bind($queue, $queue.'-xchnge');
 
@@ -408,7 +415,9 @@ class Queue extends \Eden\Core\Base
                 // set an expiration to assigned seconds of delay + 1 sec
                 'x-expires' => array('I', $this->delay*1000+1000),
                 // after message expiration in delay queue, move message to the main queue
-                'x-dead-letter-exchange' => array('S', $queue.'-xchnge')
+                'x-dead-letter-exchange' => array('S', $queue.'-xchnge'),
+                //allow prioritization in queue, with a max value of 10
+                'x-max-priority' => array('I', 10)
             )
         );
 
