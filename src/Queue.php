@@ -212,7 +212,7 @@ class Queue extends \Eden\Core\Base
     {
         Argument::i()->test(1, 'int');
 
-        $this->delay = $delay;
+        $this->delay = $delay*1000;
         return $this;
     }
 
@@ -384,51 +384,34 @@ class Queue extends \Eden\Core\Base
             false,
             false,
             ['x-max-priority' => ['I', 10]]);
-        $this->channel->exchange_declare($queue.'-xchnge', 'direct');
-        $this->channel->queue_bind($queue, $queue.'-xchnge');
 
         // set message
         $message = new AMQPMessage(json_encode($this->message), $this->setOptions());
 
         // if no delay queue it now
         if (!$this->delay) {
+            $this->channel->exchange_declare($queue.'-xchnge', 'direct');
+            $this->channel->queue_bind($queue, $queue.'-xchnge');
+
             // queue it up main queue container
             $this->channel->basic_publish($message, $queue.'-xchnge');
 
             return $this;
         }
+        
+        $this->channel->exchange_declare('xchnge-delay',
+            'x-delayed-message',
+            false,  /* passive, create if exchange doesn't exist */
+            true,   /* durable, persist through server reboots */
+            false,  /* autodelete */
+            false,  /* internal */
+            false,  /* nowait */
+            ['x-delayed-type' => ['S', 'direct']]);
 
-        // the logic if a delay is set is that
-        // we place it to a temporary container first,
-        // then forward to main queue container after
-        // the expected delayed time passed
-        $this->channel->queue_declare(
-            'que-delay',
-            false,
-            $this->durable,
-            false,
-            true,
-            true,
-            array(
-                // delay in seconds to milliseconds
-                'x-message-ttl' => array('I', $this->delay*1000),
-                // set an expiration to assigned seconds of delay + 1 sec
-                'x-expires' => array('I', $this->delay*1000+1000),
-                // after message expiration in delay queue, move message to the main queue
-                'x-dead-letter-exchange' => array('S', $queue.'-xchnge'),
-                //allow prioritization in queue, with a max value of 10
-                'x-max-priority' => array('I', 10)
-            )
-        );
-
-        $this->channel->exchange_declare('xchnge-delay', 'direct');
-        $this->channel->queue_bind('que-delay', 'xchnge-delay');
+        $this->channel->queue_bind($queue, 'xchnge-delay', 'delay_route');
 
         // queue it up on delay container
-        $this->channel->basic_publish($message, 'xchnge-delay');
-
-        $this->channel->close();
-        $this->connection->close();
+        $this->channel->basic_publish($message, 'xchnge-delay', 'delay_route');
 
         return $this;
     }
@@ -438,7 +421,8 @@ class Queue extends \Eden\Core\Base
      *
      * @return array options
      */
-    public function setOptions() {
+    public function setOptions()
+    {
         $options = array('delivery_mode' => $this->persistent);
 
         // if priority is set
@@ -489,6 +473,11 @@ class Queue extends \Eden\Core\Base
         // if correlation id is set
         if ($this->replyTo) {
             $options['reply_to'] = $this->replyTo;
+        }
+
+        // if delay is set
+        if ($this->delay) {
+            $options['x-delay'] = $this->delay;
         }
 
         return $options;
