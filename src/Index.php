@@ -8,22 +8,24 @@
  */
 namespace
 {
-    /**
-     * The starting point of every application call. If you are only
-     * using the framework you can rename this function to whatever you
-     * like.
-     */
-    function eve()
-    {
-        $class = Eve\Framework\Index::i();
-
-        if(func_num_args() == 0) {
-            return $class;
+    if(!function_exists('eve')) {
+        /**
+         * The starting point of every application call. If you are only
+         * using the framework you can rename this function to whatever you
+         * like.
+         */
+        function eve()
+        {
+            $class = Eve\Framework\Index::i();
+    
+            if(func_num_args() == 0) {
+                return $class;
+            }
+    
+            $args = func_get_args();
+    
+            return $class->__invoke($args);
         }
-
-        $args = func_get_args();
-
-        return $class->__invoke($args);
     }
 }
 
@@ -40,70 +42,70 @@ namespace Eve\Framework
      */
     class Index extends \Eden\Server\Index
     {
-		/**
-		 * @const int INSTANCE multiple or singleton
-		 */
-        const INSTANCE = 1;
-		
-		/**
-		 * @const string NO_JOB error template
-		 */
-        const NO_JOB = 'No Job: %s Found';
-		
-		/**
-		 * @const string NO_MODEL error template
-		 */
-        const NO_MODEL = 'No Model: %s Found';
-
         /**
-         * @const string NO_VALIDATE error template
+         * @const int INSTANCE multiple or singleton
          */
-        const NO_VALIDATE = 'No Validate: %s Found';
-		
-		/**
-		 * @const string NO_BLOCK error template
-		 */
+        const INSTANCE = 1;
+        
+        /**
+         * @const string NO_JOB error template
+         */
+        const NO_JOB = 'No Job: %s Found';
+        
+        /**
+         * @const string NO_MODEL error template
+         */
+        const NO_MODEL = 'No Model: %s Found';
+        
+        /**
+         * @const string NO_BLOCK error template
+         */
         const NO_BLOCK = 'No Block: %s Found';
 
-		/**
-		 * @var string|null $rootUrl
-		 */
+        /**
+         * @var string|null $rootUrl
+         */
         public $rootUrl = null;
 
-		/**
-		 * @var string|null $rootPath
-		 */
+        /**
+         * @var string|null $rootPath
+         */
         public $rootPath = null;
 
-		/**
-		 * @var string|null $defaultDatabase
-		 */
+        /**
+         * @var string|null $defaultDatabase
+         */
         public $defaultDatabase = null;
 
-		/**
-		 * @var string|null $defaultRegistry
-		 */
+        /**
+         * @var string|null $defaultRegistry
+         */
         public $defaultRegistry = null;
 
-		/**
-		 * @var string|null $defaultLanguage
-		 */
+        /**
+         * @var string|null $defaultLanguage
+         */
         public $defaultLanguage = null;
 
-		/**
-		 * @var string|null $defaultQueue
-		 */
+        /**
+         * @var string|null $defaultQueue
+         */
         public $defaultQueue = null;
 
-		/**
-		 * @var string|null $rootNameSpace
-		 */
+        /**
+         * @var string|null $rootNameSpace
+         */
         protected $rootNameSpace = null;
 
-		/**
-		 * @var string|null $routeNameSpace
-		 */
+        /**
+         * @var string|null $routeNameSpace
+         */
         protected $routeNameSpace = null;
+
+        /**
+         * @var array $cachedSettings
+         */
+        protected $cachedSettings = array();
 
         /**
          * Set the root and namespace
@@ -147,42 +149,42 @@ namespace Eve\Framework
         public function block($key)
         {
             Argument::i()->test(1, 'string');
-			
-			$key = str_replace(array('_', '/'), ' ', $key);
+            
+            $key = str_replace(array('_', '/'), ' ', $key);
             $key = ucwords($key);
             $key = str_replace(' ', '\\', $key);
-			$class = $key;
-			
-			if(!class_exists($class)) {
-				$class = $this->rootNameSpace.'\\Block\\' . $key;
-	
-				if(!class_exists($class)) {
-					$path = $this->rootPath 
-						. '/Block/' 
-						. str_replace('\\', '/', trim($key, '\\')) 
-						. '.php';
-					
-					if(!file_exists($path)) {
-						$path = $this->rootPath 
-							. '/vendor/' 
-							. str_replace('\\', '/', trim($key, '\\')) 
-							. '.php';
-						
-						if(!file_exists($path)) {
-							throw new Exception(sprintf(self::NO_BLOCK, $key));	
-						}
-					}
-					
-					return include($path);
-				}
-			}
-			
-			if(strpos($class, '\\') === 0) {
-				//remove starting \\
-            	$class = substr($class, 1);
-			}			
+            $class = $key;
             
-			return $this->$class();
+            if(!class_exists($class)) {
+                $class = $this->rootNameSpace.'\\Block\\' . $key;
+    
+                if(!class_exists($class)) {
+                    $path = $this->rootPath 
+                        . '/Block/' 
+                        . str_replace('\\', '/', trim($key, '\\')) 
+                        . '.php';
+                    
+                    if(!file_exists($path)) {
+                        $path = $this->rootPath 
+                            . '/vendor/' 
+                            . str_replace('\\', '/', trim($key, '\\')) 
+                            . '.php';
+                        
+                        if(!file_exists($path)) {
+                            throw new Exception(sprintf(self::NO_BLOCK, $key));    
+                        }
+                    }
+                    
+                    return include($path);
+                }
+            }
+            
+            if(strpos($class, '\\') === 0) {
+                //remove starting \\
+                $class = substr($class, 1);
+            }            
+            
+            return $this->$class();
         }
 
         /**
@@ -354,10 +356,9 @@ namespace Eve\Framework
                     case strpos($type, 'json') !== false:
                         $body = $handler->callArray('jsonGeneric', $args);
                         break;
-                    case strpos($type, 'plain') !== false && $mode:
+                    case $mode:
                         $body = $handler->callArray('plainDetails', $args);
                         break;
-                    case strpos($type, 'plain') !== false:
                     default:
                         $body = $handler->callArray('plainGeneric', $args);
                         break;
@@ -917,19 +918,33 @@ namespace Eve\Framework
             Argument::i()->test(1, 'string');
 
             $path = $this->path('settings');
-
-            $file = $this('file')->set($path.'/'.$key.'.php');
-
+            $file = $path.'/'.$key.'.php';
+            
             if(is_array($data)) {
-                $file->setData($data);
+                $this('file')
+                    ->set($file)
+                    ->setData($data);
+                
                 return $this;
             }
 
             if(!file_exists($file)) {
                 return array();
             }
-
-            return $file->getData();
+            
+            //is it already cached?
+            if(isset($this->cachedSettings[$file])) {
+                return $this->cachedSettings[$file];
+            }
+            
+            //get the data
+            $data = $this('file')->set($file)->getData();
+            
+            //cache the data
+            $this->cachedSettings[$file] = $data;
+            
+            //return the data
+            return $data;
         }
 
         /**
@@ -958,33 +973,6 @@ namespace Eve\Framework
             }
 
             return $this->language()->get($string);
-        }
-
-        /**
-         * Loads a validate class
-         *
-         * @param *string $key The validate factory key name
-         *
-         * @return Eve\Framework\Validate\Base
-         */
-        public function validate($key)
-        {
-            Argument::i()->test(1, 'string');
-
-            $key = str_replace(array('-', '_', '/'), ' ', $key);
-            $key = ucwords($key);
-            $key = str_replace(' ', '\\', $key);
-
-            $class = $this->rootNameSpace.'\\Validate\\' . $key . '\\Index';
-
-            if(!class_exists($class)) {
-                throw new Exception(sprintf(self::NO_VALIDATE, $key));
-            }
-
-            //remove starting \\
-            $class = substr($class, 1);
-
-            return $this->$class();
         }
 
         /**
