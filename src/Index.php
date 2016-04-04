@@ -389,147 +389,6 @@ namespace Eve\Framework
         }
 
         /**
-         * Sets up the default services connections
-         *
-         * @param array|null $queues Inject a custom service config
-         *
-         * @return Eve\Framework\Index
-         */
-        public function defaultServices(array $services = null)
-        {
-            //case for test injections
-            if(!$services 
-                && !empty($_SERVER) 
-                && isset($_SERVER['HTTP_HOST'])
-                && strpos($_SERVER['HTTP_HOST'], 'testsuites') !== false
-            ) {
-                $test = $this->settings('test');
-                $services = $test['services'];
-            }
-
-            if(!$services) {
-                $services = $this->settings('services');
-            }
-
-            foreach($services as $key => $info) {
-                //this is so we can categorize the services
-                $type = 'custom';
-                //connect to the data as described in the settings
-                switch($info['type']) {
-                    //database cases
-                    case 'postgre':
-                        $type = 'database';
-                        $instance = $this(
-                            'postgre',
-                            $info['host'],
-                            $info['name'],
-                            $info['user'],
-                            $info['pass']);
-                        break;
-                    case 'mysql':
-                        $type = 'database';
-                        $instance = $this(
-                            'mysql',
-                            $info['host'],
-                            $info['name'],
-                            $info['user'],
-                            $info['pass']);
-                        break;
-                    case 'sqlite':
-                        $type = 'database';
-                        $instance = $this('sqlite', $info['file']);
-                        break;
-                    //index cases
-                    case 'solr':
-                        $type = 'index';
-                        if(!isset($info['timeout'])) {
-                            $info['timeout'] = 30;
-                        }
-
-                        $instance = $this(
-                            'solr',
-                            $info['host'],
-                            $info['port'],
-                            $info['path'],
-                            $info['core'],
-                            $info['timeout']
-                        );
-                        break;
-                    case 'elastic':
-                        $type = 'index';
-                        $instance = $this(
-                            'elasticsearch',
-                            $info['host'],
-                            $info['port']                        
-                        );
-
-                        break;
-                    //queue cases
-                    case 'rabbitmq':
-                        $type = 'queue';
-                        $instance = $this(
-                            'rabbitmq',
-                            $info['host'],
-                            $info['port'],
-                            $info['username'],
-                            $info['password']
-                        );
-
-                        break;
-                    case 'sqs':
-                        //TODO:
-                        $type = 'database';
-                        $instance = null;
-                        break;
-                    //cache cases
-                    case 'redis':
-                        $type = 'cache';
-                        $cache = $this(
-                            'redis', 
-                            $info['host'], 
-                            $info['port']
-                        );
-                        break;
-                    case 'memcache':
-                        //TODO:
-                        $type = 'cache';
-                        $instance = null;
-                        break;
-                    //cdn cases
-                    case 's3':
-                        $type = 'cdn';
-                        $instance = $this(
-                            's3',
-                            $info['region'],
-                            $info['token'],
-                            $info['secret']
-                        );
-                        
-                        break;
-                    case 'cloudflare':
-                        //TODO:
-                        $type = 'cdn';
-                        $instance = null;
-                        break;
-                    
-                }
-
-                // Allow custom objects
-                if (is_object($info['type'])) {
-                    $instance = $info['type'];
-                }
-                
-                $this->services[$type][$key] = $instance;
-
-                if($info['default']) {
-                    $this->defaults[$type] = $instance;
-                }
-            }
-
-            return $this;
-        }
-
-        /**
          * Sets response
          *
          * @param string|null the request object
@@ -679,6 +538,146 @@ namespace Eve\Framework
                     $response->set('action', $action);
                 }
             });
+
+            return $this;
+        }
+
+        /**
+         * Sets up the default services connections
+         *
+         * @param array|null $queues Inject a custom service config
+         *
+         * @return Eve\Framework\Index
+         */
+        public function defaultServices(array $services = null)
+        {
+            //case for test injections
+            if(!$services 
+                && !empty($_SERVER) 
+                && isset($_SERVER['HTTP_HOST'])
+                && strpos($_SERVER['HTTP_HOST'], 'testsuites') !== false
+            ) {
+                $test = $this->settings('test');
+                $services = $test['services'];
+            }
+
+            if(!$services) {
+                $services = $this->settings('services');
+            }
+
+            foreach($services as $key => $info) {
+                //this is so we can categorize the services
+                $type = 'custom';
+                //connect to the data as described in the settings
+                switch($info['type']) {
+                    //database cases
+                    case 'postgre':
+                        $type = 'database';
+                        $instance = $this(
+                            'postgre',
+                            $info['host'],
+                            $info['name'],
+                            $info['user'],
+                            $info['pass']);
+                        break;
+                    case 'mysql':
+                        $type = 'database';
+                        $instance = $this(
+                            'mysql',
+                            $info['host'],
+                            $info['name'],
+                            $info['user'],
+                            $info['pass']);
+                        break;
+                    case 'sqlite':
+                        $type = 'database';
+                        $instance = $this('sqlite', $info['file']);
+                        break;
+                    //index cases
+                    case 'solr':
+                        $type = 'index';
+                        if(!isset($info['timeout'])) {
+                            $info['timeout'] = 30;
+                        }
+
+                        $instance = $this(
+                            'solr',
+                            $info['host'],
+                            $info['port'],
+                            $info['path'],
+                            $info['core'],
+                            $info['timeout']
+                        );
+                        break;
+                    case 'elastic':
+                        $type = 'index';
+                        $instance = $this(
+                            'elasticsearch',
+                            $info['host'],
+                            $info['port']                        
+                        );
+
+                        break;
+                    //queue cases
+                    case 'rabbitmq':
+                        $type = 'queue';
+                        $instance = $this(
+                            'rabbitmq',
+                            $info['host'],
+                            $info['port'],
+                            $info['username'],
+                            $info['password']
+                        );
+
+                        break;
+                    case 'sqs':
+                        //TODO:
+                        $type = 'database';
+                        $instance = null;
+                        break;
+                    //cache cases
+                    case 'redis':
+                        $type = 'cache';
+                        $cache = $this(
+                            'redis', 
+                            $info['host'], 
+                            $info['port']
+                        );
+                        break;
+                    case 'memcache':
+                        //TODO:
+                        $type = 'cache';
+                        $instance = null;
+                        break;
+                    //cdn cases
+                    case 's3':
+                        $type = 'cdn';
+                        $instance = $this('aws')->s3(
+                            $info['region'],
+                            $info['token'],
+                            $info['secret']
+                        );
+                        
+                        break;
+                    case 'cloudflare':
+                        //TODO:
+                        $type = 'cdn';
+                        $instance = null;
+                        break;
+                    
+                }
+
+                // Allow custom objects
+                if (is_object($info['type'])) {
+                    $instance = $info['type'];
+                }
+                
+                $this->services[$type][$key] = $instance;
+
+                if($info['default']) {
+                    $this->defaults[$type] = $instance;
+                }
+            }
 
             return $this;
         }
