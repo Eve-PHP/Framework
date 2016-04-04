@@ -63,34 +63,15 @@ namespace Eve\Framework
         const NO_BLOCK = 'No Block: %s Found';
 
         /**
-         * @var string|null $rootUrl
+         * @var array $defaults
          */
-        public $rootUrl = null;
-
-        /**
-         * @var string|null $rootPath
-         */
-        public $rootPath = null;
-
-        /**
-         * @var string|null $defaultDatabase
-         */
-        public $defaultDatabase = null;
-
-        /**
-         * @var string|null $defaultRegistry
-         */
-        public $defaultRegistry = null;
-
-        /**
-         * @var string|null $defaultLanguage
-         */
-        public $defaultLanguage = null;
-
-        /**
-         * @var string|null $defaultQueue
-         */
-        public $defaultQueue = null;
+        protected $defaults = array(
+            'cache' => null,
+            'cdn' => null,
+            'database' => null,
+            'index' => null,
+            'queue' => null
+        );
 
         /**
          * @var string|null $rootNameSpace
@@ -98,14 +79,30 @@ namespace Eve\Framework
         protected $rootNameSpace = null;
 
         /**
+         * @var string|null $rootPath
+         */
+        public $rootPath = null;
+
+        /**
+         * @var string|null $rootUrl
+         */
+        public $rootUrl = null;
+
+        /**
          * @var string|null $routeNameSpace
          */
         protected $routeNameSpace = null;
 
         /**
-         * @var array $cachedSettings
+         * @var array $services
          */
-        protected $cachedSettings = array();
+        protected $services = array(
+            'cache' => array(),
+            'cdn' => array(),
+            'database' => array(),
+            'index' => array(),
+            'queue' => array()
+        );
 
         /**
          * Set the root and namespace
@@ -188,6 +185,48 @@ namespace Eve\Framework
         }
 
         /**
+         * Wrapper for service() for caches
+         *
+         * @param string|null $key A specific cache ID
+         *
+         * @return mixed
+         */
+        public function cache($key = null)
+        {
+            Argument::i()->test(1, 'string', 'null');
+
+            return $this->service('cache', $key);
+        }
+
+        /**
+         * Wrapper for service() for CDNs
+         *
+         * @param string|null $key A specific cdn ID
+         *
+         * @return mixed
+         */
+        public function cdn($key = null)
+        {
+            Argument::i()->test(1, 'string', 'null');
+
+            return $this->service('cdn', $key);
+        }
+
+        /**
+         * Wrapper for service() for databases
+         *
+         * @param string|null $key A specific database ID
+         *
+         * @return mixed
+         */
+        public function database($key = null)
+        {
+            Argument::i()->test(1, 'string', 'null');
+
+            return $this->service('database', $key);
+        }
+
+        /**
          * Runs the default bootstrap from start to finish
          * If you wish to add process between these steps
          * you should copy the method details and paste to
@@ -201,7 +240,7 @@ namespace Eve\Framework
                 ->defaultPaths()
                 ->defaultDebugging()
                 ->defaultErrorHandler()
-                ->defaultDatabases()
+                ->defaultServices()
                 ->trigger('config')
                 ->defaultTimezone('Asia/Manila')
                 ->trigger('init')
@@ -214,67 +253,6 @@ namespace Eve\Framework
                 ->render()
                 ->trigger('render')
                 ->trigger('shutdown');
-        }
-
-        /**
-         * Sets up the default database connection
-         *
-         * @param array|null $databases Inject a database config
-         *
-         * @return Eve\Framework\Index
-         */
-        public function defaultDatabases(array $databases = null)
-        {
-            if(!$databases 
-                && !empty($_SERVER) 
-                && isset($_SERVER['HTTP_HOST'])
-                && strpos($_SERVER['HTTP_HOST'], 'testsuites') !== false
-            ) {
-                $test = $this->settings('test');
-                $databases = $test['database'];
-            }
-
-            if(!$databases) {
-                $databases = $this->settings('databases');
-            }
-
-            foreach($databases as $key => $info) {
-                //connect to the data as described in the settings
-                switch($info['type']) {
-                    case 'postgre':
-                        $database = $this(
-                            'postgre',
-                            $info['host'],
-                            $info['name'],
-                            $info['user'],
-                            $info['pass']);
-                        break;
-                    case 'mysql':
-                        $database = $this(
-                            'mysql',
-                            $info['host'],
-                            $info['name'],
-                            $info['user'],
-                            $info['pass']);
-                        break;
-                    case 'sqlite':
-                        $database = $this('sqlite', $info['file']);
-                        break;
-                }
-
-                // Allow custom objects
-                if (is_object($info['type'])) {
-                    $database = $info['type'];
-                }
-                
-                $this->registry()->set('database', $key, $database);
-
-                if($info['default']) {
-                    $this->defaultDatabase = $database;
-                }
-            }
-
-            return $this;
         }
 
         /**
@@ -404,6 +382,147 @@ namespace Eve\Framework
             foreach($paths as $path) {
                 if(!$this->registry()->isKey('path', strtolower($path))) {
                     $this->registry()->set('path', strtolower($path), $root . '/' . $path);
+                }
+            }
+
+            return $this;
+        }
+
+        /**
+         * Sets up the default services connections
+         *
+         * @param array|null $queues Inject a custom service config
+         *
+         * @return Eve\Framework\Index
+         */
+        public function defaultServices(array $services = null)
+        {
+            //case for test injections
+            if(!$services 
+                && !empty($_SERVER) 
+                && isset($_SERVER['HTTP_HOST'])
+                && strpos($_SERVER['HTTP_HOST'], 'testsuites') !== false
+            ) {
+                $test = $this->settings('test');
+                $services = $test['services'];
+            }
+
+            if(!$services) {
+                $services = $this->settings('services');
+            }
+
+            foreach($services as $key => $info) {
+                //this is so we can categorize the services
+                $type = 'custom';
+                //connect to the data as described in the settings
+                switch($info['type']) {
+                    //database cases
+                    case 'postgre':
+                        $type = 'database';
+                        $instance = $this(
+                            'postgre',
+                            $info['host'],
+                            $info['name'],
+                            $info['user'],
+                            $info['pass']);
+                        break;
+                    case 'mysql':
+                        $type = 'database';
+                        $instance = $this(
+                            'mysql',
+                            $info['host'],
+                            $info['name'],
+                            $info['user'],
+                            $info['pass']);
+                        break;
+                    case 'sqlite':
+                        $type = 'database';
+                        $instance = $this('sqlite', $info['file']);
+                        break;
+                    //index cases
+                    case 'solr':
+                        $type = 'index';
+                        if(!isset($info['timeout'])) {
+                            $info['timeout'] = 30;
+                        }
+
+                        $instance = $this(
+                            'solr',
+                            $info['host'],
+                            $info['port'],
+                            $info['path'],
+                            $info['core'],
+                            $info['timeout']
+                        );
+                        break;
+                    case 'elastic':
+                        $type = 'index';
+                        $instance = $this(
+                            'elasticsearch',
+                            $info['host'],
+                            $info['port']                        
+                        );
+
+                        break;
+                    //queue cases
+                    case 'rabbitmq':
+                        $type = 'queue';
+                        $instance = $this(
+                            'rabbitmq',
+                            $info['host'],
+                            $info['port'],
+                            $info['username'],
+                            $info['password']
+                        );
+
+                        break;
+                    case 'sqs':
+                        //TODO:
+                        $type = 'database';
+                        $instance = null;
+                        break;
+                    //cache cases
+                    case 'redis':
+                        $type = 'cache';
+                        $cache = $this(
+                            'redis', 
+                            $info['host'], 
+                            $info['port']
+                        );
+                        break;
+                    case 'memcache':
+                        //TODO:
+                        $type = 'cache';
+                        $instance = null;
+                        break;
+                    //cdn cases
+                    case 's3':
+                        $type = 'cdn';
+                        $instance = $this(
+                            's3',
+                            $info['region'],
+                            $info['token'],
+                            $info['secret']
+                        );
+                        
+                        break;
+                    case 'cloudflare':
+                        //TODO:
+                        $type = 'cdn';
+                        $instance = null;
+                        break;
+                    
+                }
+
+                // Allow custom objects
+                if (is_object($info['type'])) {
+                    $instance = $info['type'];
+                }
+                
+                $this->services[$type][$key] = $instance;
+
+                if($info['default']) {
+                    $this->defaults[$type] = $instance;
                 }
             }
 
@@ -593,25 +712,6 @@ namespace Eve\Framework
         }
 
         /**
-         * Returns the default database instance
-         *
-         * @param string|null $key A specific database ID
-         *
-         * @return mixed
-         */
-        public function database($key = null)
-        {
-            Argument::i()->test(1, 'string', 'null');
-
-            if(is_null($key)) {
-                //return the default database
-                return $this->defaultDatabase;
-            }
-
-            return $this->registry()->get('database', $key);
-        }
-
-        /**
          * Returns the root namespace
          *
          * @return Eve\Framework\Index
@@ -629,6 +729,20 @@ namespace Eve\Framework
         public function getRouteNamespace()
         {
             return $this->routeNameSpace;
+        }
+
+        /**
+         * Wrapper for service() for indexes
+         *
+         * @param string|null $key A specific index ID
+         *
+         * @return mixed
+         */
+        public function index($key = null)
+        {
+            Argument::i()->test(1, 'string', 'null');
+
+            return $this->service('index', $key);
         }
 
         /**
@@ -739,30 +853,17 @@ namespace Eve\Framework
         }
 
         /**
-         * Gives the ability to add Queues
+         * Wrapper for service() for queues
          *
-         * @param *string $task The job key name (which is relative to the class name)
-         * @param *array  $data The data to pass to the job
+         * @param string|null $key A queue ID
          *
-         * @return string
+         * @return mixed
          */
-        public function queue($task = null, $data = array())
-        {   
-            if(is_null($this->defaultQueue)) {
-                $config = $this->settings('config');
-                $config = $config['queue'];
-                $this->defaultQueue = Queue::i(
-                    $config['host'],
-                    $config['port'],
-                    $config['username'],
-                    $config['password']);
-            }
+        public function queue($key = null)
+        {
+            Argument::i()->test(1, 'string', 'null');
 
-            return $this->defaultQueue
-                ->setTask($task)
-                ->setData($data)
-                ->setDurable(true)
-                ->setApplication(eve()->rootNameSpace);
+            return $this->service('queue', $key);
         }
 
         /**
@@ -903,6 +1004,41 @@ namespace Eve\Framework
 
             return $this;
         }
+        
+        /**
+         * Returns a service instance
+         *
+         * @param string*     $type A specific cache ID
+         * @param string|null $key  A specific cache ID
+         *
+         * @return mixed
+         */
+        public function service($type = 'custom', $key = null)
+        {
+            Argument::i()
+                ->test(1, 'string')
+                ->test(2, 'string', 'null');
+            
+            //if no key
+            if(is_null($key)) {
+                //if no default
+                if(!isset($this->defaults[$type])) {
+                    //no coice but to return null
+                    return null;
+                }
+                
+                //return the default type
+                return $this->defaults[$type];
+            }
+            
+            //if the service does not exist
+            if(!isset($this->services[$type][$key])) {
+                //return null
+                return null;
+            }
+
+            return $this->services[$type][$key];
+        }
 
         /**
          * Returns or saves the settings
@@ -980,31 +1116,21 @@ namespace Eve\Framework
          *
          * @return Eve\Framwork\Index
          */
-        public function work($queue = 'queue')
+        public function work($key = null)
         {
-            if(!eve()->registry()->get($queue)) {
-                $config = $this->settings('config');
-                $config = $config[$queue];
-                echo 'Open Dispatcher'. PHP_EOL;
-
-                $queueConnection = Dispatcher::i(
-                    $config['host'],
-                    $config['port'],
-                    $config['username'],
-                    $config['password']
-                );
-
-                 eve()->registry()->set($queue, $queueConnection);
+            //if no queue
+            if(!($queue = $this->service('queue', $key))) {
+                //we cannot work
+                return $this;    
             }
 
-            eve()->registry()->get($queue)->run();
-
-            if($this->defaultQueue !== null){
-                $this->defaultQueue->getChannel()->close();
-                $this->defaultQueue->getConnection()->close();
-                echo 'Queue closed'. PHP_EOL;
+            if(!isset($this->defaults['dispatcher'])) {
+                $this->defaults['dispatcher'] = Dispatcher::i($queue);
             }
-
+            
+            $this->defaults['dispatcher']->run();
+            
+            //disconnection should happen on the caller's end
             return $this;
         }
     }
