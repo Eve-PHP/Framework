@@ -49,6 +49,11 @@ class Queue extends \Eden\Core\Base
         $this->channel = $this->connection->channel();
     }
 
+    public function __destruct()
+    {
+        echo 'Destroying Queue Class.';
+    }
+
     /**
      * Gets connection
      *
