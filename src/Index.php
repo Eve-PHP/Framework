@@ -990,9 +990,11 @@ namespace Eve\Framework
         /**
          * Runs the worker.
          *
+         * @param string queue configs
+         * @param string queue container name
          * @return Eve\Framwork\Index
          */
-        public function work($queue = 'queue')
+        public function work($queue = 'queue', $container = 'queue')
         {
             if(!eve()->registry()->get($queue)) {
                 $config = $this->settings('config');
@@ -1009,7 +1011,7 @@ namespace Eve\Framework
                  eve()->registry()->set($queue, $queueConnection);
             }
 
-            eve()->registry()->get($queue)->run();
+            eve()->registry()->get($queue)->run($container);
 
             if($this->defaultQueue !== null){
                 $this->defaultQueue->getChannel()->close();
