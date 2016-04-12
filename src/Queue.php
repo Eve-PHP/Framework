@@ -51,7 +51,7 @@ class Queue extends \Eden\Core\Base
 
     public function __destruct()
     {
-        echo 'Destroying Queue Class.';
+        // echo 'Destroying Queue Class.';
     }
 
     /**
