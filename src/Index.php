@@ -106,6 +106,11 @@ namespace Eve\Framework
         protected $routeNameSpace = null;
 
         /**
+         * @var array|null $settings
+         */
+        protected $settings = null;
+
+        /**
          * Set the root and namespace
          *
          * @param string|null $rootPath  The root path
@@ -916,6 +921,10 @@ namespace Eve\Framework
         {
             Argument::i()->test(1, 'string');
 
+            if(isset($this->settings[$key]) && !$data) {
+                return $this->settings[$key];
+            }
+
             $path = $this->path('settings');
 
             $file = $this('file')->set($path.'/'.$key.'.php');
@@ -929,7 +938,9 @@ namespace Eve\Framework
                 return array();
             }
 
-            return $file->getData();
+            $this->settings[$key] = $file->getData();
+            
+            return $this->settings[$key];
         }
 
         /**
