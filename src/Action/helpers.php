@@ -11,6 +11,12 @@ return array(
 		foreach($more as $arg) {
             $args[] = $arg;
         }
+		
+		foreach($args as $i => $arg) {
+			if(is_null($arg)) {
+				$args[$i] = '';
+			}
+		}
 
         return eve()->translate((string) $key, $args);
     },
@@ -109,6 +115,62 @@ return array(
         }
 
         return $results;
+    },
+	
+	'tokenize-partial' => function($name) {
+		//get args
+        $args = func_get_args();
+		
+		//get the name
+        $name = array_shift($args);
+		
+		//we need the options
+        $options = array_pop($args);
+		
+		//get the template root
+		$path = eve()->path('template');
+		
+		//name will have quotes
+		$name = substr($name, 1, -1);
+		
+		//if the name doesn't have an extension
+		if(strpos($name, '.') === false) {
+			//make it html
+			$name .= '.html';
+		}
+
+		//if the name doesn't start with a /
+		if(strpos($name, '/') !== 0) {
+			//add /
+			$name = '/' . $name;
+		}
+
+		//this is the final name
+		//which is also the path to the template
+		$name = $path . $name;
+
+		//get the partial
+		$partial = Eden\Handlebars\Runtime::getPartial($name);
+		
+		//if there is no partial and file exists
+		if(is_null($partial) && file_exists($name)) {
+			//this is the partial
+			$partial = file_get_contents($name);
+			
+			//register the partial
+			Eden\Handlebars\Runtime::registerPartial($name, $partial);
+		}
+		
+		//prep to call tokenize
+		$tokenize = Eden\Handlebars\Runtime::getHelper('tokenize->');
+		
+		//bind the arguments back
+		$options['args'] = str_replace('partial ', '> ', $options['args']);
+		
+		array_unshift($args, "'" . $name . "'");
+		array_push($args, $options);
+		
+		return call_user_func_array($tokenize, $args);
     },
 	
 	'strip' => function($html, $options) {
@@ -321,6 +383,10 @@ return array(
         $i = 0;
         $buffer = array();
         $total = count($object);
+		
+		if(!is_array($object) && !is_object($object)) {
+			return '';
+		}
 
         foreach($object as $key => $value) {
             $buffer[] = $options['fn'](array(
@@ -334,9 +400,6 @@ return array(
         return implode('', $buffer);
     },
 	
-	
-
-
     //array key
     'in' => function($value, $array, $options) {
         if(is_string($array)) {

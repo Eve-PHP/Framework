@@ -27,7 +27,7 @@
         "eden/cookie": "4.*",
         "eden/folder": "4.*",
         "eden/handler": "4.*",
-        "eden/handlebars": "4.*",
+        "eden/handlebars": "5.*",
         "eden/image": "4.*",
         "eden/language": "4.*",
         "eden/mail": "4.*",
